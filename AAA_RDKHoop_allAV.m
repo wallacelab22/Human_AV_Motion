@@ -466,8 +466,8 @@ for ii = 1:length(data_output)
             sliderUpperText = 'Most';
         elseif typeSlide == 2 % strength of motion slider
             sliderPrompt = 'How strongly did you perceive the motion?';
-            sliderLowerText = 'Strongly Left';
-            sliderUpperText = 'Strongly Right';
+            sliderLowerText = 'No motion';
+            sliderUpperText = 'Strongest motion percept';
         else
             sliderPrompt = '';
             sliderLowerText = '';
