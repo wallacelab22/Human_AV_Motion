@@ -65,7 +65,7 @@ rng('shuffle')
 data_output=at_RDKHoopMatrix_psyAud(catchtrials,audtrials);
 
 %% Initialize
-curScreen=1;
+curScreen=2;
 %Screen('Preference', 'SkipSyncTests', 0);
 Screen('Preference', 'SkipSyncTests', 1);
 screenInfo = openExperiment(monWidth, viewDist, curScreen);
