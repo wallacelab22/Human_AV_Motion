@@ -1,6 +1,7 @@
 clear all
 close all
 clc
+%hi
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
 % % directories used throughout the experment
