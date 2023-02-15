@@ -1,7 +1,6 @@
 clear all
 close all
 clc
-%Comment
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
  scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';

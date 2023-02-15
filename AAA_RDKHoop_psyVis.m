@@ -6,7 +6,6 @@ clc
 scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
 localdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
 serverdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
-% data_file_dir = '/Users/a.tiesman/Documents/MATLAB/Data and Antonia_s matlab scripts/Copy of all of Antonia_s stuff';
 cd(scriptdirectory)
 
 %% general variables to smoothly run PTB
@@ -333,7 +332,7 @@ for ii=1:length(data_output)
 end
 
 cd(localdirectory)
-save([data_file_dir filename], 'data_output', 'filename');
+save(filename, 'data_output');
 
 %% Goodbye
 cont(curWindow, cWhite0);
