@@ -86,7 +86,7 @@ InitializePsychSound;
 %     end
 % end
 
-pahandle = PsychPortAudio('Open', 1, [], 0, Fs, 2);
+pahandle = PsychPortAudio('Open', 4, [], 0, Fs, 2);
 
 %% Welcome and Instrctions for the Suject
 instructions_psyAud(curWindow, cWhite0);
