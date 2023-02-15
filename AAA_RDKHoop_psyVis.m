@@ -3,10 +3,10 @@ close all
 clc
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
-scriptdirectory = '/Users/a.tiesman/Documents/MATLAB/Data and Antonia_s matlab scripts/Copy of all of Antonia_s stuff';
-localdirectory = '/Users/a.tiesman/Documents/MATLAB/Data and Antonia_s matlab scripts/Copy of all of Antonia_s stuff';
-serverdirectory = '/Users/a.tiesman/Documents/MATLAB/Data and Antonia_s matlab scripts/Copy of all of Antonia_s stuff';
-data_file_dir = '/Users/a.tiesman/Documents/MATLAB/Data and Antonia_s matlab scripts/Copy of all of Antonia_s stuff';
+scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
+localdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
+serverdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
+% data_file_dir = '/Users/a.tiesman/Documents/MATLAB/Data and Antonia_s matlab scripts/Copy of all of Antonia_s stuff';
 cd(scriptdirectory)
 
 %% general variables to smoothly run PTB

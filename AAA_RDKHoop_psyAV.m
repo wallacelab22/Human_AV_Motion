@@ -4,9 +4,9 @@ clc
 %Comment
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
- scriptdirectory = "C:\Users\Wallace Lab\Documents\MATLAB\Adam's AV Motion Stuff";
- localdirectory = "C:\Users\Wallace Lab\Documents\MATLAB\Adam's AV Motion Stuff";
- serverdirectory = "C:\Users\Wallace Lab\Documents\MATLAB\Adam's AV Motion Stuff";
+ scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
+ localdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
+ serverdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
  cd(scriptdirectory)
 
 %% general variables to smoothly run PTB
