@@ -1,4 +1,4 @@
-%% TEST Human Visual Figures %%%%%%%%%%
+%% TEST Human Unimodality Figures %%%%%%%%%%
 % written 02/16/23 - Adam Tiesman
 clear;
 close all;
@@ -10,7 +10,7 @@ file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometr
 data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
 
-% Add the experimental data to path
+% Load the experimental data
 load("RDKHoop_psyVis_01_01_02_24.mat");
 
 % Provide specific variables 
@@ -23,7 +23,7 @@ data_output(data_output(:, 1) == 0, 1) = 3;
 right_or_left = data_output(:, 1);
 right_vs_left = splitapply(@(x){x}, data_output, right_or_left);
 
-% Isolate coherences for right and left groups
+% Isolate coherences for right and left groups and catch
 right_group = findgroups(right_vs_left{1,1}(:,2));
 left_group = findgroups(right_vs_left{2,1}(:,2));
 catch_group = findgroups(right_vs_left{3,1}(:,2));
@@ -32,7 +32,7 @@ catch_group = findgroups(right_vs_left{3,1}(:,2));
 rightward_prob = [];
 
 % Loop over each coherence level and extract the corresponding rows of the matrix for
-% i = max(groups):-1:1 for leftward trials
+% i = max(left_group):-1:1 for leftward trials
 for i = max(left_group):-1:1
     group_rows = right_vs_left{2,1}(left_group == i, :);
     left_var = 2;
@@ -51,7 +51,7 @@ percentage = (count/ size(group_rows, 1));
 rightward_prob = [rightward_prob percentage];
 
 % Loop over each coherence level and extract the corresponding rows of the matrix for
-% i = 1:max(groups) for rightward trials
+% i = 1:max(right_group) for rightward trials
 for i = 1:max(right_group)
     group_rows = right_vs_left{1,1}(right_group == i, :);
     right_var = 1;
@@ -71,3 +71,20 @@ xlabel('Coherence Level');
 ylabel('Rightward Response Probability');
 title('TEST Human Visual Psychometric Plot');
 
+% Create a Normal Cumulative Distribution Function (NormCDF)
+% Define the mean and standard deviation of the normal distribution
+mu = mean(rightward_prob);
+sigma = std(rightward_prob);
+
+% Calculate the CDF for each value of x
+y = normcdf(rightward_prob, mu, sigma);
+
+% Plot the CDF
+plot(coherence_lvls, y);
+
+% Add labels to the x-axis and y-axis
+xlabel('Coherence Levels');
+ylabel('Cumulative Probability');
+
+% Add a title to the plot
+title('Normal Cumulative Distribution Function');
