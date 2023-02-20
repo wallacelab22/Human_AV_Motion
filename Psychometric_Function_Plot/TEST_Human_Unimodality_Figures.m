@@ -5,7 +5,7 @@ close all;
 sca;
 
 % Version info
-Version = 'TEST_Human_Visual_v.1.0' ; % after code changes, change version
+Version = 'TEST_Human_Visual_v.1.1' ; % after code changes, change version
 file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
 data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
@@ -72,9 +72,29 @@ ylabel('Rightward Response Probability');
 title('TEST Human Visual Psychometric Plot');
 
 % Create a Normal Cumulative Distribution Function (NormCDF)
+%
+% X input : coherence_lvls
+% Y input : rightward_prob
+%
 % Define the mean and standard deviation of the normal distribution
-mu = mean(rightward_prob);
-sigma = std(rightward_prob);
+[xData, yData] = prepareCurveData(coherence_lvls, rightward_prob)
+
+mu = mean(yData);
+sigma = std(yData);
+parms = [mu, sigma]
+
+fun_1 = @(b, x)cdf('Normal', x, b(1), b(2));
+fun = @(b)sum((fun_1(b,xData) - yData).^2); 
+opts = optimset('MaxFunEvals',50000, 'MaxIter',10000); 
+fit_par = fminsearch(fun, parms, opts);
+
+x = -1:.01:1;
+
+[p_values, bootstat, ci] = p_value_calc(yData, parms);
+
+threshold_location = find(p >= chosen_threshold, 1);
+threshold = x(1, threshold_location);
+
 
 % Calculate the CDF for each value of x
 y = normcdf(rightward_prob, mu, sigma);
