@@ -14,7 +14,7 @@ figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psy
 load("RDKHoop_psyVis_01_01_02_24.mat");
 
 % Provide specific variables 
-chosen_threshold = 0.72; %Ask Mark about threshold
+chosen_threshold = 0.72; % Ask Mark about threshold
 
 % Replace all the 0s to 3s for catch trials for splitapply
 data_output(data_output(:, 1) == 0, 1) = 3; 
