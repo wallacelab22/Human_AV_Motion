@@ -32,10 +32,12 @@ incongruent_trials = data_output(~idx, :);
 right_or_left = congruent_trials(:, 1);
 right_vs_left = splitapply(@(x){x}, congruent_trials, right_or_left);
 
-% Isolate coherences for right and left groups and catch
+% Isolate VISUAL coherences for right and left groups and catch
 right_group = findgroups(right_vs_left{1,1}(:,2));
 left_group = findgroups(right_vs_left{2,1}(:,2));
 catch_group = findgroups(right_vs_left{3,1}(:,2));
+
+% For each group, create a cell that splits thes
 
 % Initialize an empty array to store rightward_prob for all coherences
 rightward_prob = [];
