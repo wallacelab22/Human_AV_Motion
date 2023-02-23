@@ -28,14 +28,14 @@ viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45;
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
 maxdotsframe=150; monWidth=40; viewDist =120;
 
-% addpath('C:\Users\aties\Documents\MATLAB\liblsl-Matlab\bin');
+addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
 
 % instantiate the LSL library
-% lib = lsl_loadlib();
-% 
-% % make a new stream outlet
-% info = lsl_streaminfo(lib,'EventStream','Markers',1,1,'cf_int32','wallacelab');
-% outlet = lsl_outlet(info);
+lib = lsl_loadlib();
+ 
+% make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
+info = lsl_streaminfo(lib,'EventStream','Markers',1,1,'cf_int32','wallacelab');
+outlet = lsl_outlet(info);
 
 % general drawing color
 cWhite0=255;
@@ -97,7 +97,7 @@ for ii=1:length(data_output)
         takebreak(curWindow, cWhite0);
         Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
         Screen('Flip', curWindow,0);
- %%%       outlet.push_sample();
+        outlet.push_sample();
         WaitSecs(2);
     end
     
