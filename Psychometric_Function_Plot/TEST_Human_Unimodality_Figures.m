@@ -17,6 +17,7 @@ load("RDKHoop_psyVis_01_01_02_24.mat");
 chosen_threshold = 0.72; % Ask Mark about threshold
 right_var = 1;
 left_var = 2;
+catch_var = 0;
 
 % Replace all the 0s to 3s for catch trials for splitapply
 data_output(data_output(:, 1) == 0, 1) = 3; 
@@ -76,7 +77,7 @@ title('TEST Human Visual Psychometric Plot');
 % Y input : rightward_prob
 %
 % Define the mean and standard deviation of the normal distribution
-[xData, yData] = prepareCurveData(coherence_lvls, rightward_prob)
+[xData, yData] = prepareCurveData(coherence_lvls, rightward_prob);
 
 mu = mean(yData);
 sigma = std(yData);
@@ -91,19 +92,23 @@ x = -1:.01:1;
 
 [p_values, bootstat, ci] = p_value_calc(yData, parms);
 
+p = cdf('Normal', x, fit_par(1), fit_par(2));
+
 threshold_location = find(p >= chosen_threshold, 1);
 threshold = x(1, threshold_location);
 
-
-% Calculate the CDF for each value of x
-y = normcdf(rightward_prob, mu, sigma);
-
-% Plot the CDF
-plot(coherence_lvls, y);
-
-% Add labels to the x-axis and y-axis
-xlabel('Coherence Levels');
-ylabel('Cumulative Probability');
-
-% Add a title to the plot
-title('Normal Cumulative Distribution Function');
+% Plot fit with data.
+fig = figure( 'Name', 'Psychometric Function' );
+scatter(xData, yData)
+hold on 
+plot(x, p);
+legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthEast', 'Interpreter', 'none' );
+% Label axes
+title(sprintf('Auditory Psych. Func. L&R\n%s',save_name), 'Interpreter','none');
+xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
+ylabel( '% Rightward Response', 'Interpreter', 'none' );
+xlim([-1 1])
+ylim([0 1])
+grid on
+text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
+text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
