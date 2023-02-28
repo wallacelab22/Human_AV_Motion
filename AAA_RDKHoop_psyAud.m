@@ -32,6 +32,16 @@ buffersize=(dur+silence)*Fs;
 % visual stimulus properties number of dots, viewing distance from monito
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 
+addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
+addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
+
+% instantiate the LSL library
+lib = lsl_loadlib();
+ 
+% make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
+info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
+outlet = lsl_outlet(info);
+
 %% collect subjectinformation
 subjnum = input('Enter the subject''s number: ');
 subjnum_s = num2str(subjnum);
@@ -143,7 +153,11 @@ for ii=1:length(data_output)
     CAM=makeCAM(cLvl, currauddir, dur, silence, Fs);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows == number of channels.
-        
+    dir_id = num2str(data_output(ii,1));
+    coh_id = num2str(data_output(ii,2));
+    markers = strcat([dir_id coh_id]); %unique identifier for LSL
+
+
     while continue_show
         %DS look for key down if no response yet
         if ~responded %if no response
@@ -167,6 +181,7 @@ for ii=1:length(data_output)
             start_time = GetSecs;
 	        PsychPortAudio('FillBuffer', pahandle, wavedata');
 	        PsychPortAudio('Start', pahandle, 1);
+            outlet.push_sample({markers});
 %              queueOutputData(s,CAM);
 %              lh = addlistener(s,'DataRequired', ...
 %                  @(src,event) src.queueOutputData(CAM));

@@ -44,6 +44,16 @@ maxdotsframe=150;
 monWidth=42.5; 
 viewDist =120; cWhite0=255;
 
+addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
+addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
+
+% instantiate the LSL library
+lib = lsl_loadlib();
+ 
+% make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
+info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
+outlet = lsl_outlet(info);
+
 %% collect subjectinformation
 subjnum = input('Enter the subject''s number: ');
 subjnum_s = num2str(subjnum);
@@ -178,9 +188,16 @@ for ii=1:length(MAT)
     continue_show = round(dur*60);
     priorityLevel = MaxPriority(curWindow,'KbCheck'); %make sure Window commands are correct
     Priority(priorityLevel);
+    auddir_id = num2str(MAT(ii,1));
+    audcoh_id = num2str(MAT(ii,2));
+    visdir_id = num2str(MAT(ii,3));
+    viscoh_id = num2str(MAT(ii,4));
+    markers = strcat([auddir_id audcoh_id visdir_id viscoh_id]); %unique identifier for LSL
+
     
     %% at_dotgen content
     Screen('Flip',curWindow,0);
+    outlet.push_sample({markers})
     monRefresh = 1/spf; % frames per second
     
     % Everything is initially in coordinates of visual degrees, convert to pixels
