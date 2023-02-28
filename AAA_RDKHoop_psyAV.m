@@ -1,11 +1,8 @@
-%%
-% 
-% * ITEM1
-% * ITEM2
-% 
-clear all
-close all
-clc
+%% AUDIOVISUAL TASK CODE %%%%%%%%%%
+% adapted and revised by Adam Tiesman
+clear;
+close all;
+clc;
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
  scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
