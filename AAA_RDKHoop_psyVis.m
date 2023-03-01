@@ -31,12 +31,13 @@ viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45;
 maxdotsframe=150; monWidth=40; viewDist =120;
 
 addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
+addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
 
 % instantiate the LSL library
 lib = lsl_loadlib();
  
 % make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
-info = lsl_streaminfo(lib,'EventStream','Markers',1,1,'cf_int32','wallacelab');
+info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
 outlet = lsl_outlet(info);
 
 % general drawing color
@@ -99,7 +100,6 @@ for ii=1:length(data_output)
         takebreak(curWindow, cWhite0);
         Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
         Screen('Flip', curWindow,0);
-        outlet.push_sample();
         WaitSecs(2);
     end
     
@@ -135,7 +135,9 @@ for ii=1:length(data_output)
     speed=dotInfo.speed; %speed of dots in �/sec
     dotSize=dotInfo.dotSize; %dot size in pixels
     apD = dotInfo.apXYD(3); %aperture of stimulus in � of visual angle*10; right now set to 5�
-    
+    dir_id = num2str(data_output(ii,1));
+    coh_id = num2str(data_output(ii,2));
+    markers = strcat([dir_id coh_id]); %unique identifier for LSL
     
     %% display the stimuli
     while KbCheck; end
@@ -147,6 +149,7 @@ for ii=1:length(data_output)
     
     %% at_dotgen content
     Screen('Flip',curWindow,0);
+    outlet.push_sample({markers}); %at trial start, send trigger via LSL to EEG
     monRefresh = 1/spf; % frames per second
     
     % Everything is initially in coordinates of visual degrees, convert to pixels
