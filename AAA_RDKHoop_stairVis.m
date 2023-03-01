@@ -84,17 +84,22 @@ visInfo.cohSet = [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1];
 visInfo.probs = [0.33 0.5 0.66 0.5];
 
 %% Experiment Loop
-for ii=1:num_trials
+for ii= 1:num_trials
 
     if ii == 1 
-        staircase_index = 1 % Start staircase on coherence of 1
-        visInfo.dir = randi([1,2])
-        visInfo.coh = visInfo.cohSet(staircase_index)
+        staircase_index = 1; % Start staircase on coherence of 1
+        visInfo.dir = randi([1,2]);
+        visInfo.coh = visInfo.cohSet(staircase_index);
     elseif ii > 1
-        [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index)
+        [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index);
     end
     
-    
+    if visInfo.dir == 1
+        visInfo.dir=0; %RIGHTward
+    elseif visInfo.dir == 2
+        visInfo.dir=180; %LEFTward
+    end
+
     %create info matrix from Visual Stim
     dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur);
     spf =screenInfo.frameDur; % second per frame
@@ -290,17 +295,23 @@ for ii=1:num_trials
     while KbCheck; end %hold if key is held down
     
     %% save data
-    data_output(ii, 1) = visInfo.dir; 
+    if visInfo.dir == 0
+        visInfo.dir = 1
+        data_output(ii, 1) = visInfo.dir; 
+    elseif visInfo.dir == 180
+        visInfo.dir = 2
+        data_output(ii, 1) = visInfo.dir;
+    end
     data_output(ii, 2) = visInfo.coh;
     if resp == 39
-        data_output(ii, 3)=1;
+        data_output(ii, 3) = 1;
     elseif resp == 37
-        data_output(ii, 3)=2;
+        data_output(ii, 3) = 2;
     else
-        data_output(ii, 3)= nan;
+        data_output(ii, 3) = nan;
     end
-    data_output(ii, 4)=rt;
-    data_output(ii,5)=char(resp);
+    data_output(ii, 4) = rt;
+    data_output(ii,5) = char(resp);
     if data_output(ii, 3) == data_output(ii, 1)% If response is the same as direction, Correct Trial
         trial_status = 1;
         data_output(ii, 6) = trial_status;
@@ -308,6 +319,7 @@ for ii=1:num_trials
         trial_status = 0;
         data_output(ii, 6) = trial_status;
     end
+
 end
 
 cd(localdirectory)
