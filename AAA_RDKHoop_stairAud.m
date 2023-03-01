@@ -80,12 +80,9 @@ WaitSecs(2); %wait for 2s
 
 % Define the list of possible coherences
 audInfo.cohSet = [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1];
-audInfo.probs = [0.33 .5 .66 .5]; %Staircase Probs See function
+audInfo.probs = [0.33 0.5 0.66 0.5]; %Staircase Probs See function
 
-
-
-
-%% exp loop
+%% Experiment Loop
 for ii=1:num_trials
     
     if ii == 1 
@@ -182,10 +179,10 @@ for ii=1:num_trials
     data_output(ii, 4)=rt;
     data_output(ii,5)=char(resp);
     if data_output(ii, 3) == data_output(ii, 1)% If response is the same as direction, Correct Trial
-        trial_status = 'Correct';
+        trial_status = 1;
         data_output(ii, 6) = trial_status;
     else 
-        trial_status = 'Incorrect';
+        trial_status = 0;
         data_output(ii, 6) = trial_status;
     end
 
