@@ -48,14 +48,11 @@ if length(age_s) < 2
 end
 
 underscore = '_';
-filename = strcat('RDKHoop_psyAud',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
+filename = strcat('RDKHoop_stairAud',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
 
 cd(localdirectory)
 save(filename,'filename')
 cd(scriptdirectory)
-
-%% make design Matrix
-data_output = [];
 
 %% Initialize
 curScreen=2;
@@ -83,39 +80,22 @@ WaitSecs(2); %wait for 2s
 
 % Define the list of possible coherences
 audInfo.cohSet = [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1];
-
-if trialcounter == 1 
-    staircase_index = 1 % Start staircase on coherence of 1
-    audInfo.dir = randi([0,1])
-    audInfo.coh = audInfo.cohSet(staircase_index)
-elseif trialcounter > 1
-    [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index)
-end
+audInfo.probs = [0.33 .5 .66 .5]; %Staircase Probs See function
 
 
 
-%% trial generation
+
+%% exp loop
 for ii=1:num_trials
     
-    currauddir=data_output(ii,1);
-    if currauddir == 0
-        currauddir=randi(2);
+    if ii == 1 
+        staircase_index = 1 % Start staircase on coherence of 1
+        audInfo.dir = randi([1,2])
+        audInfo.coh = audInfo.cohSet(staircase_index)
+    elseif ii > 1
+        [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index)
     end
     
-    curraudcoh=data_output(ii,2);
-    if curraudcoh == 1
-        curraudcoh=audcoh1;
-    elseif curraudcoh == 2
-        curraudcoh=audcoh2;
-    elseif curraudcoh == 3
-        curraudcoh=audcoh3;
-    elseif curraudcoh == 4
-        curraudcoh=audcoh4;
-    elseif curraudcoh == 5
-        curraudcoh=audcoh5;
-    end
-    
-    cLvl=curraudcoh;
     %% display the stimuli
     while KbCheck; end
     keycorrect=0;
@@ -129,7 +109,7 @@ for ii=1:num_trials
     
     % THE MAIN LOOP
     frames = 0;
-    CAM=makeCAM(cLvl, currauddir, dur, silence, Fs);
+    CAM=makeCAM(audInfo.coh, audInfo.dir, dur, silence, Fs);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows == number of channels.
         
@@ -190,6 +170,8 @@ for ii=1:num_trials
     end
     while KbCheck; end %hold if key is held down
     %% save data
+    data_output(ii, 1) = audInfo.dir; 
+    data_output(ii, 2) = audInfo.coh; 
     if resp == 39
         data_output(ii, 3)=1;
     elseif resp == 37
@@ -199,6 +181,14 @@ for ii=1:num_trials
     end
     data_output(ii, 4)=rt;
     data_output(ii,5)=char(resp);
+    if data_output(ii, 3) == data_output(ii, 1)% If response is the same as direction, Correct Trial
+        trial_status = 'Correct';
+        data_output(ii, 6) = trial_status;
+    else 
+        trial_status = 'Incorrect';
+        data_output(ii, 6) = trial_status;
+    end
+
 end
 
 cd(localdirectory)
