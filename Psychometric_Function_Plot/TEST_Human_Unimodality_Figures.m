@@ -11,7 +11,7 @@ data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psych
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
 
 % Load the experimental data
-load("RDKHoop_psyVis_01_01_02_24.mat");
+load("RDKHoop_psyVis_02_01_02_24.mat");
 
 % Provide specific variables 
 chosen_threshold = 0.72; % Ask Mark about threshold
