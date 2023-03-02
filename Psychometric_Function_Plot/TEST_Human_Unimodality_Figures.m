@@ -88,7 +88,7 @@ fun = @(b)sum((fun_1(b,xData) - yData).^2);
 opts = optimset('MaxFunEvals',50000, 'MaxIter',10000); 
 fit_par = fminsearch(fun, parms, opts);
 
-x = -1:.01:1;
+x = -5:.01:5;
 
 [p_values, bootstat, ci] = p_value_calc(yData, parms);
 
