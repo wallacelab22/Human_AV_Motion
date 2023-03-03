@@ -80,7 +80,7 @@ Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
 % Define the list of possible coherences and define staircase probabilities
-visInfo.cohSet = [0.55, 0.525, 0.5, 0.475, 0.45, 0.425, 0.4, 0.375 0.35];
+visInfo.cohSet = [0.5, 0.475, 0.45, 0.425, 0.4, 0.375 0.35, 0.325, 0.3, 0.275, 0.25, 0.225, 0.2, 0.175, 0.15, 0.125, 0.1, 0.75, 0.5];
 visInfo.probs = [0.33 0.5 0.66 0.5];
 
 %% Experiment Loop
