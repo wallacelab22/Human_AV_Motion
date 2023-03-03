@@ -18,6 +18,7 @@ chosen_threshold = 0.72; % Ask Mark about threshold
 right_var = 1;
 left_var = 2;
 catch_var = 0;
+save_name = 'stairVis_23_23_03_23';
 
 % Replace all the 0s to 3s for catch trials for splitapply
 data_output(data_output(:, 1) == 0, 1) = 3; 
@@ -100,43 +101,7 @@ coherence_lvls = sort(combined_coh, 'ascend');
 coherence_lvls = unique(coherence_lvls, 'stable')';
 
 % Create a Normal Cumulative Distribution Function (NormCDF)
-%
-% X input : coherence_lvls
-% Y input : rightward_prob
-%
-% Define the mean and standard deviation of the normal distribution
-[xData, yData] = prepareCurveData(coherence_lvls, rightward_prob);
+normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, save_name);
 
-mu = mean(yData);
-sigma = std(yData);
-parms = [mu, sigma];
-
-fun_1 = @(b, x)cdf('Normal', x, b(1), b(2));
-fun = @(b)sum((fun_1(b,xData) - yData).^2); 
-opts = optimset('MaxFunEvals',50000, 'MaxIter',10000); 
-fit_par = fminsearch(fun, parms, opts);
-
-x = min(left_coh_vals):.01:max(right_coh_vals);
-
-[p_values, bootstat, ci] = p_value_calc(yData, parms);
-
-p = cdf('Normal', x, fit_par(1), fit_par(2));
-
-threshold_location = find(p >= chosen_threshold, 1);
-threshold = x(1, threshold_location);
-
-% Plot fit with data.
-fig = figure( 'Name', 'Psychometric Function' );
-scatter(xData, yData)
-hold on 
-plot(x, p);
-legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthEast', 'Interpreter', 'none' );
-% Label axes
-% title(sprintf('Auditory Psych. Func. L&R\n%s',save_name), 'Interpreter','none');
-xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
-ylabel( '% Rightward Response', 'Interpreter', 'none' );
-xlim([min(left_coh_vals) max(right_coh_vals)])
-ylim([0 1])
-grid on
-text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
-text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
+% Create a stairstep graph for visualizing staircase
+stairstep_plotter(data_output);
