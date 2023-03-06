@@ -39,7 +39,7 @@ end
 
 % Group trials again based on AUDITORY coherence for AV congruent 
 % RIGHTWARD motion --> 1 = lowest coherence, 5 = highest coherence
-[groups values] = findgroups(stimulus_direction{2,1}(:, 2));
+[groups, values] = findgroups(stimulus_direction{2,1}(:, 2));
 
 % Create a cell with 5 groups based on AUDITORY coherence for AV congruent
 % RIGHTWARD motion
@@ -52,7 +52,7 @@ end
 
 % Group trials again based on AUDITORY coherence for LEFTWARD motion --> 
 % 1 = lowest coherence, 5 = highest coherence
-[groups values] = findgroups(stimulus_direction{3,1}(:, 2));
+[groups, values] = findgroups(stimulus_direction{3,1}(:, 2));
 
 % Create a cell with 5 groups based on AUDITORY coherence for AV congruent 
 % LEFTWARD motion

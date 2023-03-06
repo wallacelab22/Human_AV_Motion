@@ -20,7 +20,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 %% general stimlus variables duration of trial, trial length to keep it open for rt reasons, 
 dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
-buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 100;
+buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 500;
 
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
@@ -78,9 +78,24 @@ Screen('Flip', curWindow,0);
 s.NotifyWhenScansQueuedBelow = 22050;
 WaitSecs(2); %wait for 2s
 
-% Define the list of possible coherences
-audInfo.cohSet = [1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1];
-audInfo.probs = [0.33 0.5 0.66 0.5]; %Staircase Probs See function
+% Generate the list of possible coherences by decreasing log values
+audInfo.cohStart = 0.5102;
+nlog_coh_steps = 12;
+nlog_division = 1.4;
+audInfo.cohSet = [audInfo.cohStart];
+for i = 1:nlog_coh_steps
+    if i == 1
+        nlog_value = audInfo.cohStart;
+    end
+    nlog_value = nlog_value/nlog_division;
+    audInfo.cohSet = [audInfo.cohSet nlog_value];
+end
+
+% Prob 1 = chance of coherence lowering after correct response
+% Prob 2 = chance of direction changing after correct response
+% Prob 3 = chance of coherence raising after incorrect response
+% Prob 4 = chance of direction changing after incorrect response
+audInfo.probs = [0.33 0.5 0.66 0.5];
 
 %% Experiment Loop
 for ii=1:num_trials

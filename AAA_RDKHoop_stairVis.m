@@ -21,7 +21,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
-catchtrials=50; vistrials=20; num_trials = 1000;
+catchtrials=50; vistrials=20; num_trials = 500;
 
 %visual coherence levels
 viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45;
@@ -79,25 +79,40 @@ Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
 Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
-% Define the list of possible coherences and define staircase probabilities
-visInfo.cohSet = [0.5, 0.475, 0.45, 0.425, 0.4, 0.375 0.35, 0.325, 0.3, 0.275, 0.25, 0.225, 0.2, 0.175, 0.15, 0.125, 0.1, 0.75, 0.5];
+% Generate the list of possible coherences by decreasing log values
+visInfo.cohStart = 0.5102;
+nlog_coh_steps = 12;
+nlog_division = 1.4;
+visInfo.cohSet = [visInfo.cohStart];
+for i = 1:nlog_coh_steps
+    if i == 1
+        nlog_value = visInfo.cohStart;
+    end
+    nlog_value = nlog_value/nlog_division;
+    visInfo.cohSet = [visInfo.cohSet nlog_value];
+end
+
+% Prob 1 = chance of coherence lowering after correct response
+% Prob 2 = chance of direction changing after correct response
+% Prob 3 = chance of coherence raising after incorrect response
+% Prob 4 = chance of direction changing after incorrect response
 visInfo.probs = [0.33 0.5 0.66 0.5];
 
 %% Experiment Loop
 for ii= 1:num_trials
-
-    if ii == 1 
+    
+    if ii == 1
         staircase_index = 1; % Start staircase on coherence of 1
         visInfo.dir = randi([1,2]);
         visInfo.coh = visInfo.cohSet(staircase_index);
     elseif ii > 1
         [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index);
     end
-    
+
     if visInfo.dir == 1
-        visInfo.dir=0; %RIGHTward
+        visInfo.dir=0; % RIGHTward
     elseif visInfo.dir == 2
-        visInfo.dir=180; %LEFTward
+        visInfo.dir=180; % LEFTward
     end
 
     %create info matrix from Visual Stim
@@ -312,7 +327,11 @@ for ii= 1:num_trials
     end
     data_output(ii, 4) = rt;
     data_output(ii,5) = char(resp);
-    if data_output(ii, 3) == data_output(ii, 1)% If response is the same as direction, Correct Trial
+    % For the table, column 6 denotes accuracy (used for
+    % staircase_procedure). 0 = incorrect, 1 = correct, it checks if the 
+    % stimulus direction is equal to the recorded response. If so, then
+    % trial is correct.
+    if data_output(ii, 3) == data_output(ii, 1)
         trial_status = 1;
         data_output(ii, 6) = trial_status;
     else 
