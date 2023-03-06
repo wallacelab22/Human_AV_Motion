@@ -21,7 +21,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
-catchtrials=50; vistrials=20; num_trials = 100;
+catchtrials=50; vistrials=20; num_trials = 500;
 
 %visual coherence levels
 viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45;
@@ -79,25 +79,40 @@ Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
 Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
-% Define the list of possible coherences and define staircase probabilities
-visInfo.cohSet = [0.5, 0.475, 0.45, 0.425, 0.4, 0.375 0.35, 0.325, 0.3, 0.275, 0.25, 0.225, 0.2, 0.175, 0.15, 0.125, 0.1, 0.75, 0.5];
+% Generate the list of possible coherences by decreasing log values
+visInfo.cohStart = 0.5102;
+nlog_coh_steps = 12;
+nlog_division = 1.4;
+visInfo.cohSet = [visInfo.cohStart];
+for i = 1:nlog_coh_steps
+    if i == 1
+        nlog_value = visInfo.cohStart;
+    end
+    nlog_value = nlog_value/nlog_division;
+    visInfo.cohSet = [visInfo.cohSet nlog_value];
+end
+
+% Prob 1 = chance of coherence lowering after correct response
+% Prob 2 = chance of direction changing after correct response
+% Prob 3 = chance of coherence raising after incorrect response
+% Prob 4 = chance of direction changing after incorrect response
 visInfo.probs = [0.33 0.5 0.66 0.5];
 
 %% Experiment Loop
 for ii= 1:num_trials
-
-    if ii == 1 
+    
+    if ii == 1
         staircase_index = 1; % Start staircase on coherence of 1
         visInfo.dir = randi([1,2]);
         visInfo.coh = visInfo.cohSet(staircase_index);
     elseif ii > 1
         [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index);
     end
-    
+
     if visInfo.dir == 1
-        visInfo.dir=0; %RIGHTward
+        visInfo.dir=0; % RIGHTward
     elseif visInfo.dir == 2
-        visInfo.dir=180; %LEFTward
+        visInfo.dir=180; % LEFTward
     end
 
     %create info matrix from Visual Stim
@@ -312,7 +327,11 @@ for ii= 1:num_trials
     end
     data_output(ii, 4) = rt;
     data_output(ii,5) = char(resp);
-    if data_output(ii, 3) == data_output(ii, 1)% If response is the same as direction, Correct Trial
+    % For the table, column 6 denotes accuracy (used for
+    % staircase_procedure). 0 = incorrect, 1 = correct, it checks if the 
+    % stimulus direction is equal to the recorded response. If so, then
+    % trial is correct.
+    if data_output(ii, 3) == data_output(ii, 1)
         trial_status = 1;
         data_output(ii, 6) = trial_status;
     else 
@@ -332,104 +351,3 @@ cont(curWindow, cWhite0);
 closeExperiment;
 close all
 Screen('CloseAll')
-
-%% PLOT PSYCHOMETRIC FUNCTION 
-% Provide specific variables 
-chosen_threshold = 0.72; % Ask Mark about threshold
-right_var = 1;
-left_var = 2;
-catch_var = 0;
-
-% Replace all the 0s to 3s for catch trials for splitapply
-data_output(data_output(:, 1) == 0, 1) = 3; 
-
-% Group trials based on stimulus direction--> 1 = right, 2 = left, 3 = catch
-right_or_left = data_output(:, 1);
-right_vs_left = splitapply(@(x){x}, data_output, right_or_left);
-
-% Isolate coherences for right and left groups and catch
-right_group = findgroups(right_vs_left{1,1}(:,2));
-left_group = findgroups(right_vs_left{2,1}(:,2));
-catch_group = findgroups(right_vs_left{3,1}(:,2));
-
-%Initialize an empty array to store rightward_prob for all coherences
-rightward_prob = [];
-
-% Loop over each coherence level and extract the corresponding rows of the matrix for
-% i = max(left_group):-1:1 for leftward trials
-for i = max(left_group):-1:1
-    group_rows = right_vs_left{2,1}(left_group == i, :);
-    logical_array = group_rows(:, 3) == left_var;
-    count = sum(logical_array);
-    percentage = 1 - (count/ size(group_rows, 1));
-    rightward_prob = [rightward_prob percentage];
-end
-
-% Add to the righward_prob vector the catch trials
-group_rows = right_vs_left{3,1};
-logical_array = group_rows(:, 3) == right_var;
-count = sum(logical_array);
-percentage = (count/ size(group_rows, 1));
-rightward_prob = [rightward_prob percentage];
-
-% Loop over each coherence level and extract the corresponding rows of the matrix for
-% i = 1:max(right_group) for rightward trials
-for i = 1:max(right_group)
-    group_rows = right_vs_left{1,1}(right_group == i, :);
-    logical_array = group_rows(:, 3) == right_var;
-    count = sum(logical_array);
-    percentage = count/ size(group_rows, 1);
-    rightward_prob = [rightward_prob percentage];
-end
-
-% Display prob of right response at each coherence from -5 to 5 (neg being
-% leftward trials and pos being rightward trials)
-coherence_lvls = [-5, -4, -3, -2, -1, 0, 1, 2, 3 , 4, 5];
-scatter(coherence_lvls, rightward_prob);
-
-% Add title and labels to the x and y axis
-xlabel('Coherence Level');
-ylabel('Rightward Response Probability');
-title('TEST Human Visual Psychometric Plot');
-
-% Create a Normal Cumulative Distribution Function (NormCDF)
-%
-% X input : coherence_lvls
-% Y input : rightward_prob
-%
-% Define the mean and standard deviation of the normal distribution
-[xData, yData] = prepareCurveData(coherence_lvls, rightward_prob);
-
-mu = mean(yData);
-sigma = std(yData);
-parms = [mu, sigma]
-
-fun_1 = @(b, x)cdf('Normal', x, b(1), b(2));
-fun = @(b)sum((fun_1(b,xData) - yData).^2); 
-opts = optimset('MaxFunEvals',50000, 'MaxIter',10000); 
-fit_par = fminsearch(fun, parms, opts);
-
-x = -5:.01:5;
-
-[p_values, bootstat, ci] = p_value_calc(yData, parms);
-
-p = cdf('Normal', x, fit_par(1), fit_par(2));
-
-threshold_location = find(p >= chosen_threshold, 1);
-threshold = x(1, threshold_location);
-
-% Plot fit with data.
-fig = figure( 'Name', 'Psychometric Function' );
-scatter(xData, yData)
-hold on 
-plot(x, p);
-legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthEast', 'Interpreter', 'none' );
-% Label axes
-title(sprintf('Auditory Psych. Func. L&R\n%s',save_name), 'Interpreter','none');
-xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
-ylabel( '% Rightward Response', 'Interpreter', 'none' );
-xlim([-1 1])
-ylim([0 1])
-grid on
-text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
-text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
