@@ -11,14 +11,14 @@ data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psych
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
 
 % Load the experimental data
-load("RDKHoop_stairVis_23_23_03_23.mat");
+load("RDKHoop_stairVis_01_01_01_24.mat");
 
 % Provide specific variables 
 chosen_threshold = 0.72; % Ask Mark about threshold
 right_var = 1;
 left_var = 2;
 catch_var = 0;
-save_name = 'stairVis_23_23_03_23';
+save_name = 'stairVis_01_01_01_24';
 
 % Replace all the 0s to 3s for catch trials for splitapply
 data_output(data_output(:, 1) == 0, 1) = 3; 
