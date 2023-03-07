@@ -8,6 +8,7 @@ trial_num = 1:size(data_output, 1);
 % Plot the stairstep graph
 figure;
 stairstep = stairs(trial_num, trial_coh);
+grid on
 
 % Label the axes
 xlabel('Trial number');

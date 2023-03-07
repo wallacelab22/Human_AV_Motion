@@ -67,8 +67,12 @@ end
 coherence_lvls = sort(combined_coh, 'ascend');
 coherence_lvls = unique(coherence_lvls, 'stable')';
 
-% Create a Normal Cumulative Distribution Function (NormCDF)
+%% Create a Normal Cumulative Distribution Function (NormCDF)
 normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, save_name);
 
-% Create a stairstep graph for visualizing staircase
+%% Create a stairstep graph for visualizing staircase
 stairstep_plotter(data_output);
+
+%% Create a bar graph of percent correct at each coherence level
+accuracy_plotter(data_output, coherence_lvls);
+
