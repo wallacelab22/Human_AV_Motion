@@ -232,6 +232,13 @@ for ii=1:length(data_output)
     end
     data_output(ii, 4)=rt;
     data_output(ii,5)=char(resp);
+    if data_output(ii, 3) == data_output(ii, 1)
+        trial_status = 1;
+        data_output(ii, 6) = trial_status;
+    else 
+        trial_status = 0;
+        data_output(ii, 6) = trial_status;
+    end
 end
 
 cd(localdirectory)

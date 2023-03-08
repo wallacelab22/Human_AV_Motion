@@ -24,23 +24,23 @@ catch_var = 0;
 % Replace all the 0s to 3s for catch trials for splitapply
 data_output(data_output(:, 1) == 0, 1) = 3; 
 
-% % Replace coherence levels percentages (0-1) to whole number integers (1-5)
-% if data_output(:, 2) < 1
-%     unique_vals = unique(data_output(:, 2));
-%     val_map = containers.Map('KeyType', 'double', 'ValueType', 'double');
-%     counter = 1;
-%     for i = 1:length(unique_vals)
-%         curr_val = unique_vals(i);
-%         
-%         if isKey(val_map, curr_val)
-%             data_output(data_output(:, 2) == curr_val, 2) = val_map(curr_val);
-%         else
-%             data_output(data_output(:, 2) == curr_val, 2) = counter;
-%             val_map(curr_val) = counter;
-%             counter = counter + 1;
-%         end
-%     end 
-% end
+% Replace coherence levels percentages (0-1) to whole number integers (1-5)
+if data_output(:, 2) < 1
+    unique_vals = unique(data_output(:, 2));
+    val_map = containers.Map('KeyType', 'double', 'ValueType', 'double');
+    counter = 1;
+    for i = 1:length(unique_vals)
+        curr_val = unique_vals(i);
+        
+        if isKey(val_map, curr_val)
+            data_output(data_output(:, 2) == curr_val, 2) = val_map(curr_val);
+        else
+            data_output(data_output(:, 2) == curr_val, 2) = counter;
+            val_map(curr_val) = counter;
+            counter = counter + 1;
+        end
+    end 
+end
 
 % Group trials based on stimulus direction--> 1 = right, 2 = left, 3 = catch
 right_or_left = data_output(:, 1);
@@ -74,5 +74,4 @@ normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals,
 stairstep_plotter(data_output);
 
 %% Create a bar graph of percent correct at each coherence level
-accuracy_plotter(data_output, coherence_lvls);
-
+accuracy_plotter(right_vs_left, right_group, left_group);
