@@ -1,4 +1,4 @@
-function MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, vistrials, audtrials, mstrials)
+function MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, mstrials)
 %% fill single columns
 % catch trials
 catchs=[0 0 0 0];
@@ -20,28 +20,28 @@ ar2vl2=[1 2 2 2];
 
 % Auditory and Visual level 3
 al3vl3=[2 3 2 3]; % congreunt
-ar1vr1=[1 3 1 3];
+ar3vr3=[1 3 1 3];
 
 al3vr3=[2 3 1 3]; % incongreunt
 ar3vl3=[1 3 2 3];
 
 % Auditory and Visual level 4
 al4vl4=[2 4 2 4]; % congreunt
-ar1vr1=[1 4 1 4];
+ar4vr4=[1 4 1 4];
 
 al4vr4=[2 4 1 4]; % incongreunt
 ar4vl4=[1 4 2 4];
 
 % Auditory and Visual level 5
 al5vl5=[2 5 2 5]; % congreunt
-ar1vr1=[1 5 1 5];
+ar5vr5=[1 5 1 5];
 
 al5vr5=[2 5 1 5]; % incongreunt
 ar5vl5=[1 5 2 5];
 
 % Auditory and Visual level 6
-al1vl1=[2 6 2 6]; % congreunt
-ar1vr1=[1 6 1 6];
+al6vl6=[2 6 2 6]; % congreunt
+ar6vr6=[1 6 1 6];
 
 al6vr6=[2 6 1 6]; % incongreunt
 ar6vl6=[1 6 2 6];
@@ -56,50 +56,6 @@ ar7vl7=[1 7 2 7];
 %% create Matrices
 %catch trials
 catchmat=repmat(catchs, catchtrials, 1);
-
-% visual
-matvl1=repmat(vl1, vistrials, 1);
-matvr1=repmat(vr1, vistrials, 1);
-
-matvl2=repmat(vl2, vistrials, 1);
-matvr2=repmat(vr2, vistrials, 1);
-
-matvl3=repmat(vl3, vistrials, 1);
-matvr3=repmat(vr3, vistrials, 1);
-
-matvl4=repmat(vl4, vistrials, 1);
-matvr4=repmat(vr4, vistrials, 1);
-
-matvl5=repmat(vl5, vistrials, 1);
-matvr5=repmat(vr5, vistrials, 1);
-
-matvl6=repmat(vl6, vistrials, 1);
-matvr6=repmat(vr6, vistrials, 1);
-
-matvl7=repmat(vl7, vistrials, 1);
-matvr7=repmat(vr7, vistrials, 1);
-
-% auditory
-matal1=repmat(al1, audtrials, 1);
-matar1=repmat(ar1, audtrials, 1);
-
-matal2=repmat(al2, audtrials, 1);
-matar2=repmat(ar2, audtrials, 1);
-
-matal3=repmat(al3, audtrials, 1);
-matar3=repmat(ar3, audtrials, 1);
-
-matal4=repmat(al4, audtrials, 1);
-matar4=repmat(ar4, audtrials, 1);
-
-matal5=repmat(al5, audtrials, 1);
-matar5=repmat(ar5, audtrials, 1);
-
-matal6=repmat(al6, audtrials, 1);
-matar6=repmat(ar6, audtrials, 1);
-
-matal7=repmat(al7, audtrials, 1);
-matar7=repmat(ar7, audtrials, 1);
 
 % multisensory
 % Auditory and Visual level 1

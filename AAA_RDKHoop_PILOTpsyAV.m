@@ -32,9 +32,9 @@ catchtrials=50; mstrials=25;
 buffersize=(dur+silence)*Fs;
 
 %visual coherence levels
-viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45;
+viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45; viscoh6=.55; viscoh7=.65;
 %auditory coherence levels
-audcoh1=0.1; audcoh2=0.25; audcoh3=0.35; audcoh4=0.45; audcoh5=0.55;
+audcoh1=0.1; audcoh2=0.25; audcoh3=0.35; audcoh4=0.45; audcoh5=0.55; audcoh6=0.65; audcoh7=0.75;
 % visual stimulus properties
 maxdotsframe=150; 
 %monWidth=53; %Antonia's original default
@@ -83,7 +83,7 @@ cd(scriptdirectory)
 %% make design Matrix
 rng('shuffle')
 % generate number of trials and different combinations of trials for experiment 
-MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, vistrials, audtrials, mstrials);
+MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, mstrials);
 save('MAT.mat', 'MAT');
 % reload=load('MAT.mat');
 % MAT=reload.MAT;
@@ -144,6 +144,10 @@ for ii=1:length(MAT)
         currviscoh=viscoh4;
     elseif currviscoh == 5
         currviscoh=viscoh5;
+    elseif currviscoh == 6
+        currviscoh=viscoh6;
+    elseif currviscoh == 7
+        currviscoh=viscoh7;
     end
     
     currauddir=MAT(ii,1);
@@ -162,6 +166,10 @@ for ii=1:length(MAT)
         curraudcoh=audcoh4;
     elseif curraudcoh == 5
         curraudcoh=audcoh5;
+    elseif curraudcoh == 6
+        curraudcoh=audcoh6;
+    elseif curraudcoh == 7
+        curraudcoh=audcoh7;
     end
     
     cLvl=curraudcoh;
@@ -393,12 +401,12 @@ for ii=1:length(MAT)
     end
     MAT(ii, 6)=rt;
     MAT(ii,7)=char(resp);
-    if data(ii, 5) == data_output(ii, 1) && data(ii, 5) == data_output(ii, 3)
+    if MAT(ii, 5) == MAT(ii, 1) && MAT(ii, 5) == MAT(ii, 3)
         trial_status = 1;
-        data_output(ii, 6) = trial_status;
+        MAT(ii, 6) = trial_status;
     else 
         trial_status = 0;
-        data_output(ii, 6) = trial_status;
+        MAT(ii, 6) = trial_status;
     end
 end
 
