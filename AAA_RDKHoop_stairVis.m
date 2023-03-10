@@ -21,10 +21,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
-catchtrials=50; vistrials=20; num_trials = 500;
-
-%visual coherence levels
-viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45;
+num_trials = 700;
 
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
@@ -80,9 +77,9 @@ Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
-visInfo.cohStart = 0.5;
-nlog_coh_steps = 6;
-nlog_division = 1.814;
+visInfo.cohStart = 0.5102;
+nlog_coh_steps = 12;
+nlog_division = 1.4;
 visInfo.cohSet = [visInfo.cohStart];
 for i = 1:nlog_coh_steps
     if i == 1
