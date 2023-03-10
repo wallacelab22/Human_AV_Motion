@@ -73,5 +73,5 @@ normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals,
 %% Create a stairstep graph for visualizing staircase
 stairstep_plotter(data_output);
 
-%% Create a bar graph of percent correct at each coherence level
+%% Create a graph of percent correct at each coherence level
 accuracy_plotter(right_vs_left, right_group, left_group);
