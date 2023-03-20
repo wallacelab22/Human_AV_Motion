@@ -27,15 +27,23 @@ rseed = sum(100*clock); % Seed random number generator
 rng(rseed,'v5uniform'); % v5 random generator
 %rng(rseed,'twister'); % new default generator
 screenInfo = struct('rseed',rseed);
-
+white = WhiteIndex(curScreen);
+black = BlackIndex(curScreen);
 % Open screen, make stuff behave itself in OS X with multiple monitors
 %Screen('Preference', 'VisualDebugLevel',0);
 
 % Set the background color to the default background value - black
-screenInfo.bckgnd = 0;
+screenInfo.bckgnd = black;
+%screenInfo.bckgnd = 0;
 
-[screenInfo.curWindow, screenInfo.screenRect] = Screen('OpenWindow',curScreen,...
-     screenInfo.bckgnd, [],32,2);
+[screenXpixels, screenYpixels] = Screen('WindowSize', curScreen);
+[xCenter, yCenter] = RectCenter([0 0 screenXpixels screenYpixels]);
+[screenInfo.curWindow, screenInfo.screenRect] = PsychImaging('OpenWindow',curScreen,black);
+
+% [screenInfo.curWindow, screenInfo.screenRect] = Screen('OpenWindow',curScreen,...
+%      screenInfo.bckgnd, [],32,2);
+% [screenInfo.curWindow, screenInfo.screenRect] = Screen('OpenWindow',curScreen,...
+%      screenInfo.bckgnd, [],[],2);
 
 % 0 for clear drawing, 1 for incremental drawing (does not clear buffer after flip)
 screenInfo.dontclear = 0;

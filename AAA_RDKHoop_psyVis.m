@@ -2,7 +2,8 @@
 % adapted and revised by Adam Tiesman
 clear;
 close all;
-clc;
+sca;
+
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
 scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
@@ -11,9 +12,6 @@ serverdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
 data_directory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\data\';
 cd(scriptdirectory)
 
-%% general variables to smoothly run PTB
-KbName('UnifyKeyNames');
-AssertOpenGL;
 %% define general values
 inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
@@ -27,8 +25,11 @@ catchtrials=50; vistrials=20;
 viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45;
 
 % visual stimulus properties
-% maxdotsframe=150; monWidth=42.5; viewDist =120;
-maxdotsframe=150; monWidth=40; viewDist =120;
+% maxdotsframe=150;  viewDist =120;
+monWidth=42.5;
+%monWidth=46;
+%monWidth=53.5;
+maxdotsframe=150;  viewDist =120;
 
 addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
 addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
@@ -76,15 +77,22 @@ rng('shuffle')
 data_output=at_RDKHoopMatrix_psyVis(catchtrials,vistrials);
 
 %% Initialize
+%PsychDefaultSetup(1)
+PsychDefaultSetup(2)
+
 curScreen=2;
-% Screen('Preference', 'SkipSyncTests', 0);
-Screen('Preference', 'SkipSyncTests', 1);
+%curScreen=1;
+
+
+Screen('Preference', 'SkipSyncTests', 0)
+%Screen('Preference', 'SkipSyncTests', 1);
+
 screenInfo = openExperiment(monWidth, viewDist, curScreen);
 curWindow= screenInfo.curWindow;
 screenRect= screenInfo.screenRect;
 % Enable alpha blending with proper blend-function. We need it for drawing
 % of smoothed points.
-Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+Screen('BlendFunction', curWindow);% GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
 %% Welcome and Instrctions for the Suject
 instructions_psyVis(curWindow, cWhite0);
 %% Flip up fixation dot

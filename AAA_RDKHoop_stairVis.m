@@ -21,8 +21,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
-num_trials = 700;
-
+num_trials = 600;
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
 maxdotsframe=150; monWidth=40; viewDist =120;
