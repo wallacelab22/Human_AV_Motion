@@ -101,6 +101,7 @@ Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
 Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
+Screen('Preference','Visualdebuglevel', 6);
 %% trial generation
 for ii=1:length(data_output)
     tt=[length(data_output)/nbblocks: length(data_output)/nbblocks : length(data_output)-length(data_output)/nbblocks];
