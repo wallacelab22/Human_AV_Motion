@@ -11,7 +11,9 @@ data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psych
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
 
 % Load the experimental data --> load("PUT EXP DATA FOR AV TRIAL HERE")
-load('RDKHoop_psyAV_18_03_1_20.mat')
+data = input('Enter data file: ');
+load(data);
+save_name = data;
 data_output = MAT;
 
 % Provide specific variables
@@ -20,13 +22,17 @@ right_var = 1;
 left_var = 2;
 catch_var = 0;
 
+% Replace all the 0s to 3s for catch trials for splitapply
+data_output(data_output(:, 1) == 0, 1) = 3;
+data_output(data_output(:, 3) == 0, 1) = 3;
+
 % Extract and separate AV congruent trials from AV incongruent trials
 idx = data_output(:,1) == data_output(:,3);
 congruent_trials = data_output(idx, :);
 incongruent_trials = data_output(~idx, :);
 
 % Group AV congruent trials based on stimulus direction --> 1 = right,
-% 2 = left, and 0 = catch
+% 2 = left, and 3 = catch
 [groups, values] = findgroups(congruent_trials(:, 1));
 
 % Create a cell with 3 groups based on stimulus direction
@@ -39,7 +45,7 @@ end
 
 % Group trials again based on AUDITORY coherence for AV congruent 
 % RIGHTWARD motion --> 1 = lowest coherence, 5 = highest coherence
-[groups, values] = findgroups(stimulus_direction{2,1}(:, 2));
+[groups, values] = findgroups(stimulus_direction{1,1}(:, 2));
 
 % Create a cell with 5 groups based on AUDITORY coherence for AV congruent
 % RIGHTWARD motion
@@ -52,14 +58,14 @@ end
 
 % Group trials again based on AUDITORY coherence for LEFTWARD motion --> 
 % 1 = lowest coherence, 5 = highest coherence
-[groups, values] = findgroups(stimulus_direction{3,1}(:, 2));
+[groups, values] = findgroups(stimulus_direction{2,1}(:, 2));
 
 % Create a cell with 5 groups based on AUDITORY coherence for AV congruent 
 % LEFTWARD motion
 left_auditory_coherence = cell(numel(values), 1);
 for i = 1:numel(values)
     idx = groups == i;
-    matrix = stimulus_direction{3,1}(idx, :);
+    matrix = stimulus_direction{2,1}(idx, :);
     left_auditory_coherence{i} = matrix;
 end
 
@@ -89,8 +95,7 @@ for i = 1:5
                                              right_auditory_coherence{i, 1},...
                                              left_auditory_coherence{j, 1},...
                                              right_var,...
-                                             left_var,...
-                                             rightward_prob_coh);
+                                             left_var);
     end
 end
 

@@ -20,7 +20,6 @@ chosen_threshold = 0.72; % Ask Mark about threshold
 right_var = 1;
 left_var = 2;
 catch_var = 0;
-save_name = 'stairVis_23_23_03_23';
 
 % Replace all the 0s to 3s for catch trials for splitapply
 data_output(data_output(:, 1) == 0, 1) = 3; 
