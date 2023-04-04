@@ -7,10 +7,10 @@ clc;
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
 % % directories used throughout the experment
-scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
-localdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
-serverdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
-data_directory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\data\';
+scriptdirectory = '/home/wallace/Human_AV_Motion';
+localdirectory = '/home/wallace/Human_AV_Motion';
+serverdirectory = '/home/wallace/Human_AV_Motion';
+data_directory = '/home/wallace/Human_AV_Motion';
 cd(scriptdirectory)
 % % general variables to smoothly run PTB
  KbName('UnifyKeyNames');
@@ -32,7 +32,7 @@ buffersize=(dur+silence)*Fs;
 %auditory coherence levels
  audcoh1=0.1; audcoh2=0.25; audcoh3=0.35; audcoh4=0.45; audcoh5=0.55;
 
-% visual stimulus properties number of dots, viewing distance from monito
+% visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 
 addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');

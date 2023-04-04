@@ -6,10 +6,10 @@ sca;
 
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
-scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
-localdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
-serverdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
-data_directory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\data\';
+scriptdirectory = '/home/wallace/Human_AV_Motion';
+localdirectory = '/home/wallace/Human_AV_Motion';
+serverdirectory = '/home/wallace/Human_AV_Motion';
+data_directory = '/home/wallace/Human_AV_Motion';
 cd(scriptdirectory)
 
 %% define general values
@@ -31,15 +31,16 @@ monWidth=42.5;
 %monWidth=53.5;
 maxdotsframe=150;  viewDist =120;
 
-addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
-addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
-
-% instantiate the LSL library
-lib = lsl_loadlib();
- 
-% make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
-info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
-outlet = lsl_outlet(info);
+%% LSL Initiation
+% addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
+% addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
+% 
+% % instantiate the LSL library
+% lib = lsl_loadlib();
+%  
+% % make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
+% info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
+% outlet = lsl_outlet(info);
 
 % general drawing color
 cWhite0=255;
@@ -80,7 +81,7 @@ data_output=at_RDKHoopMatrix_psyVis(catchtrials,vistrials);
 %PsychDefaultSetup(1)
 PsychDefaultSetup(2)
 
-curScreen=2;
+curScreen=0;
 %curScreen=1;
 
 
@@ -158,7 +159,7 @@ for ii=1:length(data_output)
     
     %% at_dotgen content
     Screen('Flip',curWindow,0);
-    outlet.push_sample({markers}); %at trial start, send trigger via LSL to EEG
+%     outlet.push_sample({markers}); %at trial start, send trigger via LSL to EEG
     monRefresh = 1/spf; % frames per second
     
     % Everything is initially in coordinates of visual degrees, convert to pixels
