@@ -2,7 +2,6 @@
 % written by Adam Tiesman 2/27/2023
 clear;
 close all;
-clc;
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
 scriptdirectory = '/home/wallace/Human_AV_Motion';
@@ -21,7 +20,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
-num_trials = 600;
+num_trials = 300;
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
 maxdotsframe=150; monWidth=40; viewDist =120;
@@ -58,7 +57,7 @@ cd(localdirectory)
 cd(scriptdirectory)
 
 %% Initialize
-curScreen=2;
+curScreen=0;
 % Screen('Preference', 'SkipSyncTests', 0);
 Screen('Preference', 'SkipSyncTests', 1);
 screenInfo = openExperiment(monWidth, viewDist, curScreen);
