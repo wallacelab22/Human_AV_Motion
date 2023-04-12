@@ -306,16 +306,16 @@ for ii= 1:num_trials
     
     %% save data
     if visInfo.dir == 0
-        visInfo.dir = 1
+        visInfo.dir = 1;
         data_output(ii, 1) = visInfo.dir; 
     elseif visInfo.dir == 180
-        visInfo.dir = 2
+        visInfo.dir = 2;
         data_output(ii, 1) = visInfo.dir;
     end
     data_output(ii, 2) = visInfo.coh;
-    if resp == 114
+    if resp == 115
         data_output(ii, 3) = 1;
-    elseif resp == 115
+    elseif resp == 114
         data_output(ii, 3) = 2;
     else
         data_output(ii, 3) = nan;
