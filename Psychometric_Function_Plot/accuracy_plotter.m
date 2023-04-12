@@ -11,7 +11,7 @@ coh_accuracy = [];
 frequency = [];
 
 % Loop through each coherence level and find the accuracy
-for i = 1:max(coh_bins)
+for i = 1:length(coh_bins)
     right_group_coh = right_vs_left{1,1}(right_group == i, :);
     right_correct = sum(right_group_coh(:,6)) / size(right_group_coh(:, 2), 1);
     right_freq = size(right_group_coh(:, 2), 1);
