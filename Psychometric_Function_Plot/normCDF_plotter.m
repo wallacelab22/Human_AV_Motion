@@ -50,7 +50,7 @@ legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthEast', 'I
 % title(sprintf('Auditory Psych. Func. L&R\n%s',save_name), 'Interpreter','none');
 xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
 ylabel( '% Rightward Response', 'Interpreter', 'none' );
-xlim([min(left_coh_vals) max(right_coh_vals)])
+xlim([-1 1])
 ylim([0 1])
 grid on
 text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
