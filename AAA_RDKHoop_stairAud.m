@@ -20,7 +20,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 %% general stimlus variables duration of trial, trial length to keep it open for rt reasons, 
 dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
-buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 500;
+buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 250;
 
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
@@ -64,6 +64,7 @@ screenRect= screenInfo.screenRect;
 % of smoothed points.
 
 %% Initialize Audio
+PsychPortAudio('Close')
 Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 InitializePsychSound;
 pahandle = PsychPortAudio('Open', 4, [], 0, Fs, 2);
@@ -185,9 +186,9 @@ for ii=1:num_trials
     %% save data
     data_output(ii, 1) = audInfo.dir; 
     data_output(ii, 2) = audInfo.coh; 
-    if resp == 39
+    if resp == 114
         data_output(ii, 3)=1;
-    elseif resp == 37
+    elseif resp == 115
         data_output(ii, 3)=2;
     else
         data_output(ii, 3)= nan;

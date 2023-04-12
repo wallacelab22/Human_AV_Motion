@@ -313,9 +313,9 @@ for ii= 1:num_trials
         data_output(ii, 1) = visInfo.dir;
     end
     data_output(ii, 2) = visInfo.coh;
-    if resp == 39
+    if resp == 114
         data_output(ii, 3) = 1;
-    elseif resp == 37
+    elseif resp == 115
         data_output(ii, 3) = 2;
     else
         data_output(ii, 3) = nan;
