@@ -5,11 +5,11 @@ close all;
 clc;
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
- scriptdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
- localdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
- serverdirectory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion';
- data_directory = 'C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\data\';
- cd(scriptdirectory)
+scriptdirectory = '/home/wallace/Human_AV_Motion';
+localdirectory = '/home/wallace/Human_AV_Motion';
+serverdirectory = '/home/wallace/Human_AV_Motion';
+data_directory = '/home/wallace/Human_AV_Motion';
+cd(scriptdirectory)
 
 %% general variables to smoothly run PTB
 KbName('UnifyKeyNames');
@@ -393,6 +393,13 @@ for ii=1:length(MAT)
     end
     MAT(ii, 6)=rt;
     MAT(ii,7)=char(resp);
+    if data(ii, 5) == data_output(ii, 1) && data(ii, 5) == data_output(ii, 3)
+        trial_status = 1;
+        data_output(ii, 6) = trial_status;
+    else 
+        trial_status = 0;
+        data_output(ii, 6) = trial_status;
+    end
 end
 
 cd(localdirectory)
