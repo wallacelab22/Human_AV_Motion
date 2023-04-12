@@ -79,10 +79,9 @@ s.NotifyWhenScansQueuedBelow = 22050;
 WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
-audInfo.cohStart = 0.5;
-nlog_coh_steps = 6;
-nlog_division = 1; 
-% nlog_division = 1.4; 
+audInfo.cohStart = 1.0;
+nlog_coh_steps = 9;
+nlog_division = 1.4;  
 audInfo.cohSet = [audInfo.cohStart];
 for i = 1:nlog_coh_steps
     if i == 1
@@ -97,18 +96,17 @@ end
 % Prob 3 = chance of coherence raising after incorrect response
 % Prob 4 = chance of direction changing after incorrect response
  audInfo.probs = [0.33 0.5 0.66 0.5];
-%audInfo.probs = [0.33 0 0.66 0];
 
 %% Experiment Loop
 for ii=1:num_trials
     
     if ii == 1 
-        staircase_index = 1 % Start staircase on coherence of 1
+        staircase_index = 1; % Start staircase on coherence of 1
 %         audInfo.dir = randi([1,2]);
         audInfo.dir = 1;
         audInfo.coh = audInfo.cohSet(staircase_index);
     elseif ii > 1
-        [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index)
+        [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index);
     end
     
     %% display the stimuli
