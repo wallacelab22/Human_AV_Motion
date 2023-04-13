@@ -1,4 +1,4 @@
-function [accuracy_graph] = accuracy_plotter(right_vs_left, right_group, left_group)
+function [accuracy_graph, frequency] = accuracy_plotter(right_vs_left, right_group, left_group)
 % Create x bins for the bar plot by finding all coherence levels
 right_coh_vals = right_vs_left{1,1}(:, 2);
 left_coh_vals = right_vs_left{2,1}(:, 2);

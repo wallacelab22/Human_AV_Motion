@@ -67,6 +67,9 @@ end
 coherence_lvls = sort(combined_coh, 'ascend');
 coherence_lvls = unique(coherence_lvls, 'stable')';
 
+%% Create frequency vector for each coherence level
+% frequency_plotter(data_output);
+
 %% Create a Normal Cumulative Distribution Function (NormCDF)
 normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, save_name);
 

@@ -45,7 +45,7 @@ fig = figure( 'Name', 'Psychometric Function' );
 scatter(xData, yData)
 hold on 
 plot(x, p);
-legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthEast', 'Interpreter', 'none' );
+legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthWest', 'Interpreter', 'none' );
 % Label axes
 % title(sprintf('Auditory Psych. Func. L&R\n%s',save_name), 'Interpreter','none');
 xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
@@ -53,6 +53,9 @@ ylabel( '% Rightward Response', 'Interpreter', 'none' );
 xlim([-1 1])
 ylim([0 1])
 grid on
-text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
-text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
+text(0,.2,"std of the slope: " + fit_par(2))
+% text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
+
+%text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
+%text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
 end
