@@ -1,8 +1,7 @@
 %% AUDIOVISUAL TASK CODE %%%%%%%%%%
 % adapted and revised by Adam Tiesman
-clear;
 close all;
-clc;
+
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
 scriptdirectory = '/home/wallace/Human_AV_Motion';
@@ -31,10 +30,6 @@ dur=.5; Fs=44100; triallength=2; nbblocks=4; silence=0.03;
 catchtrials=50; mstrials=25;
 buffersize=(dur+silence)*Fs;
 
-%visual coherence levels
-viscoh1=.05; viscoh2=.15; viscoh3=.25; viscoh4=.35; viscoh5=.45; viscoh6=.55; viscoh7=.65;
-%auditory coherence levels
-audcoh1=0.1; audcoh2=0.25; audcoh3=0.35; audcoh4=0.45; audcoh5=0.55; audcoh6=0.65; audcoh7=0.75;
 % visual stimulus properties
 maxdotsframe=150; 
 %monWidth=53; %Antonia's original default
@@ -79,6 +74,43 @@ filename = strcat('RDKHoop_psyAV',underscore,subjnum_s,underscore,group_s, under
 cd(localdirectory)
 save(filename,'filename')
 cd(scriptdirectory)
+
+%% Generating coherences from staircase data
+% Define coherence calculations from staircase
+freq_decimal = 0.2;
+nlog_division = 1.4;
+
+% Load the auditory staircase data
+stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat',subnum_s, group_s, sex_s, age_s);
+load(stairAud_filename);
+
+% Generate auditory coherence levels based on staircase
+[audInfo] = coherence_calc(data_output, freq_decimal, nlog_division);
+
+% Load the visual staircase data
+stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat',subnum_s, group_s, sex_s, age_s);
+load(stairVis_filename);
+
+% Generate auditory coherence levels based on staircase
+[visInfo] = coherence_calc(data_output, freq_decimal, nlog_division);
+
+%auditory coherence levels
+audcoh1 = audInfo.cohSet(1); 
+audcoh2 = audInfo.cohSet(2); 
+audcoh3 = audInfo.cohSet(3); 
+audcoh4 = audInfo.cohSet(4); 
+audcoh5 = audInfo.cohSet(5); 
+audcoh6 = audInfo.cohSet(6); 
+audcoh7 = audInfo.cohSet(7);
+
+%visual coherence levels
+viscoh1 = visInfo.cohSet(1); 
+viscoh2 = visInfo.cohSet(2); 
+viscoh3 = visInfo.cohSet(3); 
+viscoh4 = visInfo.cohSet(4); 
+viscoh5 = visInfo.cohSet(5); 
+viscoh6 = visInfo.cohSet(6); 
+viscoh7 = visInfo.cohSet(7);
 
 %% make design Matrix
 rng('shuffle')
