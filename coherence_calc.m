@@ -13,11 +13,12 @@ counts = accumarray(idx(:), 1, [], @sum);
 min_coh = min(unique_cohs(counts >= (freq_decimal * numel(trial_coh))));
 
 stimInfo.cohSet = [nlog_division*min_coh];
-stimInfo.cohSet = [nlog_division*stimInfo.cohSet stimInfo.cohSet];
+stimInfo.cohSet = [nlog_division*stimInfo.cohSet nlog_division*min_coh];
 
 for i = 1:4
     if i == 1
         nlog_value = min_coh;
+        stimInfo.cohSet=[stimInfo.cohSet nlog_value];
     end
     nlog_value = nlog_value/nlog_division;
     stimInfo.cohSet = [stimInfo.cohSet nlog_value];

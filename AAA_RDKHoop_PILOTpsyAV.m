@@ -36,15 +36,15 @@ maxdotsframe=150;
 monWidth=42.5; 
 viewDist =120; cWhite0=255;
 
-addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
-addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
-
-% instantiate the LSL library
-lib = lsl_loadlib();
- 
-% make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
-info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
-outlet = lsl_outlet(info);
+% addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
+% addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
+% 
+% % instantiate the LSL library
+% lib = lsl_loadlib();
+%  
+% % make a new stream outlet (name: BioSemi, type: EEG. 8 channels, 100Hz)
+% info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
+% outlet = lsl_outlet(info);
 
 %% collect subjectinformation
 subjnum = input('Enter the subject''s number: ');
@@ -81,14 +81,14 @@ freq_decimal = 0.2;
 nlog_division = 1.4;
 
 % Load the auditory staircase data
-stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat',subnum_s, group_s, sex_s, age_s);
+stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat',subjnum_s, group_s, sex_s, age_s);
 load(stairAud_filename);
 
 % Generate auditory coherence levels based on staircase
 [audInfo] = coherence_calc(data_output, freq_decimal, nlog_division);
 
 % Load the visual staircase data
-stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat',subnum_s, group_s, sex_s, age_s);
+stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat',subjnum_s, group_s, sex_s, age_s);
 load(stairVis_filename);
 
 % Generate auditory coherence levels based on staircase
@@ -121,7 +121,7 @@ save('MAT.mat', 'MAT');
 % MAT=reload.MAT;
 
 %% Initialize
-curScreen=2;
+curScreen=0;
 %Screen('Preference', 'SkipSyncTests', 0);
 Screen('Preference', 'SkipSyncTests', 1);
 
@@ -133,6 +133,7 @@ screenRect= screenInfo.screenRect;
 Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 %% Initialize Audio (AT)
+PsychPortAudio('Close')
 InitializePsychSound;
 pahandle = PsychPortAudio('Open', 4, [], 0, Fs, 2);
 %% Welcome and Instrctions for the Suject
@@ -234,7 +235,7 @@ for ii=1:length(MAT)
     
     %% at_dotgen content
     Screen('Flip',curWindow,0);
-    outlet.push_sample({markers})
+%     outlet.push_sample({markers})
     monRefresh = 1/spf; % frames per second
     
     % Everything is initially in coordinates of visual degrees, convert to pixels
@@ -424,9 +425,9 @@ for ii=1:length(MAT)
     while KbCheck; end %hold if key is held down
     
     %% save data
-    if resp == 39
+    if resp == 115
         MAT(ii, 5)=1;
-    elseif resp == 37
+    elseif resp == 114
         MAT(ii, 5)=2;
     else
         MAT(ii, 5)= nan;
@@ -435,10 +436,10 @@ for ii=1:length(MAT)
     MAT(ii,7)=char(resp);
     if MAT(ii, 5) == MAT(ii, 1) && MAT(ii, 5) == MAT(ii, 3)
         trial_status = 1;
-        MAT(ii, 6) = trial_status;
+        MAT(ii, 8) = trial_status;
     else 
         trial_status = 0;
-        MAT(ii, 6) = trial_status;
+        MAT(ii, 8) = trial_status;
     end
 end
 
