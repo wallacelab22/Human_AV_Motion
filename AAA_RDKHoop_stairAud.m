@@ -103,8 +103,7 @@ for ii=1:num_trials
     
     if ii == 1 
         staircase_index = 1; % Start staircase on coherence of 1
-%         audInfo.dir = randi([1,2]);
-        audInfo.dir = 1;
+        audInfo.dir = randi([1,2]);
         audInfo.coh = audInfo.cohSet(staircase_index);
     elseif ii > 1
         [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index);
@@ -123,7 +122,7 @@ for ii=1:num_trials
     
     % THE MAIN LOOP
     frames = 0;
-    CAM=makeCAM(audInfo.coh, audInfo.dir, dur, silence, Fs, ii);
+    CAM=makeCAM(audInfo.coh, audInfo.dir, dur, silence, Fs);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows == number of channels.
         

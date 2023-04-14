@@ -1,10 +1,6 @@
 % function [CAM] = makeCAM(cLvl,speed, direction, dur, Fs)
-function [CAM] = makeCAM(cLvl, direction, dur, silence, Fs, ii)
-cLvl = 0.7;
-direction = 1;
-dur = 0.5;
-silence = 0.03;
-Fs = 44100;
+function [CAM] = makeCAM(cLvl, direction, dur, silence, Fs)
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CAM =       array of voltages to present to speakers                 %
 % cLvl =      coherence level (between 0 and 1)                        %
@@ -23,10 +19,10 @@ samples = round(dur.*Fs);
 silent = zeros((silence.*Fs),2);
 
 % Generate the 4 noise signals
-N1 = (rand(samples,1)-.5);
-N2 = (rand(samples,1)-.5);
-N3 = (rand(samples,1)-.5);
-N4 = (rand(samples,1)-.5);
+N1 = rand(samples,1)-.5;
+N2 = rand(samples,1)-.5;
+N3 = rand(samples,1)-.5;
+N4 = rand(samples,1)-.5;
 
 % Generate noise signals of 0, 100, and 50% correlation
 n0 = [N1 N2];
@@ -57,10 +53,10 @@ end
 if cLvl <.5
     noise = n50;
     motion = motion.*cLvl.*2;
-    CAM = noise + 2*motion;
+    CAM = noise + motion;
 else
     noise = n50.*(1-cLvl).*2;
-    CAM = noise + 2*motion;
+    CAM = noise + motion;
 end
 
 % Applies an onset and offset ramped "gate"
@@ -68,8 +64,3 @@ CAM = makeramp(dur,Fs,CAM);
 % Scales the signal between -1 and 1
 CAM = normalize(CAM);
 CAM = cat(1, silent, CAM);
-
-
-figure;
-plot(CAM);
-ylim([-1 1]);
