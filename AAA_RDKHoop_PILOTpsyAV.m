@@ -69,7 +69,7 @@ if length(age_s) < 2
 end
 
 underscore = '_';
-filename = strcat('RDKHoop_psyAV',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
+filename = strcat('RDKHoop_PILOTpsyAV',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
 
 cd(localdirectory)
 save(filename,'filename')
@@ -445,6 +445,7 @@ end
 
 cd(localdirectory)
 save([data_directory filename], 'MAT');
+save(filename, 'MAT')
 
 %% Goodbye
 cont(curWindow, cWhite0);
