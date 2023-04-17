@@ -55,7 +55,7 @@ end
 
 % Loop over each coherence level and extract the corresponding rows of the matrix for 
 % leftward, catch, and rightward trials
-rightward_prob = rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
 
 % Create vector of coherence levels
 right_coh_vals = right_vs_left{1,1}(:, 2);

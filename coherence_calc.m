@@ -1,9 +1,8 @@
 function [stimInfo] = coherence_calc(data_output, freq_decimal, nlog_division)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
-freq_decimal = 0.2;
-load('RDKHoop_stairAud_05_01_01_28.mat')
-nlog_division = 1.4;
+% Finds the coherence in the staircase task that the participant asympototed
+% out to. It then extrapolates down four log values and up four log values
+% given a certain step value (nlog_division). This coherence set it given
+% to the task code to individualize coherences.
 
 trial_coh = data_output(:, 2);
 

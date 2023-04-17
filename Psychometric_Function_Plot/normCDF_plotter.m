@@ -50,7 +50,7 @@ legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthWest', 'I
 % title(sprintf('Auditory Psych. Func. L&R\n%s',save_name), 'Interpreter','none');
 xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
 ylabel( '% Rightward Response', 'Interpreter', 'none' );
-xlim([-1 1])
+xlim([min(left_coh_vals) max(right_coh_vals)])
 ylim([0 1])
 grid on
 text(0,.2,"std of the slope: " + fit_par(2))

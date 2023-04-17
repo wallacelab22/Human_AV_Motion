@@ -1,4 +1,4 @@
-function [rightward_prob] = rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var)
+function [rightward_prob] = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var)
 % Initialize an empty array
 rightward_prob = [];
 

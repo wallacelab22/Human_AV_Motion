@@ -5,7 +5,7 @@ close all;
 sca;
 
 % Version info
-Version = 'TEST_Human_Visual_v.1.1' ; % after code changes, change version
+Version = 'TEST_Human_Multisensory_v.1.1' ; % after code changes, change version
 file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
 data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
@@ -44,15 +44,15 @@ for i = 1:numel(values)
 end
 
 % Group trials again based on AUDITORY coherence for AV congruent 
-% RIGHTWARD motion --> 1 = lowest coherence, 5 = highest coherence
+% RIGHTWARD motion --> 1 = lowest coherence, 7 = highest coherence
 [groups, values] = findgroups(stimulus_direction{1,1}(:, 2));
 
-% Create a cell with 5 groups based on AUDITORY coherence for AV congruent
+% Create a cell with 7 groups based on AUDITORY coherence for AV congruent
 % RIGHTWARD motion
 right_auditory_coherence = cell(numel(values), 1);
 for i = 1:numel(values)
     idx = groups == i;
-    matrix = stimulus_direction{2,1}(idx, :);
+    matrix = stimulus_direction{1,1}(idx, :);
     right_auditory_coherence{i} = matrix;
 end
 
@@ -82,10 +82,30 @@ end
 % leftcoh4_group = findgroups(left_auditory_coherence{4,1}(:,4));
 % leftcoh5_group = findgroups(left_auditory_coherence{5,1}(:,4));
 
-% catc_group = findgroups(stimulus_direction(:,4));% this should all be 0
+% catch_group = findgroups(stimulus_direction(:,4));% this should all be 0
 
 % Initialize an empty arrays to store rightward_prob for all coherences at
 % varying auditory coherences
+
+right_group = findgroups(stimulus_direction{1,1}(:,2));
+left_group = findgroups(stimulus_direction{2,1}(:,2));
+
+rightward_prob = multisensory_rightward_prob_calc(stimulus_direction, right_group, left_group, right_var, left_var);
+
+
+% Create vector of coherence levels
+right_coh_vals = stimulus_direction{1,1}(:,2);
+left_coh_vals = -stimulus_direction{2,1}(:,2);
+combined_coh = [right_coh_vals; left_coh_vals];
+if size(stimulus_direction, 1) >= 3 && size(stimulus_direction{3,1}, 2) >= 2
+    combined_coh = [right_coh_vals; left_coh_vals; 0];
+end
+coherence_lvls = sort(combined_coh, 'ascend');
+coherence_lvls = unique(coherence_lvls, 'stable');
+
+%% Create a Normal Cumulative Distribution Function (normCDF)
+normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, save_name);
+
 
 rightward_prob_coh = {};
 
