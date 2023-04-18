@@ -27,7 +27,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; Fs=44100; triallength=2; nbblocks=4; silence=0.03;
 
 % Define Stimulus repetitions
-catchtrials=50; mstrials=25;
+catchtrials=50; congruent_mstrials=24; incongrunet_mstrials=8;
 buffersize=(dur+silence)*Fs;
 
 % visual stimulus properties
@@ -115,7 +115,7 @@ viscoh7 = visInfo.cohSet(7);
 %% make design Matrix
 rng('shuffle')
 % generate number of trials and different combinations of trials for experiment 
-MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, mstrials);
+MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongrunet_mstrials);
 save('MAT.mat', 'MAT');
 % reload=load('MAT.mat');
 % MAT=reload.MAT;
