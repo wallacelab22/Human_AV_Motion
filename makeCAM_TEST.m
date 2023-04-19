@@ -15,203 +15,204 @@ function [CAM] = makeCAM(cLvl, direction, dur, silence, Fs, ii)
 
 %% Initialize Audio
 PsychPortAudio('Close')
-Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 InitializePsychSound;
-pahandle = PsychPortAudio('Open', 4, [], 0, Fs, 2);
+pahandle = PsychPortAudio('Open', 5, [], 0, 44100, 2);
 
-%% Define function variables
-cLvl = 0.3;
-direction = 1;
-dur = 0.5;
-silence = 0.03;
-Fs = 44100;
-ii = 1;
+cohSet = [0.1328 0.0949 0.678 0.0484 0.0346 0.0247 0.0176];
+
+for i_coherence = 1:length(cohSet)
+    %% Define function variables
+    cLvl = cohSet(i_coherence);
+    direction = 1;
+    dur = 0.5;
+    silence = 0.03;
+    Fs = 44100;
+    ii = 11;
 
 
-% Calculate duration in samples. Rounding is unnessesary if you have an
-% even duration (one that doesn't produce a decimal when multiplying by Fs)
-samples = round(dur.*Fs);
-silent = zeros((silence.*Fs),2);
+    % Calculate duration in samples. Rounding is unnessesary if you have an
+    % even duration (one that doesn't produce a decimal when multiplying by Fs)
+    samples = round(dur.*Fs);
+    silent = zeros((silence.*Fs),2);
+    
+    % Generate the 4 noise signals
+    N1 =(rand(samples,1)-.5);
+    N2 =(rand(samples,1)-.5);
+    N3 =(rand(samples,1)-.5);
+    N4 = rand(samples,1)-.5;
 
-% Generate the 4 noise signals
-N1 =(rand(samples,1)-.5);
-N2 =(rand(samples,1)-.5);
-N3 =(rand(samples,1)-.5);
-N4 = rand(samples,1)-.5;
+    % Generate noise signals of 0, 100, and 50% correlation
+    n0 = [N1 N2];
+    n100 = [N3 N3];
+    n50 = (n100 + n0)./2;
+    % Unused array of all noises together
+    Y = [n0 n50 n100];
 
-% Generate noise signals of 0, 100, and 50% correlation
-n0 = [N1 N2];
-n100 = [N3 N3];
-n50 = (n100 + n0)./2;
-% Unused array of all noises together
-Y = [n0 n50 n100]; 
+    % Generate ramp for increasing and decreasing N4 amplitute in speaker
+    rampu = (1/samples:1/samples:1)';
+    rampd = (1:-1/samples:1/samples)';
+    % Convolve the ramps with N4
+    nup = N4 .* rampu;
+    ndown = N4 .* rampd;
 
-% Generate ramp for increasing and decreasing N4 amplitute in speaker
-rampu = (1/samples:1/samples:1)';
-rampd = (1:-1/samples:1/samples)';
-% Convolve the ramps with N4
-nup = N4 .* rampu;
-ndown = N4 .* rampd;
+    % Generate the leftward and rightward motion signal
+    left = [nup ndown];
+    right = [ndown nup];
 
-% Generate the leftward and rightward motion signal
-left = [nup ndown];
-right = [ndown nup];
+    % Apply the proper motion
+    if direction == 1
+        motion = right;
+    else
+        motion = left;
+    end
 
-% Apply the proper motion
-if direction == 1
-    motion = right;
-else
-    motion = left;
-end
+    % Titrates the SNR
+    if cLvl <.5
+        noise = n50;
+        motion = motion.*cLvl.*2;
+        CAM = noise + motion;
+    else
+        noise = n50.*(1-cLvl).*2;
+        CAM = noise + motion;
+    end
 
-% Titrates the SNR
-if cLvl <.5
-    noise = n50;
-    motion = motion.*cLvl.*2;
-    CAM = noise + motion;
-else
-    noise = n50.*(1-cLvl).*2;
-    CAM = noise + motion;
-end
+    % Applies an onset and offset ramped "gate"
+    CAM = makeramp(dur,Fs,CAM);
+    % Scales the signal between -1 and 1
+    CAM = normalize(CAM);
+    CAM = cat(1, silent, CAM);
 
-% Applies an onset and offset ramped "gate"
-CAM = makeramp(dur,Fs,CAM);
-% Scales the signal between -1 and 1
-CAM = normalize(CAM);
-CAM = cat(1, silent, CAM);
+    if ii == 1
+        figure;
+        plot(CAM);
+        ylim([-1 1]);
+    end
 
-if ii == 1
-    figure;
-    plot(CAM);
-    ylim([-1 1]);
-end
+    %  wavedata = CAM;
+    %  nrchannels = size(wavedata,1); % Number of rows == number of channels.
+    %
+    %  PsychPortAudio('FillBuffer', pahandle, wavedata');
+    %  PsychPortAudio('Start', pahandle, 1);
+    %
+    % WaitSecs(3);
 
- wavedata = CAM;
- nrchannels = size(wavedata,1); % Number of rows == number of channels.
+    %% If you want to change the dB SNR of the stimulus:
 
- PsychPortAudio('FillBuffer', pahandle, wavedata');
- PsychPortAudio('Start', pahandle, 1);
+    % Define the desired dB SNR reduction
+    SNR_reduction = 10;
 
-WaitSecs(2);
+    % Calculate the power of the signal
+    signal_power = rms(motion(:))^2;
 
- %% If you want to change the dB SNR of the stimulus: 
+    % Calculate the power of the noise
+    noise_power = rms(noise(:))^2;
 
-% Define the desired dB SNR reduction
-SNR_reduction = 10;
+    % Calculate the current SNR in dB
+    current_SNR = 10*log10(signal_power / noise_power);
 
-% Calculate the power of the signal
-signal_power = rms(motion(:))^2;
+    % Calculate the desired noise power based on the desired SNR reduction
+    desired_noise_power = signal_power / (10^(SNR_reduction/10));
 
-% Calculate the power of the noise
-noise_power = rms(noise(:))^2;
+    % Calculate the scaling factor for the noise that will achieve the desired SNR
+    noise_scale_factor = sqrt(desired_noise_power / noise_power);
 
-% Calculate the current SNR in dB
-current_SNR = 10*log10(signal_power / noise_power);
+    % Apply the scaling factor to the noise
+    noise = noise * noise_scale_factor;
 
-% Calculate the desired noise power based on the desired SNR reduction
-desired_noise_power = signal_power / (10^(SNR_reduction/10));
+    % Combine the noise and motion signal to create the final stimulus
+    stimulus = noise + motion;
 
-% Calculate the scaling factor for the noise that will achieve the desired SNR
-noise_scale_factor = sqrt(desired_noise_power / noise_power);
+    % Normalize the stimulus to be between -1 and 1
+    stimulus = normalize(stimulus);
 
-% Apply the scaling factor to the noise
-noise = noise * noise_scale_factor;
-
-% Combine the noise and motion signal to create the final stimulus
-stimulus = noise + motion;
-
-% Normalize the stimulus to be between -1 and 1
-stimulus = normalize(stimulus);
-
-% Apply an onset and offset ramped "gate"
-stimulus = makeramp(dur, Fs, stimulus);
-CAM = stimulus;
-if ii == 1
+    % Apply an onset and offset ramped "gate"
+    stimulus = makeramp(dur, Fs, stimulus);
+    CAM = stimulus;
     figure;
     plot(stimulus);
     ylim([-1 1]);
+
+    wavedata = CAM;
+    nrchannels = size(wavedata,1); % Number of rows == number of channels.
+
+    PsychPortAudio('FillBuffer', pahandle, wavedata');
+    PsychPortAudio('Start', pahandle, 1);
+
+    WaitSecs(3);
 end
 
- wavedata = CAM;
- nrchannels = size(wavedata,1); % Number of rows == number of channels.
-
- PsychPortAudio('FillBuffer', pahandle, wavedata');
- PsychPortAudio('Start', pahandle, 1);
-
-WaitSecs(2);
-
-%% Define function variables
-cLvl = 0.5;
-direction = 1;
-dur = 0.5;
-silence = 0.03;
-Fs = 44100;
-ii = 1;
-
-
-% Calculate duration in samples. Rounding is unnessesary if you have an
-% even duration (one that doesn't produce a decimal when multiplying by Fs)
-samples = round(dur.*Fs);
-silent = zeros((silence.*Fs),2);
-
-% Generate the 4 noise signals
-N1 =(rand(samples,1)-.5);
-N2 =(rand(samples,1)-.5);
-N3 =(rand(samples,1)-.5);
-N4 = rand(samples,1)-.5;
-
-% Generate noise signals of 0, 100, and 50% correlation
-n0 = [N1 N2];
-n100 = [N3 N3];
-n50 = (n100 + n0)./2;
-% Unused array of all noises together
-Y = [n0 n50 n100]; 
-
-% Generate ramp for increasing and decreasing N4 amplitute in speaker
-rampu = (1/samples:1/samples:1)';
-rampd = (1:-1/samples:1/samples)';
-% Convolve the ramps with N4
-nup = N4 .* rampu;
-ndown = N4 .* rampd;
-
-% Generate the leftward and rightward motion signal
-left = [nup ndown];
-right = [ndown nup];
-
-% Apply the proper motion
-if direction == 1
-    motion = right;
-else
-    motion = left;
-end
-
-% Titrates the SNR
-if cLvl <.5
-    noise = n50;
-    motion = motion.*cLvl.*2;
-    CAM = noise + motion;
-else
-    noise = n50.*(1-cLvl).*2;
-    CAM = noise + motion;
-end
-
-% Applies an onset and offset ramped "gate"
-CAM = makeramp(dur,Fs,CAM);
-% Scales the signal between -1 and 1
-CAM = normalize(CAM);
-CAM = cat(1, silent, CAM);
-
-if ii == 1
-    figure;
-    plot(CAM);
-    ylim([-1 1]);
-end
-
- wavedata = CAM;
- nrchannels = size(wavedata,1); % Number of rows == number of channels.
-
- PsychPortAudio('FillBuffer', pahandle, wavedata');
- PsychPortAudio('Start', pahandle, 1);
-
-WaitSecs(2);
+% %% Define function variables
+% cLvl = 0.5;
+% direction = 1;
+% dur = 0.5;
+% silence = 0.03;
+% Fs = 44100;
+% ii = 1;
+%
+%
+% % Calculate duration in samples. Rounding is unnessesary if you have an
+% % even duration (one that doesn't produce a decimal when multiplying by Fs)
+% samples = round(dur.*Fs);
+% silent = zeros((silence.*Fs),2);
+%
+% % Generate the 4 noise signals
+% N1 =(rand(samples,1)-.5);
+% N2 =(rand(samples,1)-.5);
+% N3 =(rand(samples,1)-.5);
+% N4 = rand(samples,1)-.5;
+%
+% % Generate noise signals of 0, 100, and 50% correlation
+% n0 = [N1 N2];
+% n100 = [N3 N3];
+% n50 = (n100 + n0)./2;
+% % Unused array of all noises together
+% Y = [n0 n50 n100];
+%
+% % Generate ramp for increasing and decreasing N4 amplitute in speaker
+% rampu = (1/samples:1/samples:1)';
+% rampd = (1:-1/samples:1/samples)';
+% % Convolve the ramps with N4
+% nup = N4 .* rampu;
+% ndown = N4 .* rampd;
+%
+% % Generate the leftward and rightward motion signal
+% left = [nup ndown];
+% right = [ndown nup];
+%
+% % Apply the proper motion
+% if direction == 1
+%     motion = right;
+% else
+%     motion = left;
+% end
+%
+% % Titrates the SNR
+% if cLvl <.5
+%     noise = n50;
+%     motion = motion.*cLvl.*2;
+%     CAM = noise + motion;
+% else
+%     noise = n50.*(1-cLvl).*2;
+%     CAM = noise + motion;
+% end
+%
+% % Applies an onset and offset ramped "gate"
+% CAM = makeramp(dur,Fs,CAM);
+% % Scales the signal between -1 and 1
+% CAM = normalize(CAM);
+% CAM = cat(1, silent, CAM);
+%
+% if ii == 1
+%     figure;
+%     plot(CAM);
+%     ylim([-1 1]);
+% end
+%
+%  wavedata = CAM;
+%  nrchannels = size(wavedata,1); % Number of rows == number of channels.
+%
+%  PsychPortAudio('FillBuffer', pahandle, wavedata');
+%  PsychPortAudio('Start', pahandle, 1);
+%
+% WaitSecs(2);
 

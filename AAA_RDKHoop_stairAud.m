@@ -80,7 +80,7 @@ s.NotifyWhenScansQueuedBelow = 22050;
 WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
-audInfo.cohStart = 1.0;
+audInfo.cohStart = 0.5102;
 nlog_coh_steps = 9;
 nlog_division = 1.4;  
 audInfo.cohSet = [audInfo.cohStart];
