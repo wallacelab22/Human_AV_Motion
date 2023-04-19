@@ -95,22 +95,22 @@ load(stairVis_filename);
 [visInfo] = coherence_calc(data_output, freq_decimal, nlog_division);
 
 %auditory coherence levels
-audcoh1 = audInfo.cohSet(1); 
-audcoh2 = audInfo.cohSet(2); 
-audcoh3 = audInfo.cohSet(3); 
+audcoh1 = audInfo.cohSet(7); 
+audcoh2 = audInfo.cohSet(6); 
+audcoh3 = audInfo.cohSet(5); 
 audcoh4 = audInfo.cohSet(4); 
-audcoh5 = audInfo.cohSet(5); 
-audcoh6 = audInfo.cohSet(6); 
-audcoh7 = audInfo.cohSet(7);
+audcoh5 = audInfo.cohSet(3); 
+audcoh6 = audInfo.cohSet(2); 
+audcoh7 = audInfo.cohSet(1);
 
 %visual coherence levels
-viscoh1 = visInfo.cohSet(1); 
-viscoh2 = visInfo.cohSet(2); 
-viscoh3 = visInfo.cohSet(3); 
+viscoh1 = visInfo.cohSet(7); 
+viscoh2 = visInfo.cohSet(6); 
+viscoh3 = visInfo.cohSet(5); 
 viscoh4 = visInfo.cohSet(4); 
-viscoh5 = visInfo.cohSet(5); 
-viscoh6 = visInfo.cohSet(6); 
-viscoh7 = visInfo.cohSet(7);
+viscoh5 = visInfo.cohSet(3); 
+viscoh6 = visInfo.cohSet(2); 
+viscoh7 = visInfo.cohSet(1);
 
 %% make design Matrix
 rng('shuffle')
@@ -135,7 +135,7 @@ Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 %% Initialize Audio (AT)
 PsychPortAudio('Close')
 InitializePsychSound;
-pahandle = PsychPortAudio('Open', 4, [], 0, Fs, 2);
+pahandle = PsychPortAudio('Open', 5, [], 0, Fs, 2);
 %% Welcome and Instrctions for the Suject
 instructions_psyAV(curWindow, cWhite0);
 %% Flip up fixation dot
