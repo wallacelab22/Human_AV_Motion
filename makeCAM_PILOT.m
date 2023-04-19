@@ -68,7 +68,7 @@ CAM = cat(1, silent, CAM);
 %% If you want to change the dB SNR of the stimulus:
 
 % Define the desired dB SNR reduction
-SNR_reduction = 5;
+SNR_reduction = 2;
 
 % Calculate the power of the signal
 signal_power = rms(motion(:))^2;

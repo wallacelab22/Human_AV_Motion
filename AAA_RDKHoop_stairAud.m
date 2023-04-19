@@ -20,7 +20,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 %% general stimlus variables duration of trial, trial length to keep it open for rt reasons, 
 dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
-buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 250;
+buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 100;
 
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
@@ -67,7 +67,7 @@ screenRect= screenInfo.screenRect;
 PsychPortAudio('Close')
 Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 InitializePsychSound;
-pahandle = PsychPortAudio('Open', 4, [], 0, Fs, 2);
+pahandle = PsychPortAudio('Open', 5, [], 0, Fs, 2);
 
 %% Welcome and Instrctions for the Suject
 instructions_psyAud(curWindow, cWhite0);
@@ -122,7 +122,7 @@ for ii=1:num_trials
     
     % THE MAIN LOOP
     frames = 0;
-    CAM=makeCAM(audInfo.coh, audInfo.dir, dur, silence, Fs);
+    CAM=makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows == number of channels.
         
@@ -205,7 +205,7 @@ for ii=1:num_trials
 end
 
 cd(localdirectory)
-save([data_directory filename], 'data_output');
+save(filename, 'data_output');
 
 %% Goodbye
 cont(curWindow, cWhite0);
