@@ -47,7 +47,7 @@ for i_coherence = 1:length(audInfo.cohSet)
     silent = zeros((silence.*Fs),2);
     
     % Generate the 4 noise signals
-    N1 =(rand(samples,1)-.5);
+    N1 =(rand(samples,1)-.5)*.707; %gives 3db reduction. clac is 20log(v)
     N2 =(rand(samples,1)-.5);
     N3 =(rand(samples,1)-.5);
     N4 = rand(samples,1)-.5;
