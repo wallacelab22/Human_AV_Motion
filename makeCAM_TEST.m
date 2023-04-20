@@ -13,10 +13,10 @@ function [CAM] = makeCAM(cLvl, direction, dur, silence, Fs, ii)
 % Fs =        Sampling frequency                                       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Initialize Audio
-PsychPortAudio('Close')
-InitializePsychSound;
-pahandle = PsychPortAudio('Open', 5, [], 0, 44100, 2);
+% % Initialize Audio
+% PsychPortAudio('Close')
+% InitializePsychSound;
+% pahandle = PsychPortAudio('Open', 5, [], 0, 44100, 2);
 
 audInfo.cohStart = 0.5102;
 nlog_coh_steps = 9;
@@ -38,7 +38,7 @@ for i_coherence = 1:length(audInfo.cohSet)
     dur = 0.5;
     silence = 0.03;
     Fs = 44100;
-    ii = 2;
+    ii = 1;
 
 
     % Calculate duration in samples. Rounding is unnessesary if you have an
@@ -47,9 +47,9 @@ for i_coherence = 1:length(audInfo.cohSet)
     silent = zeros((silence.*Fs),2);
     
     % Generate the 4 noise signals
-    N1 =(rand(samples,1)-.5)*.707; %gives 3db reduction. clac is 20log(v)
-    N2 =(rand(samples,1)-.5);
-    N3 =(rand(samples,1)-.5);
+    N1 =(rand(samples,1)-.5)*(1/sqrt(2)); %gives 3db reduction. calc is 20log(v)
+    N2 =(rand(samples,1)-.5)*(1/sqrt(2));
+    N3 =(rand(samples,1)-.5)*(1/sqrt(2));
     N4 = rand(samples,1)-.5;
 
     % Generate noise signals of 0, 100, and 50% correlation
@@ -99,58 +99,58 @@ for i_coherence = 1:length(audInfo.cohSet)
         ylim([-1 1]);
     end
 
-     wavedata = CAM;
-     nrchannels = size(wavedata,1); % Number of rows == number of channels.
-    
-     PsychPortAudio('FillBuffer', pahandle, wavedata');
-     PsychPortAudio('Start', pahandle, 1);
-    
-    WaitSecs(3);
+%      wavedata = CAM;
+%      nrchannels = size(wavedata,1); % Number of rows == number of channels.
+%     
+%      PsychPortAudio('FillBuffer', pahandle, wavedata');
+%      PsychPortAudio('Start', pahandle, 1);
+%     
+%     WaitSecs(3);
 
     %% If you want to change the dB SNR of the stimulus:
 
-    % Define the desired dB SNR reduction
-    SNR_reduction = 2;
-
-    % Calculate the power of the signal
-    signal_power = rms(motion(:))^2;
-
-    % Calculate the power of the noise
-    noise_power = rms(noise(:))^2;
-
-    % Calculate the current SNR in dB
-    current_SNR = 10*log10(signal_power / noise_power);
-
-    % Calculate the desired noise power based on the desired SNR reduction
-    desired_noise_power = signal_power / (10^(SNR_reduction/10));
-
-    % Calculate the scaling factor for the noise that will achieve the desired SNR
-    noise_scale_factor = sqrt(desired_noise_power / noise_power);
-
-    % Apply the scaling factor to the noise
-    noise = noise * noise_scale_factor;
-
-    % Combine the noise and motion signal to create the final stimulus
-    stimulus = noise + motion;
-
-    % Normalize the stimulus to be between -1 and 1
-    stimulus = normalize(stimulus);
-
-    % Apply an onset and offset ramped "gate"
-    stimulus = makeramp(dur, Fs, stimulus);
-    CAM = stimulus;
-    
-    if ii == 1
-        figure;
-        plot(CAM);
-        ylim([-1 1]);
-    end
-
-    wavedata = CAM;
-    nrchannels = size(wavedata,1); % Number of rows == number of channels.
-
-    PsychPortAudio('FillBuffer', pahandle, wavedata');
-    PsychPortAudio('Start', pahandle, 1);
-
-    WaitSecs(3);
-end
+%     % Define the desired dB SNR reduction
+%     SNR_reduction = 2;
+% 
+%     % Calculate the power of the signal
+%     signal_power = rms(motion(:))^2;
+% 
+%     % Calculate the power of the noise
+%     noise_power = rms(noise(:))^2;
+% 
+%     % Calculate the current SNR in dB
+%     current_SNR = 10*log10(signal_power / noise_power);
+% 
+%     % Calculate the desired noise power based on the desired SNR reduction
+%     desired_noise_power = signal_power / (10^(SNR_reduction/10));
+% 
+%     % Calculate the scaling factor for the noise that will achieve the desired SNR
+%     noise_scale_factor = sqrt(desired_noise_power / noise_power);
+% 
+%     % Apply the scaling factor to the noise
+%     noise = noise * noise_scale_factor;
+% 
+%     % Combine the noise and motion signal to create the final stimulus
+%     stimulus = noise + motion;
+% 
+%     % Normalize the stimulus to be between -1 and 1
+%     stimulus = normalize(stimulus);
+% 
+%     % Apply an onset and offset ramped "gate"
+%     stimulus = makeramp(dur, Fs, stimulus);
+%     CAM = stimulus;
+%     
+%     if ii == 1
+%         figure;
+%         plot(CAM);
+%         ylim([-1 1]);
+%     end
+% 
+% %     wavedata = CAM;
+% %     nrchannels = size(wavedata,1); % Number of rows == number of channels.
+% % 
+% %     PsychPortAudio('FillBuffer', pahandle, wavedata');
+% %     PsychPortAudio('Start', pahandle, 1);
+% % 
+% %     WaitSecs(3);
+ end

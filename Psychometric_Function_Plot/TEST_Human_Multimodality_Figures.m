@@ -22,7 +22,7 @@ right_var = 1;
 left_var = 2;
 catch_var = 0;
 compare_plot = input('Unisensory vs. Multisensory compare? 0 for NO, 1 for YES:');
-AV_correction = input('AV correction? 0 for NO, 1 for YES:');
+AV_correction = input('Coh level to coh? 0 for NO, 1 for YES:');
 
 if AV_correction == 1
     aud_replace = input('Enter the 7 auditory coherences: ');

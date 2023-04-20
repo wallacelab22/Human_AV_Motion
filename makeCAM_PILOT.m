@@ -1,5 +1,5 @@
 % function [CAM] = makeCAM(cLvl,speed, direction, dur, Fs)
-function [CAM] = makeCAM_PILOT(cLvl, direction, dur, silence, Fs)
+function [CAM] = makeCAM_PILOT(cLvl, direction, dur, silence, Fs, noise_reduction_scalar)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CAM =       array of voltages to present to speakers                 %
@@ -19,9 +19,9 @@ samples = round(dur.*Fs);
 silent = zeros((silence.*Fs),2);
 
 % Generate the 4 noise signals
-N1 =(rand(samples,1)-.5);
-N2 =(rand(samples,1)-.5);
-N3 =(rand(samples,1)-.5);
+N1 =(rand(samples,1)-.5)*noise_reduction_scalar;
+N2 =(rand(samples,1)-.5)*noise_reduction_scalar;
+N3 =(rand(samples,1)-.5)*noise_reduction_scalar;
 N4 = rand(samples,1)-.5;
 
 % Generate noise signals of 0, 100, and 50% correlation
@@ -64,39 +64,6 @@ CAM = makeramp(dur,Fs,CAM);
 % Scales the signal between -1 and 1
 CAM = normalize(CAM);
 CAM = cat(1, silent, CAM);
-
-%% If you want to change the dB SNR of the stimulus:
-
-% Define the desired dB SNR reduction
-SNR_reduction = 2;
-
-% Calculate the power of the signal
-signal_power = rms(motion(:))^2;
-
-% Calculate the power of the noise
-noise_power = rms(noise(:))^2;
-
-% Calculate the current SNR in dB
-current_SNR = 10*log10(signal_power / noise_power);
-
-% Calculate the desired noise power based on the desired SNR reduction
-desired_noise_power = signal_power / (10^(SNR_reduction/10));
-
-% Calculate the scaling factor for the noise that will achieve the desired SNR
-noise_scale_factor = sqrt(desired_noise_power / noise_power);
-
-% Apply the scaling factor to the noise
-noise = noise * noise_scale_factor;
-
-% Combine the noise and motion signal to create the final stimulus
-stimulus = noise + motion;
-
-% Normalize the stimulus to be between -1 and 1
-stimulus = normalize(stimulus);
-
-% Apply an onset and offset ramped "gate"
-stimulus = makeramp(dur, Fs, stimulus);
-CAM = stimulus;
 
  
 
