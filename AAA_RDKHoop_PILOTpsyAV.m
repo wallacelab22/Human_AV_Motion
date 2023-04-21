@@ -37,6 +37,12 @@ maxdotsframe=150;
 monWidth=42.5; 
 viewDist =120; cWhite0=255;
 
+% auditory stimulus properties
+dB_noise_reduction = 3; % how much less sound intensity (dB) you want from the noise compared to the signal
+
+% convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
+noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
+
 % addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
 % addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master\bin');
 % 
@@ -271,7 +277,7 @@ for ii=1:length(MAT)
     
     % THE MAIN LOOP
     frames = 0;
-    CAM=makeCAM(cLvl, currauddir, dur, silence, Fs);
+    CAM=makeCAM_PILOT(cLvl, currauddir, dur, silence, Fs, noise_reduction_scalar);
     
     %% Audio wav file (AT)
 %     audiowrite('CAM.wav',CAM,Fs)
