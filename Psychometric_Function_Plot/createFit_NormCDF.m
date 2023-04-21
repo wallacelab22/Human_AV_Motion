@@ -58,8 +58,6 @@ p = cdf('Normal', x, mdl.Coefficients{1,1}, mdl.Coefficients{2,1});
 threshold_location=find(p >= chosen_threshold, 1);
 threshold=x(1,threshold_location);
 
-
-
 % Plot fit with data.
 fig = figure( 'Name', 'Psychometric Function' );
 scatter(xData, yData, all_sizes)

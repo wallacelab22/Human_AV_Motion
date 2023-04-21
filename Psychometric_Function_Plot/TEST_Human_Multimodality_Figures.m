@@ -11,7 +11,7 @@ data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psych
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
 
 % Load the experimental data --> load("PUT EXP DATA FOR AV TRIAL HERE")
-data = input('Enter data file: ');
+data = input('Enter PILOT AV data file: ');
 load(data);
 save_name = data;
 data_output = MAT;

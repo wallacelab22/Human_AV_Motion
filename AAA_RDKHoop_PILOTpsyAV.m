@@ -20,6 +20,7 @@ s.Rate=44100;
 % IsContinuous=true;
 % addAnalogOutputChannel(s,'cDAQ1Mod2','ao0','Voltage');
 % addAnalogOutputChannel(s,'cDAQ1Mod2','ao1','Voltage');
+
 %% define general values
 inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
@@ -136,8 +137,10 @@ Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 PsychPortAudio('Close')
 InitializePsychSound;
 pahandle = PsychPortAudio('Open', 5, [], 0, Fs, 2);
+
 %% Welcome and Instrctions for the Suject
 instructions_psyAV(curWindow, cWhite0);
+
 %% Flip up fixation dot
 fix=[screenRect(3)/2,screenRect(4)/2]; %define fix position of fix dot
 Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
@@ -161,9 +164,9 @@ for ii=1:length(MAT)
     % 2=leftwardmotion
     currvisdir=MAT(ii,3);
     if currvisdir == 1
-        currvisdir=0; %RIGHTward
+        currvisdir=0; % RIGHTward
     elseif currvisdir == 2
-        currvisdir=180; %LEFTward
+        currvisdir=180; % LEFTward
     end
     
     currviscoh=MAT(ii,4);
