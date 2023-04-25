@@ -104,8 +104,8 @@ nlog_division = 1.4;
 % [visInfo] = coherence_calc(data_output);
 
 %manual cohSet input for piloting reasons
-audInfo.cohSet = [0.1859 0.1328 0.0949 0.0678 0.0484 0.0346 0.0247];
-visInfo.cohSet = [0.2603 0.1859 0.1328 0.0949 0.0678 0.0484 0.0346];
+audInfo.cohSet = [0.0949 0.0678 0.0484 0.0346 0.0247 0.0176 0.0126];
+visInfo.cohSet = [0.1328 0.0949 0.0678 0.0484 0.0346 0.0247 0.0176];
 
 %auditory coherence levels
 audcoh1 = audInfo.cohSet(7); 
