@@ -26,7 +26,7 @@ buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 250;
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 
 % auditory stimulus properties
-dB_noise_reduction = 3; % how much less sound intensity (dB) you want from the noise compared to the signal
+dB_noise_reduction = 6; % how much less sound intensity (dB) you want from the noise compared to the signal
 
 % convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);

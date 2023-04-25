@@ -28,8 +28,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; Fs=44100; triallength=2; nbblocks=4; silence=0.03;
 
 % Define Stimulus repetitions
-catchtrials=50; congruent_mstrials=27; incongruent_mstrials=3;
-buffersize=(dur+silence)*Fs;
+catchtrials=20; congruent_mstrials=9; incongruent_mstrials=1;
 
 % visual stimulus properties
 maxdotsframe=150; 
@@ -38,9 +37,11 @@ monWidth=42.5;
 viewDist =120; cWhite0=255;
 
 % auditory stimulus properties
-dB_noise_reduction = 3; % how much less sound intensity (dB) you want from the noise compared to the signal
+buffersize=(dur+silence)*Fs;
+dB_noise_reduction = 6; % how much less sound intensity (dB) you want from the noise compared to the signal
 
-% convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
+% convert dB noise reduction to a scalar for CAM --> 
+% noise dB - dB_noise_reduction = 20log(noise_reduction_scalar*CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
 
 % addpath('C:\Users\Wallace Lab\Documents\MATLAB\Human_AV_Motion\liblsl-Matlab-master');
@@ -84,7 +85,7 @@ cd(scriptdirectory)
 
 %% Generating coherences from staircase data
 % Define coherence calculations from staircase
-freq_decimal = 0.2;
+freq_decimal = 0.2; % how often value has to be hovered around for all staircase trials
 nlog_division = 1.4;
 
 % Load the auditory staircase data
