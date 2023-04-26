@@ -10,7 +10,7 @@ function MAT=at_RDKHoopMatrix_psyAud(catchtrials,audtrials)
 % catch trials
 catchs=[0 0];
 
-% visual [direction coherencelevel]
+% auditory [direction coherencelevel]
 al1=[2 1];
 ar1=[1 1];
 
@@ -26,11 +26,17 @@ ar4=[1 4];
 al5=[2 5];
 ar5=[1 5];
 
+al6=[2 6];
+ar6=[1 6];
+
+al7=[2 7];
+ar7=[1 7];
+
 %% create Matrices
 %catch trials
 catchmat=repmat(catchs, catchtrials, 1);
 
-% visual
+% auditory
 matal1=repmat(al1, audtrials, 1);
 matar1=repmat(ar1, audtrials, 1);
 
@@ -46,8 +52,14 @@ matar4=repmat(ar4, audtrials, 1);
 matal5=repmat(al5, audtrials, 1);
 matar5=repmat(ar5, audtrials, 1);
 
+matal6=repmat(al6, audtrials, 1);
+matar6=repmat(ar6, audtrials, 1);
+
+matal7=repmat(al7, audtrials, 1);
+matar7=repmat(ar7, audtrials, 1);
+
 %concatenate all conditions into 1 big matrix
-trialStruc= cat(1, catchmat, matal1, matar1, matal2, matar2, matal3, matar3, matal4, matar4, matal5, matar5);
+trialStruc= cat(1, catchmat, matal1, matar1, matal2, matar2, matal3, matar3, matal4, matar4, matal5, matar5, matal6, matar6, matal7, matar7);
 
 %% define single columns
 % add trial order and response recording columns

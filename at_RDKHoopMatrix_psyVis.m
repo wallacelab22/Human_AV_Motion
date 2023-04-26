@@ -26,6 +26,12 @@ vr4=[1 4];
 vl5=[2 5];
 vr5=[1 5];
 
+vl6=[2 6];
+vr6=[1 6];
+
+vl7=[2 7];
+vr7=[1 7];
+
 %% create Matrices
 %catch trials
 catchmat=repmat(catchs, catchtrials, 1);
@@ -46,8 +52,14 @@ matvr4=repmat(vr4, vistrials, 1);
 matvl5=repmat(vl5, vistrials, 1);
 matvr5=repmat(vr5, vistrials, 1);
 
+matvl6=repmat(vl6, vistrials, 1);
+matvr6=repmat(vr6, vistrials, 1);
+
+matvl7=repmat(vl7, vistrials, 1);
+matvr7=repmat(vr7, vistrials, 1);
+
 %concatenate all conditions into 1 big matrix
-trialStruc= cat(1, catchmat, matvl1, matvr1, matvl2, matvr2, matvl3, matvr3, matvl4, matvr4, matvl5, matvr5);
+trialStruc= cat(1, catchmat, matvl1, matvr1, matvl2, matvr2, matvl3, matvr3, matvl4, matvr4, matvl5, matvr5, matvl6, matvr6, matvl7, matvr7);
 
 %% define single columns
 % add trial order and response recording columns

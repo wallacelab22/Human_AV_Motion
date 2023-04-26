@@ -26,10 +26,10 @@ function [stimInfo] = coherence_calc(data_output)
 
 % Define malleable variables
 nlog_division = 1.4;
-upper_lim = 2;
-lower_lim = 4;
+upper_lim = 3;
+lower_lim = 3;
 num_reversals = 10;
-coh_step = 0;
+coh_step = 2;
 
 % Find the direction of each trial (positive or negative)
 directions = sign(diff(data_output(:,2)));

@@ -28,7 +28,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; Fs=44100; triallength=2; nbblocks=4; silence=0.03;
 
 % Define Stimulus repetitions
-catchtrials=20; congruent_mstrials=9; incongruent_mstrials=1;
+catchtrials=50; congruent_mstrials=27; incongruent_mstrials=3;
 
 % visual stimulus properties
 maxdotsframe=150; 
@@ -135,9 +135,7 @@ save('MAT.mat', 'MAT');
 
 %% Initialize
 curScreen=0;
-%Screen('Preference', 'SkipSyncTests', 0);
 Screen('Preference', 'SkipSyncTests', 1);
-
 screenInfo = openExperiment(monWidth, viewDist, curScreen);
 curWindow= screenInfo.curWindow;
 screenRect= screenInfo.screenRect;

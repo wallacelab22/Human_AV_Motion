@@ -338,6 +338,7 @@ end
 
 cd(localdirectory)
 save([data_directory filename], 'data_output');
+save(filename, 'data_output')
 
 %% Goodbye
 cont(curWindow, cWhite0);
