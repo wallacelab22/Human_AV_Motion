@@ -76,7 +76,7 @@ WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
 visInfo.cohStart = 0.5102;
-nlog_coh_steps = 12;
+nlog_coh_steps = 11;
 nlog_division = 1.4;
 visInfo.cohSet = [visInfo.cohStart];
 for i = 1:nlog_coh_steps

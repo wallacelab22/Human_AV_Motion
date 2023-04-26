@@ -87,7 +87,7 @@ WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
 audInfo.cohStart = 0.5102;
-nlog_coh_steps = 9;
+nlog_coh_steps = 11;
 nlog_division = 1.4;  
 audInfo.cohSet = [audInfo.cohStart];
 for i = 1:nlog_coh_steps
