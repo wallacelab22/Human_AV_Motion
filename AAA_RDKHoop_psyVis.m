@@ -67,7 +67,7 @@ underscore = '_';
 filename = strcat('RDKHoop_psyVis',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
 
 cd(localdirectory)
-% save(filename,'filename')
+save(filename,'filename')
 cd(scriptdirectory)
 
 %% Generating coherences from staircase data

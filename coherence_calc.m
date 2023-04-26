@@ -29,7 +29,7 @@ nlog_division = 1.4;
 upper_lim = 3;
 lower_lim = 3;
 num_reversals = 10;
-coh_step = 2;
+coh_step = 1;
 
 % Find the direction of each trial (positive or negative)
 directions = sign(diff(data_output(:,2)));

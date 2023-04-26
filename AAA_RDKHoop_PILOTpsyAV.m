@@ -127,8 +127,8 @@ viscoh7 = visInfo.cohSet(1);
 
 %% make design Matrix
 rng('shuffle')
-% generate number of trials and different cbombinations of trgials for behxperiment 
- fffMAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
+% generate number of trials and different combinations of trials for experiment 
+MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
 save('MAT.mat', 'MAT');
 % reload=load('MAT.mat');
 % MAT=reload.MAT;

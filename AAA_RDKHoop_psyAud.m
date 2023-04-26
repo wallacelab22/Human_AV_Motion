@@ -103,7 +103,7 @@ rng('shuffle')
 data_output=at_RDKHoopMatrix_psyAud(catchtrials,audtrials);
 
 %% Initialize
-curScreen=2;
+curScreen=0;
 %Screen('Preference', 'SkipSyncTests', 0);
 Screen('Preference', 'SkipSyncTests', 1);
 screenInfo = openExperiment(monWidth, viewDist, curScreen);
@@ -124,7 +124,7 @@ InitializePsychSound;
 %     end
 % end
 
-pahandle = PsychPortAudio('Open', 4, [], 0, Fs, 2);
+pahandle = PsychPortAudio('Open', 5, [], 0, Fs, 2);
 
 %% Welcome and Instrctions for the Suject
 instructions_psyAud(curWindow, cWhite0);
