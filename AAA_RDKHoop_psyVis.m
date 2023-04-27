@@ -72,7 +72,7 @@ cd(scriptdirectory)
 
 %% Generating coherences from staircase data
 % Define coherence calculations from staircase
-nlog_division = 1.4;
+nlog_division = sqrt(2);
 
 % Load the visual staircase data
 stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat',subjnum_s, group_s, sex_s, age_s);

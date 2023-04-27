@@ -24,8 +24,10 @@ function [stimInfo] = coherence_calc(data_output)
 %                               number of steps up (coh_step) will be the
 %                               threshold
 
+
+
 % Define malleable variables
-nlog_division = 1.4;
+nlog_division = sqrt(2);
 upper_lim = 3;
 lower_lim = 3;
 num_reversals = 10;

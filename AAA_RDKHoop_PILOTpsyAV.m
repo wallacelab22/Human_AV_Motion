@@ -85,7 +85,7 @@ cd(scriptdirectory)
 
 %% Generating coherences from staircase data
 % Define coherence calculations from staircase
-nlog_division = 1.4;
+nlog_division = sqrt(2);
 
 % Load the auditory staircase data
 stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat',subjnum_s, group_s, sex_s, age_s);

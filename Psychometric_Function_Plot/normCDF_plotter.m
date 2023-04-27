@@ -41,7 +41,7 @@ threshold_location = find(p >= chosen_threshold, 1);
 threshold = x(1, threshold_location);
 
 % Plot fit with data.
-fig = figure( 'Name', 'Psychometric Function' );
+% fig = figure( 'Name', 'Psychometric Function' );
 scatter(xData, yData)
 hold on 
 plot(x, p);

@@ -20,13 +20,13 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 %% general stimlus variables duration of trial, trial length to keep it open for rt reasons, 
 dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
-buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 250;
+buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 100;
 
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 
 % auditory stimulus properties
-dB_noise_reduction = 6; % how much less sound intensity (dB) you want from the noise compared to the signal
+dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
 
 % convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
@@ -86,9 +86,9 @@ s.NotifyWhenScansQueuedBelow = 22050;
 WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
-audInfo.cohStart = 0.5102;
-nlog_coh_steps = 11;
-nlog_division = 1.4;  
+audInfo.cohStart = 0.5;
+nlog_coh_steps = 19;
+nlog_division = sqrt(2);  
 audInfo.cohSet = [audInfo.cohStart];
 for i = 1:nlog_coh_steps
     if i == 1
