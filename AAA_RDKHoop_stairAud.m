@@ -10,6 +10,7 @@ scriptdirectory = '/home/wallace/Human_AV_Motion';
 localdirectory = '/home/wallace/Human_AV_Motion';
 serverdirectory = '/home/wallace/Human_AV_Motion';
 data_directory = '/home/wallace/Human_AV_Motion';
+analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot';
 cd(scriptdirectory)
 
 % % general variables to smoothly run PTB
@@ -236,7 +237,7 @@ if data_analysis == 1
     left_var = 2;
     catch_var = 0;
 
-    cd("Psychometric_Function_Plot/")
+    cd(analysis_directory)
 
     %% Split the data by direction of motion for the trial
     [right_vs_left, right_group, left_group] = direction_plotter(data_output);
