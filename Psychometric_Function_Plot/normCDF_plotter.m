@@ -1,4 +1,4 @@
-function [fig, p_values,ci,threshold] = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, save_name)
+function [fig, p_values,ci,threshold] = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name)
 %CREATEFIT(COH_LIST,PC_AUD)
 %  Create a fit.
 %
@@ -40,14 +40,29 @@ p = cdf('Normal', x, fit_par(1), fit_par(2));
 threshold_location = find(p >= chosen_threshold, 1);
 threshold = x(1, threshold_location);
 
+sz = 10*coherence_frequency(2,:);
+
 % Plot fit with data.
-% fig = figure( 'Name', 'Psychometric Function' );
-scatter(xData, yData)
+fig = figure('Name', save_name);
+if contains(save_name, 'Aud')
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
+elseif contains(save_name, 'Vis')
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
+elseif contains(save_name, 'AV')
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm');
+end
 hold on 
-plot(x, p);
+% Set the color of the figure based on the block
+if contains(save_name, 'Aud')
+    plot(x, p, 'LineWidth', 3, 'Color', 'r');
+elseif contains(save_name, 'Vis')
+    plot(x, p, 'LineWidth', 3, 'Color', 'b');
+elseif contains(save_name, 'AV')
+    plot(x, p, 'LineWidth', 3, 'Color',  'm')
+end
 legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthWest', 'Interpreter', 'none' );
 % Label axes
-% title(sprintf('Auditory Psych. Func. L&R\n%s',save_name), 'Interpreter','none');
+title(sprintf('Psych. Function',save_name), 'Interpreter','none');
 xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
 ylabel( '% Rightward Response', 'Interpreter', 'none' );
 xlim([min(left_coh_vals) max(right_coh_vals)])

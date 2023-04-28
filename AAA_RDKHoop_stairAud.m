@@ -25,6 +25,9 @@ buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 100;
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 
+% Specify if you want data analysis
+data_analysis = input('Data Anlysis? 0 = NO, 1 = YES : ');
+
 % auditory stimulus properties
 dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
 
@@ -210,6 +213,8 @@ for ii=1:num_trials
 
 end
 
+
+
 cd(localdirectory)
 save(filename, 'data_output');
 
@@ -221,4 +226,34 @@ closeExperiment;
 close all
 Screen('CloseAll');
 PsychPortAudio('Close', pahandle);
+
+%% Data Analysis
+
+if data_analysis == 1
+    % Provide specific variables 
+    chosen_threshold = 0.72;
+    right_var = 1;
+    left_var = 2;
+    catch_var = 0;
+
+    cd("Psychometric_Function_Plot/")
+
+    %% Split the data by direction of motion for the trial
+    [right_vs_left, right_group, left_group] = direction_plotter(data_output);
+    
+    %% Loop over each coherence level and extract the corresponding rows of the matrix for leftward, catch, and rightward trials
+    rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+    
+    %% Create frequency count for each coherence level
+    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+    
+    %% Create a graph of percent correct at each coherence level
+    accuracy_plotter(right_vs_left, right_group, left_group);
+    
+    %% Create a Normal Cumulative Distribution Function (NormCDF)
+    normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
+    
+    %% Create a stairstep graph for visualizing staircase
+    stairstep_plotter(data_output);
+end
 

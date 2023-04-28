@@ -16,6 +16,9 @@ AssertOpenGL;
 %% define general values
 inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
+% Specify if you want data analysis
+data_analysis = input('Data Anlysis? 0 = NO, 1 = YES : ');
+
 %% general stimlus variables
 dur=.5; triallength=2; nbblocks=2;
 
@@ -347,3 +350,33 @@ cont(curWindow, cWhite0);
 closeExperiment;
 close all
 Screen('CloseAll')
+
+%% Data Analysis
+
+if data_analysis == 1
+    % Provide specific variables 
+    chosen_threshold = 0.72;
+    right_var = 1;
+    left_var = 2;
+    catch_var = 0;
+
+    cd("Psychometric_Function_Plot/")
+
+    %% Split the data by direction of motion for the trial
+    [right_vs_left, right_group, left_group] = direction_plotter(data_output);
+    
+    %% Loop over each coherence level and extract the corresponding rows of the matrix for leftward, catch, and rightward trials
+    rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+    
+    %% Create frequency count for each coherence level
+    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+    
+    %% Create a graph of percent correct at each coherence level
+    accuracy_plotter(right_vs_left, right_group, left_group);
+    
+    %% Create a Normal Cumulative Distribution Function (NormCDF)
+    normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
+    
+    %% Create a stairstep graph for visualizing staircase
+    stairstep_plotter(data_output);
+end
