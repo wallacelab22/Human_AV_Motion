@@ -7,7 +7,7 @@ close all;
 scriptdirectory = '/home/wallace/Human_AV_Motion';
 localdirectory = '/home/wallace/Human_AV_Motion';
 serverdirectory = '/home/wallace/Human_AV_Motion';
-data_directory = '/home/wallace/Human_AV_Motion';
+data_directory = '/home/wallace/Human_AV_Motion/data';
 analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot';
 cd(scriptdirectory)
 
@@ -18,7 +18,7 @@ AssertOpenGL;
 inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 % Specify if you want data analysis
-data_analysis = input('Data Anlysis? 0 = NO, 1 = YES : ');
+data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
 %% general stimlus variables
 dur=.5; triallength=2; nbblocks=2;
@@ -340,8 +340,7 @@ for ii= 1:num_trials
 
 end
 
-cd(localdirectory)
-save([data_directory filename], 'data_output');
+cd(data_directory)
 save(filename, 'data_output')
 
 %% Goodbye
@@ -381,3 +380,6 @@ if data_analysis == 1
     %% Create a stairstep graph for visualizing staircase
     stairstep_plotter(data_output);
 end
+
+cd(data_directory)
+save(filename)

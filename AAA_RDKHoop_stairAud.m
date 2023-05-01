@@ -9,7 +9,7 @@ clear;
 scriptdirectory = '/home/wallace/Human_AV_Motion';
 localdirectory = '/home/wallace/Human_AV_Motion';
 serverdirectory = '/home/wallace/Human_AV_Motion';
-data_directory = '/home/wallace/Human_AV_Motion';
+data_directory = '/home/wallace/Human_AV_Motion/data';
 analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot';
 cd(scriptdirectory)
 
@@ -27,7 +27,7 @@ buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 100;
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 
 % Specify if you want data analysis
-data_analysis = input('Data Anlysis? 0 = NO, 1 = YES : ');
+data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
 % auditory stimulus properties
 dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
