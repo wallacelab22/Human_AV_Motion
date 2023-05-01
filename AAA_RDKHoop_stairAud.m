@@ -236,6 +236,7 @@ if data_analysis == 1
     right_var = 1;
     left_var = 2;
     catch_var = 0;
+    save_name = filename;
 
     cd(analysis_directory)
 
@@ -252,7 +253,7 @@ if data_analysis == 1
     accuracy_plotter(right_vs_left, right_group, left_group);
     
     %% Create a Normal Cumulative Distribution Function (NormCDF)
-    normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
+    %normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
     
     %% Create a stairstep graph for visualizing staircase
     stairstep_plotter(data_output);
