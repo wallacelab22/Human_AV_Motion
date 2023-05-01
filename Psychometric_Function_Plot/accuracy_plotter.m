@@ -1,4 +1,4 @@
-function [accuracy_graph, sz] = accuracy_plotter(right_vs_left, right_group, left_group)
+function [accuracy_graph, sz] = accuracy_plotter(right_vs_left, right_group, left_group, save_name)
 % Create x bins for the bar plot by finding all coherence levels
 right_coh_vals = right_vs_left{1,1}(:, 2);
 left_coh_vals = right_vs_left{2,1}(:, 2);
@@ -29,12 +29,12 @@ figure;
 accuracy_graph = plot(coh_bins, coh_accuracy, 'LineWidth', 2, 'MarkerFaceColor', 'g', 'MarkerSize', 15);
 hold on
 scatter(coh_bins, coh_accuracy, sz, 'MarkerEdgeColor', 'k', 'LineWidth', 2);
-title('Accuracy');
+title(sprintf('Leftward v. Rightward Accuracy: \n %s',save_name), 'Interpreter','none');
 xlabel('Coherence Levels');
 ylabel('Accuracy');
 legend('Leftward trials', 'Rightward trials', 'Location', 'southeast');
 ylim([0 1]);
 grid on
-
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 
 end

@@ -250,12 +250,15 @@ if data_analysis == 1
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
     
     %% Create a graph of percent correct at each coherence level
-    accuracy_plotter(right_vs_left, right_group, left_group);
+    accuracy = accuracy_plotter(right_vs_left, right_group, left_group, save_name);
     
     %% Create a Normal Cumulative Distribution Function (NormCDF)
-    %normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
+%     CDF = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
     
     %% Create a stairstep graph for visualizing staircase
-    stairstep_plotter(data_output);
+    stairstep = stairstep_plotter(data_output, save_name);
 end
+
+cd(data_directory)
+save(filename)
 

@@ -1,7 +1,7 @@
 %% TEST Human Unimodality Figures %%%%%%%%%%
 % written 02/16/23 - Adam Tiesman
 clear all;
-close all;
+%close all;
 
 % Version info
 Version = 'TEST_Human_Unimodal_v.2.0' ; % after code changes, change version
@@ -51,12 +51,12 @@ rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left
 [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
 
 %% Create a graph of percent correct at each coherence level
-accuracy_plotter(right_vs_left, right_group, left_group);
+accuracy_plotter(right_vs_left, right_group, left_group, save_name);
 
 %% Create a Normal Cumulative Distribution Function (NormCDF)
 normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
 
 %% Create a stairstep graph for visualizing staircase
-stairstep_plotter(data_output);
+stairstep_plotter(data_output, save_name);
 
 

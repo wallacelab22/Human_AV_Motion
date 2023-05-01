@@ -26,16 +26,25 @@ mu = mean(yData);
 sigma = std(yData);
 parms = [mu, sigma];
 
+% Norm CDF Function Fitting
 fun_1 = @(b, x)cdf('Normal', x, b(1), b(2));
 fun = @(b)sum((fun_1(b,xData) - yData).^2); 
 opts = optimset('MaxFunEvals',50000, 'MaxIter',10000); 
 fit_par = fminsearch(fun, parms, opts);
 
+% New model to account for weights of PCs
+normalcdf_fun = @(b, x) 0.5 * (1 + erf((x - b(1)) ./ (b(2) * sqrt(2))));
+mdl = fitnlm(xData, yData, normalcdf_fun, parms, 'Weights', coherence_frequency(2,:));
+
+
 x = min(left_coh_vals):.01:max(right_coh_vals);
 
 [p_values, bootstat, ci] = p_value_calc(yData, parms);
 
-p = cdf('Normal', x, fit_par(1), fit_par(2));
+%p = cdf('Normal', x, fit_par(1), fit_par(2)); % function not weighted by
+% coherence frequency
+ p = cdf('Normal', x, mdl.Coefficients{1,1}, mdl.Coefficients{2,1}); % function 
+% weighted by coherence frequency
 
 threshold_location = find(p >= chosen_threshold, 1);
 threshold = x(1, threshold_location);
@@ -44,31 +53,30 @@ sz = 10*coherence_frequency(2,:);
 
 % Plot fit with data.
 fig = figure('Name', save_name);
+% Set color of figure based on block (A, V, or AV)
 if contains(save_name, 'Aud')
     scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
-elseif contains(save_name, 'Vis')
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
-elseif contains(save_name, 'AV')
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm');
-end
-hold on 
-% Set the color of the figure based on the block
-if contains(save_name, 'Aud')
+    hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'r');
 elseif contains(save_name, 'Vis')
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
+    hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'b');
 elseif contains(save_name, 'AV')
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm');
+    hold on
     plot(x, p, 'LineWidth', 3, 'Color',  'm')
 end
-legend('% Rightward Resp. vs. Coherence', 'NormCDF', 'Location', 'NorthWest', 'Interpreter', 'none' );
+legend('Participant Responses (scaled by trial amount)', 'NormCDF', 'Location', 'NorthWest', 'Interpreter', 'none');
 % Label axes
-title(sprintf('Psych. Function',save_name), 'Interpreter','none');
-xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none' );
-ylabel( '% Rightward Response', 'Interpreter', 'none' );
+title(sprintf('Psych. Function: \n %s',save_name), 'Interpreter','none');
+xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none');
+ylabel( '% Rightward Response', 'Interpreter', 'none');
 xlim([min(left_coh_vals) max(right_coh_vals)])
 ylim([0 1])
 grid on
 text(0,.2,"std of the slope: " + fit_par(2))
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 % text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
 
 %text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
