@@ -1,4 +1,4 @@
-'RDKHoop_PILOTpsyAV_03_02_02_24.mat'%% TEST Human Multimodality Figures %%%%%%%%%%
+%% TEST Human Multimodality Figures %%%%%%%%%%
 % written on 02/21/23 - Adam Tiesman
 clear;
 close all;
@@ -7,7 +7,7 @@ sca;
 % Version info
 Version = 'TEST_Human_Multisensory_v.1.1' ; % after code changes, change version
 file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
-data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
+data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data';
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
 
 % Load the experimental data --> load("PUT EXP DATA FOR AV TRIAL HERE")
@@ -21,6 +21,7 @@ chosen_threshold = 0.72; % Ask Mark about threshold
 right_var = 1;
 left_var = 2;
 catch_var = 0;
+coherence_frequency = NaN;
 compare_plot = input('Unisensory vs. Multisensory compare? 0 for NO, 1 for YES:');
 AV_correction = input('Coh level to coh? 0 for NO, 1 for YES:');
 
@@ -112,7 +113,8 @@ coherence_lvls = sort(combined_coh, 'ascend');
 coherence_lvls = unique(coherence_lvls, 'stable');
 
 %% Create a Normal Cumulative Distribution Function (normCDF)
-normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, save_name);
+normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, ...
+    left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name)
 
 
 

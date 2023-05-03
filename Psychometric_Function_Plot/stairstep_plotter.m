@@ -7,7 +7,11 @@ trial_num = 1:size(data_output, 1);
 
 % Plot the stairstep graph
 figure;
-stairstep = stairs(trial_num, trial_coh, 'LineWidth', 2);
+if contains(save_name, 'Aud')
+    stairstep = stairs(trial_num, trial_coh, 'LineWidth', 2, 'Color', 'r');
+elseif contains(save_name, 'Vis')
+    stairstep = stairs(trial_num, trial_coh, 'LineWidth', 2, 'Color', 'b');
+end
 grid on
 
 % Label the axes and title
