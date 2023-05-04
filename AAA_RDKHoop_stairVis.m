@@ -343,6 +343,7 @@ end
 cd(data_directory)
 save(filename, 'data_output')
 
+cd(scriptdirectory)
 %% Goodbye
 cont(curWindow, cWhite0);
 
