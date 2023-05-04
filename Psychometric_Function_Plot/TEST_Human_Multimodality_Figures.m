@@ -6,7 +6,8 @@ sca;
 
 % Version info
 Version = 'TEST_Human_Multisensory_v.1.1' ; % after code changes, change version
-file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
+task_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion';
+script_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
 data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data';
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
 
@@ -26,9 +27,8 @@ compare_plot = input('Unisensory vs. Multisensory compare? 0 for NO, 1 for YES:'
 AV_correction = input('Coh level to coh? 0 for NO, 1 for YES:');
 
 if AV_correction == 1
-    aud_replace = input('Enter the 7 auditory coherences: ');
-    vis_replace = input('Enter the 7 visual coherences: ');
-    data_output = PILOT_AV_coh_level_correction(data_output, aud_replace, vis_replace);
+    data_output = coh_level_correction(data_output, script_file_directory, ...
+    task_file_directory, save_name);
 end
 
 % Replace all the 0s to 3s for catch trials for splitapply
