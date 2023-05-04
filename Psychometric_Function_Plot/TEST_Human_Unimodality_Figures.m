@@ -12,6 +12,7 @@ figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psy
 
 cd(data_file_directory)
 
+%% Load the experimental data
 subjnum = input('Enter the subject''s number: ');
 subjnum_s = num2str(subjnum);
 if length(subjnum_s) < 2
@@ -33,7 +34,7 @@ if length(age_s) < 2
     age_s = strcat(['0' age_s]);
 end
 
-block = input('1 = stairAud, 2 = stairVis, 3 = psyAud, 4 = psyVis? ');
+block = input('1 = stairAud, 2 = stairVis, 3 = psyAud, 4 = psyVis ');
 if block == 1
     block_analysis = 'stairAud';
 elseif block == 2
@@ -45,17 +46,14 @@ elseif block == 4
 end
 
 underscore = '_';
-save_name = strcat('RDKHoop_',block_analysis,underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
+save_name = strcat('RDKHoop_', block_analysis, underscore, subjnum_s, ...
+    underscore, group_s, underscore, sex_s, underscore, age_s);
 sprintf(save_name)
 load(save_name)
 
-% % Load the experimental data
-% data = input('Enter data file: ');
-% load(data);
-% save_name = data;
 
 cd(script_file_directory)
-% Provide specific variables 
+%% Provide specific variables 
 chosen_threshold = 0.72;
 right_var = 1;
 left_var = 2;
@@ -98,7 +96,7 @@ rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left
 [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
 
 %% Create a graph of percent correct at each coherence level
-%accuracy_plotter(right_vs_left, right_group, left_group, save_name);
+accuracy_plotter(right_vs_left, right_group, left_group, save_name);
 
 %% Create a Normal Cumulative Distribution Function (NormCDF)
 normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name);
@@ -108,19 +106,13 @@ if contains(save_name, 'stair')
     stairstep_plotter(data_output, save_name);
 end
 
-% %% Compare plots
-% if compare_plot == 1
-%     % Find the positions of the underscores in the input string
-%     underscore_pos = strfind(save_name, '_');
-%     % Extract the numerical substrings based on their positions
-%     subjnum_s = save_name(underscore_pos(2)+1:underscore_pos(2)+2);
-%     group_s = save_name(underscore_pos(3)+1:underscore_pos(3)+2);
-%     sex_s = save_name(underscore_pos(4)+1:underscore_pos(4)+2);
-%     age_s = save_name(underscore_pos(5)+1:underscore_pos(5)+2);
-%     % Generate a figure comparing psychometric curves
-%     compare_figure = compare_plotter(compare_plot, data_file_directory, script_file_directory, ...
-%     subjnum_s, group_s, sex_s, age_s, save_name);
-% end
+%% Compare plots
+if compare_plot == 1
+    % Extract the numerical substrings based on their positions
+    % Generate a figure comparing psychometric curves
+    compare_figure = compare_plotter(compare_plot, data_file_directory, script_file_directory, ...
+    subjnum_s, group_s, sex_s, age_s, save_name);
+end
 
 
 
