@@ -70,6 +70,7 @@ if compare_plot == 1
     fig = 0;
 elseif compare_plot == 0
     fig = figure('Name', save_name);
+    
     % Set color of figure based on block (A, V, or AV)
     if contains(save_name, 'Aud')
         scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
@@ -84,7 +85,9 @@ elseif compare_plot == 0
         hold on
         plot(x, p, 'LineWidth', 3, 'Color',  'm')
     end
+    
     legend('Participant Responses (scaled by trial amount)', 'NormCDF', 'Location', 'NorthWest', 'Interpreter', 'none');
+    
     % Label axes
     title(sprintf('Psych. Function: \n %s',save_name), 'Interpreter','none');
     xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none');

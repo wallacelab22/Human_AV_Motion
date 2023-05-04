@@ -54,7 +54,7 @@ load(save_name);
 
 
 cd(script_file_directory)
-%% Provide specific variables 
+%% Provide specific v4ariables 
 chosen_threshold = 0.72;
 right_var = 1;
 left_var = 2;
@@ -92,7 +92,7 @@ if compare_plot == 1
     % Generate a figure comparing psychometric curves
     compare_figure = compare_plotter(compare_plot, coh_change, ...
         data_file_directory, script_file_directory, task_file_directory, ...
-        subjnum_s, group_s, sex_s, age_s, save_name);
+        subjnum_s, group_s, sex_s, age_s, identifier, save_name);
 elseif compare_plot == 0
     normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name);
 end

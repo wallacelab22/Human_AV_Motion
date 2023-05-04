@@ -1,6 +1,6 @@
 function [fig] = compare_plotter(compare_plot, coh_change, data_file_directory, ...
     script_file_directory, task_file_directory, ...
-    subjnum_s, group_s, sex_s, age_s, save_name)
+    subjnum_s, group_s, sex_s, age_s, identifier, save_name)
 
 % This is code to plot psychometric functions of different blocks on top of
 % one another.
@@ -32,8 +32,8 @@ if compare_stairAud == 1
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
     [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-    coherence_frequency, compare_plot, save_name);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
+    coherence_frequency, compare_plot, stairAud_filename);
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
     hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'r');
 end
@@ -53,8 +53,8 @@ if compare_stairVis == 1
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
     [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-    coherence_frequency, compare_plot, save_name);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
+    coherence_frequency, compare_plot, stairVis_filename);
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
     hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'b');
 end 
@@ -75,8 +75,8 @@ if compare_psyAud == 1
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
     [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-        coherence_frequency, compare_plot, save_name);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
+        coherence_frequency, compare_plot, psyAud_filename);
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
     hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'r');
 end
@@ -97,8 +97,8 @@ if compare_psyVis == 1
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
     [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-    coherence_frequency, compare_plot, save_name);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
+    coherence_frequency, compare_plot, psyVis_filename);
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
     hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'b');
 end
@@ -178,15 +178,15 @@ if compare_PILOTpsyAV == 1
     coherence_lvls = unique(coherence_lvls, 'stable');
     [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
         rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-        coherence_frequency, compare_plot, save_name);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
+        coherence_frequency, compare_plot, PILOTpsyAV_filename);
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
     hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'b');
 end
 
 
 %% Set figure properties
-title(sprintf('Psych. Comparison Function: \n %s',save_name), 'Interpreter','none');
+title(sprintf('Psych. Function Comparison: \n %s', identifier), 'Interpreter','none');
 xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none');
 ylabel( '% Rightward Response', 'Interpreter', 'none');
 xlim([min(left_coh_vals) max(right_coh_vals)])

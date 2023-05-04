@@ -3,6 +3,9 @@
 % x = 1 dB SNR
 % y = 3 dB SNR
 % z = 6 dB SNR
+%
+% Auditory and Visual CDF comparison are showing normal Vis stim and z dB
+% SNR Aud stim
 
 clear all;
 close all;
@@ -101,3 +104,14 @@ xlim([min(left_coh_vals) max(right_coh_vals)])
 ylim([0 1])
 grid on
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+
+%% Compare Auditory staircase at z dB SNR to Visual staircase
+group_s = '03';
+underscore = '_';
+identifier = strcat(subjnum_s, underscore, group_s, underscore, sex_s, underscore, age_s);
+fig = figure('Name', sprintf('%s CDF Comparison ', identifier));
+% Generate a figure comparing psychometric curves
+compare_figure = compare_plotter(compare_plot, coh_change, ...
+    data_file_directory, script_file_directory, task_file_directory, ...
+    subjnum_s, group_s, sex_s, age_s, identifier, save_name);
+legend('6 dB Aud', 'Normal Vis', 'Location', 'NorthWest', 'Interpreter', 'none');
