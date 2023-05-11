@@ -4,6 +4,8 @@ function [fig] = compare_plotter(compare_plot, coh_change, data_file_directory, 
 
 % This is code to plot psychometric functions of different blocks on top of
 % one another.
+compare_trainAud = input('Compare Auditory Training? 0 for NO, 1 for YES: ');
+compare_trainVis = input('Compare Visual Training? 0 for NO, 1 for YES: ');
 compare_stairAud = input('Compare Auditory Staircase? 0 for NO, 1 for YES: ');
 compare_stairVis = input('Compare Visual Staircase? 0 for NO, 1 for YES: ');
 compare_psyAud = input('Compare Auditory? 0 for NO, 1 for YES: ');
@@ -16,6 +18,49 @@ right_var = 1;
 left_var = 2;
 
 %% Plot each desired dataset on same figure
+
+% Auditory training
+if compare_trainAud == 1
+    cd(data_file_directory)
+    trainAud_filename = sprintf('RDKHoop_trainAud_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+    load(trainAud_filename, 'data_output');
+    cd(script_file_directory)
+    if coh_change == 1
+        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, stairAud_filename);
+    end
+    [right_vs_left, right_group, left_group] = direction_plotter(data_output);
+    rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
+        coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
+    coherence_frequency, compare_plot, trainAud_filename);
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
+    hold on
+    plot(x, p, 'LineWidth', 3, 'Color', 'r');
+end
+
+% Visual training
+if compare_trainVis == 1
+    cd(data_file_directory)
+    trainVis_filename = sprintf('RDKHoop_trainVis_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+    load(trainVis_filename, 'data_output');
+    cd(script_file_directory)
+    if coh_change == 1
+        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, stairAud_filename);
+    end
+    [right_vs_left, right_group, left_group] = direction_plotter(data_output);
+    rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
+        coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
+    coherence_frequency, compare_plot, trainVis_filename);
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
+    hold on
+    plot(x, p, 'LineWidth', 3, 'Color', 'b');
+end
+
 
 % Auditory staircase
 if compare_stairAud == 1

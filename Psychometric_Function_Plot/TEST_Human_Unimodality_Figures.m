@@ -34,7 +34,7 @@ if length(age_s) < 2
     age_s = strcat(['0' age_s]);
 end
 
-block = input('1 = stairAud, 2 = stairVis, 3 = psyAud, 4 = psyVis ');
+block = input('1 = stairAud, 2 = stairVis, 3 = psyAud, 4 = psyVis, 5 = trainAud, 6 = trainVis ');
 if block == 1
     block_analysis = 'stairAud';
 elseif block == 2
@@ -43,6 +43,10 @@ elseif block == 3
     block_analysis = 'psyAud';
 elseif block == 4
     block_analysis = 'psyVis';
+elseif block == 5
+    block_analysis = 'trainAud';
+elseif block == 6
+    block_analysis = 'trainVis';
 end
 
 underscore = '_';
@@ -82,7 +86,7 @@ rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left
 accuracy_plotter(right_vs_left, right_group, left_group, save_name);
 
 %% Create a stairstep graph for visualizing staircase
-if contains(save_name, 'stair')
+if contains(save_name, 'stair') || contains(save_name, 'train')
     stairstep_plotter(data_output, save_name);
 end
 

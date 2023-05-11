@@ -39,7 +39,7 @@ fit_par = fminsearch(fun, parms, opts);
 
 % New model to account for weights of PCs
 normalcdf_fun = @(b, x) 0.5 * (1 + erf((x - b(1)) ./ (b(2) * sqrt(2))));
-if contains(save_name, 'stair')
+if contains(save_name, 'stair') || contains(save_name, 'train')
     mdl = fitnlm(xData, yData, normalcdf_fun, parms, 'Weights', coherence_frequency(2,:));
 end
 
@@ -48,7 +48,7 @@ end
 x = min(left_coh_vals):.01:max(right_coh_vals);
 
 [p_values, bootstat, ci] = p_value_calc(yData, parms);
-if contains(save_name, 'stair')
+if contains(save_name, 'stair') || contains(save_name, 'train')
     % function weighted by coherence frequency
     p = cdf('Normal', x, mdl.Coefficients{1,1}, mdl.Coefficients{2,1});
 else
@@ -59,7 +59,7 @@ end
 threshold_location = find(p >= chosen_threshold, 1);
 threshold = x(1, threshold_location);
 
-if contains(save_name, 'stair')
+if contains(save_name, 'stair') || contains(save_name, 'train')
     sz = 10*coherence_frequency(2,:);
 else
     sz = 36;
