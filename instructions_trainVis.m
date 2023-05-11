@@ -27,43 +27,39 @@ keytest_unbound;
 % Instructions 5
 Screen('DrawText', curWindow, 'After every trial you will be informed if you were correct or incorrect.',300,300,cWhite0);
 Screen('DrawText', curWindow, 'The following HIGH pitched tone will be played if you are CORRECT.',300,400,cWhite0);
-Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',500,500,cWhite0);
+Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',300,650,cWhite0);
 Screen('Flip',curWindow);
-WaitSecs(2)
+WaitSecs(5)
 PsychPortAudio('FillBuffer', pahandle, corr_soundout')
 PsychPortAudio('Start', pahandle)
-WaitSecs(1)
 keytest_unbound
 
 % Instructions 6
 Screen('DrawText', curWindow, 'The CORRECT tone will be played again...',300,400,cWhite0);
-Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',500,500,cWhite0);
+Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',300,650,cWhite0);
 Screen('Flip',curWindow);
 WaitSecs(2)
 PsychPortAudio('FillBuffer', pahandle, corr_soundout')
 PsychPortAudio('Start', pahandle)
-WaitSecs(1)
 keytest_unbound
 
 % Instructions 7
 Screen('DrawText', curWindow, 'After every trial you will be informed if you were correct or incorrect.',300,300,cWhite0);
 Screen('DrawText', curWindow, 'The following LOW pitched tone will be played if you are INCORRECT.',300,400,cWhite0);
-Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',500,500,cWhite0);
+Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',300,650,cWhite0);
 Screen('Flip',curWindow);
-WaitSecs(2)
+WaitSecs(5)
 PsychPortAudio('FillBuffer', pahandle, incorr_soundout')
 PsychPortAudio('Start', pahandle)
-WaitSecs(1)
 keytest_unbound
 
 % Instructions 8
 Screen('DrawText', curWindow, 'The INCORRECT tone will be played again...',300,400,cWhite0);
-Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',500,500,cWhite0);
+Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',300,650,cWhite0);
 Screen('Flip',curWindow);
 WaitSecs(2)
 PsychPortAudio('FillBuffer', pahandle, incorr_soundout')
 PsychPortAudio('Start', pahandle)
-WaitSecs(1)
 keytest_unbound
 
 % Instructions 9
