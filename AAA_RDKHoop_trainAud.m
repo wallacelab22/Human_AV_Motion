@@ -1,4 +1,4 @@
-%% AUDITORY STAIRCASE %%%%%%%%%%
+%% AUDITORY TRAINING %%%%%%%%%%
 % written by Adam Tiesman 2/27/2023
 clear;
 % close all;
@@ -21,7 +21,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 %% general stimlus variables duration of trial, trial length to keep it open for rt reasons, 
 dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
-buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 100;
+buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 150;
 
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
@@ -30,6 +30,8 @@ maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
 % auditory stimulus properties
+correct_freq = 4000;
+incorrect_freq = 200;
 dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
 
 % convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
@@ -58,7 +60,7 @@ if length(age_s) < 2
 end
 
 underscore = '_';
-filename = strcat('RDKHoop_stairAud',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
+filename = strcat('RDKHoop_trainAud',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
 
 cd(localdirectory)
 save(filename,'filename')
@@ -90,8 +92,8 @@ s.NotifyWhenScansQueuedBelow = 22050;
 WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
-audInfo.cohStart = 0.5;
-nlog_coh_steps = 19;
+audInfo.cohStart = 1.0;
+nlog_coh_steps = 24;
 nlog_division = sqrt(2);  
 audInfo.cohSet = [audInfo.cohStart];
 for i = 1:nlog_coh_steps
@@ -211,7 +213,13 @@ for ii=1:num_trials
         trial_status = 0;
         data_output(ii, 6) = trial_status;
     end
-
+    if trial_status == 1
+        correct_sound = MakeBeep(correct_freq, dur, Fs);
+        PsychPortAudio('FillBuffer', pahandle, correct_sound)
+    elseif trial_status == 0
+        incorrect_sound = MakeBeep(incorrect_freq, dur, Fs);
+        PsychPortAudio('FillBuffer', pahandle, incorrect_sound)
+    end
 end
 
 

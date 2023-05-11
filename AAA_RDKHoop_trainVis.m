@@ -1,4 +1,4 @@
-%% VISUAL STAIRCASE %%%%%%%%%%
+%% VISUAL TRAINING %%%%%%%%%%
 % written by Adam Tiesman 2/27/2023
 clear;
 close all;
@@ -24,7 +24,7 @@ data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 dur=.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
-num_trials = 100;
+num_trials = 150;
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
 maxdotsframe=150; monWidth=40; viewDist =120;
@@ -54,7 +54,7 @@ if length(age_s) < 2
 end
 
 underscore = '_';
-filename = strcat('RDKHoop_stairVis',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
+filename = strcat('RDKHoop_trainVis',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
 
 cd(localdirectory)
 % save(filename,'filename')
@@ -79,8 +79,8 @@ Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
 % Generate the list of possible coherences by decreasing log values
-visInfo.cohStart = 0.5;
-nlog_coh_steps = 19;
+visInfo.cohStart = 1.0;
+nlog_coh_steps = 24;
 nlog_division = sqrt(2);
 visInfo.cohSet = [visInfo.cohStart];
 for i = 1:nlog_coh_steps

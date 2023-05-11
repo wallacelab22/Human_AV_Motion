@@ -115,3 +115,58 @@ compare_figure = compare_plotter(compare_plot, coh_change, ...
     data_file_directory, script_file_directory, task_file_directory, ...
     subjnum_s, group_s, sex_s, age_s, identifier, save_name);
 legend('6 dB Aud', 'Normal Vis', 'Location', 'NorthWest', 'Interpreter', 'none');
+
+%% Compare normal Visual staircase and pixel size change Visual staircase
+
+% Provide specific variables 
+chosen_threshold = 0.72;
+right_var = 1;
+left_var = 2;
+catch_var = 0;
+compare_plot = 1;
+coh_change = 0;
+fig = figure('Name', sprintf('%s Visual Staircase Comparison', identifier));
+
+%Plot normal visual staircase
+cd(data_file_directory)
+normVis_filename = sprintf('RDKHoop_stairVis_%s_03_%s_%s.mat', subjnum_s, sex_s, age_s);
+load(normVis_filename, 'data_output');
+save_name = normVis_filename;
+cd(script_file_directory)
+[right_vs_left, right_group, left_group] = direction_plotter(data_output);
+rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+[total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
+    coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+[fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
+coherence_frequency, compare_plot, save_name);
+scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', [0.6350, 0.0780, 0.1840], 'HandleVisibility', 'off');
+hold on
+plot(x, p, 'LineWidth', 3, 'Color', [0.6350, 0.0780, 0.1840], 'DisplayName', 'norm Vis');
+
+% Plot pixel size change visual staircase
+cd(data_file_directory)
+pixVis_filename = sprintf('RDKHoop_stairVis_%s_04_%s_%s.mat', subjnum_s, sex_s, age_s);
+load(pixVis_filename, 'data_output');
+save_name = pixVis_filename;
+cd(script_file_directory)
+[right_vs_left, right_group, left_group] = direction_plotter(data_output);
+rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+[total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
+    coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+[fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
+coherence_frequency, compare_plot, save_name);
+scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', [0.9290,0.6940,0.1250], 'HandleVisibility', 'off');
+hold on
+plot(x, p, 'LineWidth', 3, 'Color', [0.9290,0.6940,0.1250], 'DisplayName', 'Increase pixel size Vis');
+
+% Set figure properties
+title(sprintf('Visual Staircase Comparison Function: \n %s',save_name), 'Interpreter','none');
+legend('Location', 'NorthWest', 'Interpreter', 'none');
+xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none');
+ylabel( '% Rightward Response', 'Interpreter', 'none');
+xlim([min(left_coh_vals) max(right_coh_vals)])
+ylim([0 1])
+grid on
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
