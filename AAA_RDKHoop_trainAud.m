@@ -93,7 +93,7 @@ InitializePsychSound;
 pahandle = PsychPortAudio('Open', 5, [], 0, Fs, 2);
 
 %% Welcome and Instrctions for the Suject
-instructions_psyAud(curWindow, cWhite0);
+instructions_trainAud(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout);
 
 %% Flip up fixation dot
 fix=[screenRect(3)/2,screenRect(4)/2]; %define fix position of fix dot
