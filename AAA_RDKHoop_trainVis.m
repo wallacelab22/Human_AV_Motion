@@ -21,13 +21,25 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
 %% general stimlus variables
-dur=.5; triallength=2; nbblocks=2;
+dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
+buffersize=(dur+silence)*Fs; s.Rate=44100;
 
 % Define Stimulus repetitions
-num_trials = 150;
+num_trials = 100;
+
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
 maxdotsframe=150; monWidth=40; viewDist =120;
+
+% training sound properties
+correct_freq = 2000;
+incorrect_freq = 800;
+correct_sound = MakeBeep(correct_freq, (dur+silence), Fs);
+corr_soundout = [correct_sound', correct_sound'];
+corr_soundout = normalize(corr_soundout);
+incorrect_sound = MakeBeep(incorrect_freq, (dur+silence), Fs);
+incorr_soundout = [incorrect_sound', incorrect_sound'];
+incorr_soundout = normalize(incorr_soundout);
 
 % general drawing color
 cWhite0=255;
@@ -70,6 +82,13 @@ screenRect= screenInfo.screenRect;
 % Enable alpha blending with proper blend-function. We need it for drawing
 % of smoothed points.
 Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+%% Initialize Audio
+PsychPortAudio('Close')
+Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+InitializePsychSound;
+pahandle = PsychPortAudio('Open', 5, [], 0, Fs, 2);
+
 %% Welcome and Instrctions for the Suject
 instructions_psyVis(curWindow, cWhite0);
 %% Flip up fixation dot
@@ -332,12 +351,16 @@ for ii= 1:num_trials
     % trial is correct.
     if data_output(ii, 3) == data_output(ii, 1)
         trial_status = 1;
+        PsychPortAudio('FillBuffer', pahandle, corr_soundout')
+        PsychPortAudio('Start', pahandle)
         data_output(ii, 6) = trial_status;
     else 
         trial_status = 0;
+        PsychPortAudio('FillBuffer', pahandle, incorr_soundout')
+        PsychPortAudio('Start', pahandle)
         data_output(ii, 6) = trial_status;
     end
-
+    WaitSecs(1)
 end
 
 cd(data_directory)

@@ -1,7 +1,7 @@
 %% AUDITORY TRAINING %%%%%%%%%%
 % written by Adam Tiesman 2/27/2023
 clear;
-% close all;
+close all;
 
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
@@ -21,7 +21,10 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 %% general stimlus variables duration of trial, trial length to keep it open for rt reasons, 
 dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
-buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 150;
+buffersize=(dur+silence)*Fs; s.Rate=44100; 
+
+% Define stimulus repetitions
+num_trials = 100;
 
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
@@ -30,12 +33,20 @@ maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
 % auditory stimulus properties
-correct_freq = 4000;
-incorrect_freq = 200;
 dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
 
 % convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
+
+% training sound properties
+correct_freq = 2000;
+incorrect_freq = 800;
+correct_sound = MakeBeep(correct_freq, (dur+silence), Fs);
+corr_soundout = [correct_sound', correct_sound'];
+corr_soundout = normalize(corr_soundout);
+incorrect_sound = MakeBeep(incorrect_freq, (dur+silence), Fs);
+incorr_soundout = [incorrect_sound', incorrect_sound'];
+incorr_soundout = normalize(incorr_soundout);
 
 %% collect subjectinformation
 subjnum = input('Enter the subject''s number: ');
@@ -206,20 +217,22 @@ for ii=1:num_trials
     end
     data_output(ii, 4)=rt;
     data_output(ii,5)=char(resp);
-    if data_output(ii, 3) == data_output(ii, 1)% If response is the same as direction, Correct Trial
+    % For the table, column 6 denotes accuracy (used for
+    % staircase_procedure). 0 = incorrect, 1 = correct, it checks if the 
+    % stimulus direction is equal to the recorded response. If so, then
+    % trial is correct.
+    if data_output(ii, 3) == data_output(ii, 1)
         trial_status = 1;
+        PsychPortAudio('FillBuffer', pahandle, corr_soundout')
+        PsychPortAudio('Start', pahandle)
         data_output(ii, 6) = trial_status;
     else 
         trial_status = 0;
+        PsychPortAudio('FillBuffer', pahandle, incorr_soundout')
+        PsychPortAudio('Start', pahandle)
         data_output(ii, 6) = trial_status;
     end
-    if trial_status == 1
-        correct_sound = MakeBeep(correct_freq, dur, Fs);
-        PsychPortAudio('FillBuffer', pahandle, correct_sound)
-    elseif trial_status == 0
-        incorrect_sound = MakeBeep(incorrect_freq, dur, Fs);
-        PsychPortAudio('FillBuffer', pahandle, incorrect_sound)
-    end
+    WaitSecs(1)
 end
 
 
