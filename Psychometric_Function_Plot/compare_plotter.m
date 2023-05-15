@@ -35,9 +35,9 @@ if compare_trainAud == 1
     [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, trainAud_filename);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'g', 'HandleVisibility', 'off');
     hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'r');
+    plot(x, p, 'LineWidth', 3, 'Color', 'g');
 end
 
 % Visual training
@@ -56,9 +56,9 @@ if compare_trainVis == 1
     [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, trainVis_filename);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
+    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'g', 'HandleVisibility', 'off');
     hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'b');
+    plot(x, p, 'LineWidth', 3, 'Color', 'g');
 end
 
 
@@ -234,7 +234,7 @@ end
 title(sprintf('Psych. Function Comparison: \n %s', identifier), 'Interpreter','none');
 xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none');
 ylabel( '% Rightward Response', 'Interpreter', 'none');
-xlim([min(left_coh_vals) max(right_coh_vals)])
+xlim([-1 1])
 ylim([0 1])
 grid on
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
