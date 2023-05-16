@@ -24,8 +24,6 @@ function [stimInfo] = coherence_calc(data_output)
 %                               number of steps up (coh_step) will be the
 %                               threshold
 
-load('RDKHoop_stairVis_03_02_02_24-2.mat')
-
 % Define malleable variables
 nlog_division = sqrt(2);
 upper_lim = 3;

@@ -70,7 +70,10 @@ coh_change = input('Coherence level to coherence correction? 0 for No, 1 for YES
 data_output(data_output(:, 1) == 0, 1) = 3; 
 
 if coh_change == 1
-    data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, save_name);
+    [data_output, cohlvlcoh] = coh_level_correction(data_output, subjnum_s, ...
+    group_s, sex_s, age_s, script_file_directory, data_file_directory, ...
+    task_file_directory, save_name);
+    disp(cohlvlcoh)
 end
 
 %% Split the data by direction of motion for the trial
