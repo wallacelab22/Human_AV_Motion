@@ -3,7 +3,7 @@
 clear;
 close all;
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
-% %% define general variables
+%%% define general variables
 scriptdirectory = '/home/wallace/Human_AV_Motion';
 localdirectory = '/home/wallace/Human_AV_Motion';
 serverdirectory = '/home/wallace/Human_AV_Motion';
@@ -25,7 +25,7 @@ dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
 buffersize=(dur+silence)*Fs; s.Rate=44100;
 
 % Define Stimulus repetitions
-num_trials = 100;
+num_trials = 200;
 
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;

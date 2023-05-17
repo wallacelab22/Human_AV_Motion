@@ -88,6 +88,9 @@ viscoh_file = strcat('visInfo.cohSet',underscore,subjnum_s,underscore,group_s, u
 cd(data_directory)
 save(viscoh_file, 'visInfo.cohSet')
 
+% hardcoding Antonia's coherences and adding 0.65 and 0.05
+visInfo.cohSet = [0.65 0.55 0.45 0.35 0.25 0.1 0.05];
+
 %visual coherence levels
 viscoh1 = visInfo.cohSet(7); 
 viscoh2 = visInfo.cohSet(6); 

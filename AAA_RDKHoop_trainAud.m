@@ -24,7 +24,7 @@ dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
 buffersize=(dur+silence)*Fs; s.Rate=44100; 
 
 % Define stimulus repetitions
-num_trials = 100;
+num_trials = 200;
 
 % visual stimulus properties number of dots, viewing distance from monitor
 maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
