@@ -5,15 +5,16 @@ close all;
 
 % Version info
 Version = 'TEST_Human_Unimodal_v.2.0' ; % after code changes, change version
-task_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion';
-script_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot';
+task_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/';
+script_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/';
 Antonia_data = (input('Antonia data analysis? 0 = NO, 1 = YES '));
 if Antonia_data == 1
-    data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Antonia_data';
+    data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Antonia_data/';
 else
-    data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data';
+    data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data/';
 end
-figure_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/Human_Figures';
+figure_file_directory = '/Users/a.tiesman/Documents/Research/Meeting_figures/';
+Antonia_figure_file_directory = '/Users/a.tiesman/Documents/Research/Meeting_figures/Antonia_figs/';
 
 cd(data_file_directory)
 
@@ -65,13 +66,14 @@ load(save_name);
 
 
 cd(script_file_directory)
-%% Provide specific v4ariables 
+%% Provide specific variables 
 chosen_threshold = 0.72;
 right_var = 1;
 left_var = 2;
 catch_var = 0;
 compare_plot = input('Psychometric Function Comparison? 0 for NO, 1 for YES: ');
 coh_change = input('Coherence level to coherence correction? 0 for No, 1 for YES: ');
+fig_save = input('Save figures? 0 = NO, 1 = YES : ');
 
 % Specific if analyzing Antonia's data
 if Antonia_data == 1
@@ -113,10 +115,20 @@ rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left
 
 %% Create a graph of percent correct at each coherence level
 accuracy_plot = accuracy_plotter(right_vs_left, right_group, left_group, save_name);
+if fig_save == 1 && Antonia_data ~= 1
+    cd(figure_file_directory)
+    saveas(gcf, strcat('Leftward_and_Rightward_Accuracies_', save_name, '.jpg'))
+    cd(script_file_directory)
+end
 
 %% Create a stairstep graph for visualizing staircase
 if contains(save_name, 'stair') || contains(save_name, 'train')
     stairstep_plot = stairstep_plotter(data_output, save_name);
+    if fig_save == 1
+        cd(figure_file_directory)
+        saveas(gcf, strcat('Stairstep_Function_', save_name, '.jpg'))
+        cd(script_file_directory)
+    end
 end
 
 %% Compare CDF plots
@@ -126,11 +138,33 @@ if compare_plot == 1
     compare_figure = compare_plotter(compare_plot, coh_change, Antonia_data, ...
         data_file_directory, script_file_directory, task_file_directory, ...
         subjnum_s, group_s, sex_s, age_s, identifier, save_name);
+    if fig_save == 1
+        cd(figure_file_directory)
+        saveas(gcf, strcat('CDF_Comparison_', identifier, '.jpg'))
+        cd(script_file_directory)
+    end
 elseif compare_plot == 0
     normCDF_plot = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name);
+    if fig_save == 1
+        cd(figure_file_directory)
+        saveas(gcf, strcat('Norm_CDF_Function_', save_name, '.jpg'))
+        cd(script_file_directory)
+    end
 end
 
-save(save_name, 'cohlvlcoh', 'accuracy_plot', 'stairstep_plot', 'normCDF_plot')
-
-
+% if fig_save == 1
+%     cd(figure_file_directory)
+%     if contains(save_name, 'stair') || contains(save_name, 'train')
+%         savefig(save_name, 'cohlvlcoh', 'accuracy_plot', 'stairstep_plot', 'normCDF_plot')
+%     elseif contains(save_name, 'stair') || contains(save_name, 'train') && compare_plot == 1
+%         savefig(save_name, 'cohlvlcoh', 'accuracy_plot', 'stairstep_plot', 'fig')
+%     elseif contains(save_name, 'psy') && compare_plot == 0
+%         savefig(save_name, 'cohlvlcoh', 'accuracy_plot', 'normCDF_plot')
+%     elseif contains(save_name, 'psy') && compare_plot == 1
+%         savefig(save_name, 'cohlvlcoh', 'accuracy_plot', 'fig')
+%     elseif Antonia_data == 1
+%         cd(Antonia_figure_file_directory)
+%         savefig(identifier, 'fig')
+%     end
+% end
 
