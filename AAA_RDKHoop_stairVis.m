@@ -27,7 +27,7 @@ dur=.5; triallength=2; nbblocks=2;
 num_trials = 100;
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
-maxdotsframe=150; monWidth=40; viewDist =120;
+maxdotsframe=150; monWidth=50.8; viewDist =120;
 
 % general drawing color
 cWhite0=255;
@@ -62,8 +62,8 @@ cd(scriptdirectory)
 
 %% Initialize
 curScreen=0;
-% Screen('Preference', 'SkipSyncTests', 0);
-Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 0);
+%Screen('Preference', 'SkipSyncTests', 1);
 screenInfo = openExperiment(monWidth, viewDist, curScreen);
 curWindow= screenInfo.curWindow;
 screenRect= screenInfo.screenRect;

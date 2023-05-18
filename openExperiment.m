@@ -60,7 +60,7 @@ screenInfo.center = [screenInfo.screenRect(3), screenInfo.screenRect(4)]/2;
 % (pix/screen) * (screen/rad) * (rad/deg) = (pixels per degree)
 screenInfo.ppd = pi * screenInfo.screenRect(3) / atan(monWidth/viewDist/2) / 360;    
 
-%HideCursor;
+HideCursor;
 
 % If reward system is hooked up, rewardOn = 1, otherwise rewardOn = 0;
 screenInfo.rewardOn = 0;
