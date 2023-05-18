@@ -90,9 +90,15 @@ elseif compare_plot == 0
     
     % Label axes
     title(sprintf('Psych. Function: \n %s',save_name), 'Interpreter','none');
-    xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none');
+    xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
     ylabel( '% Rightward Response', 'Interpreter', 'none');
-    xlim([min(left_coh_vals) max(right_coh_vals)])
+    if abs(min(left_coh_vals)) < abs(max(right_coh_vals))
+        xlim([-max(right_coh_vals) max(right_coh_vals)])
+    elseif abs(min(left_coh_vals)) > abs(max(right_coh_vals))
+        xlim([min(left_coh_vals) -min(left_coh_vals)])
+    else
+        xlim([min(left_coh_vals) max(right_coh_vals)])
+    end
     ylim([0 1])
     grid on
     text(0,.2,"std of the slope: " + fit_par(2))

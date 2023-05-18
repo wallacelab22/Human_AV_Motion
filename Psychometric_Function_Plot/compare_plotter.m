@@ -1,5 +1,5 @@
-function [fig] = compare_plotter(compare_plot, coh_change, data_file_directory, ...
-    script_file_directory, task_file_directory, ...
+function [fig] = compare_plotter(compare_plot, coh_change, Antonia_data, ...
+    data_file_directory, script_file_directory, task_file_directory, ...
     subjnum_s, group_s, sex_s, age_s, identifier, save_name)
 
 % This is code to plot psychometric functions of different blocks on top of
@@ -25,8 +25,12 @@ if compare_trainAud == 1
     trainAud_filename = sprintf('RDKHoop_trainAud_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
     load(trainAud_filename, 'data_output');
     cd(script_file_directory)
-    if coh_change == 1
-        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, stairAud_filename);
+    if Antonia_data == 1 && coh_change == 1
+        [data_output, cohlvlcoh] = Antonia_coh_level_correction(data_output, trainAud_filename);
+    elseif Antonia_data ~= 1 && coh_change == 1
+        [data_output, cohlvlcoh] = coh_level_correction(data_output, subjnum_s, ...
+        group_s, sex_s, age_s, script_file_directory, data_file_directory, ...
+        task_file_directory, trainAud_filename);
     end
     [right_vs_left, right_group, left_group] = direction_plotter(data_output);
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
@@ -46,8 +50,12 @@ if compare_trainVis == 1
     trainVis_filename = sprintf('RDKHoop_trainVis_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
     load(trainVis_filename, 'data_output');
     cd(script_file_directory)
-    if coh_change == 1
-        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, stairAud_filename);
+    if Antonia_data == 1 && coh_change == 1
+        [data_output, cohlvlcoh] = Antonia_coh_level_correction(data_output, trainVis_filename);
+    elseif Antonia_data ~= 1 && coh_change == 1
+        [data_output, cohlvlcoh] = coh_level_correction(data_output, subjnum_s, ...
+        group_s, sex_s, age_s, script_file_directory, data_file_directory, ...
+        task_file_directory, trainVis_filename);
     end
     [right_vs_left, right_group, left_group] = direction_plotter(data_output);
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
@@ -68,8 +76,12 @@ if compare_stairAud == 1
     stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
     load(stairAud_filename, 'data_output');
     cd(script_file_directory)
-    if coh_change == 1
-        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, stairAud_filename);
+    if Antonia_data == 1 && coh_change == 1
+        [data_output, cohlvlcoh] = Antonia_coh_level_correction(data_output, stairAud_filename);
+    elseif Antonia_data ~= 1 && coh_change == 1
+        [data_output, cohlvlcoh] = coh_level_correction(data_output, subjnum_s, ...
+        group_s, sex_s, age_s, script_file_directory, data_file_directory, ...
+        task_file_directory, stairAud_filename);
     end
     [right_vs_left, right_group, left_group] = direction_plotter(data_output);
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
@@ -89,8 +101,12 @@ if compare_stairVis == 1
     stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
     load(stairVis_filename, 'data_output');
     cd(script_file_directory)
-    if coh_change == 1
-        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, stairVis_filename);
+    if Antonia_data == 1 && coh_change == 1
+        [data_output, cohlvlcoh] = Antonia_coh_level_correction(data_output, stairVis_filename);
+    elseif Antonia_data ~= 1 && coh_change == 1
+        [data_output, cohlvlcoh] = coh_level_correction(data_output, subjnum_s, ...
+        group_s, sex_s, age_s, script_file_directory, data_file_directory, ...
+        task_file_directory, stairVis_filename);
     end
     [right_vs_left, right_group, left_group] = direction_plotter(data_output);
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
@@ -108,10 +124,21 @@ end
 if compare_psyAud == 1
     cd(data_file_directory)
     psyAud_filename = sprintf('RDKHoop_psyAud_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
-    load(psyAud_filename, 'data_output');
+    if Antonia_data == 1
+        load(psyAud_filename, 'MAT');
+    else
+        load(psyAud_filename, 'data_output');
+    end
     cd(script_file_directory)
-    if coh_change == 1
-        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, psyAud_filename);
+    if Antonia_data == 1
+        data_output = MAT;
+    end
+    if Antonia_data == 1 && coh_change == 1
+        [data_output, cohlvlcoh] = Antonia_coh_level_correction(data_output, psyAud_filename);
+    elseif Antonia_data ~= 1 && coh_change == 1
+        [data_output, cohlvlcoh] = coh_level_correction(data_output, subjnum_s, ...
+        group_s, sex_s, age_s, script_file_directory, data_file_directory, ...
+        task_file_directory, psyAud_filename);
     end
     data_output(data_output(:, 1) == 0, 1) = 3; 
     [right_vs_left, right_group, left_group] = direction_plotter(data_output);
@@ -130,10 +157,21 @@ end
 if compare_psyVis == 1
     cd(data_file_directory)
     psyVis_filename = sprintf('RDKHoop_psyVis_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
-    load(psyVis_filename, 'data_output');
+    if Antonia_data == 1
+        load(psyVis_filename, 'MAT');
+    else
+        load(psyVis_filename, 'data_output');
+    end
     cd(script_file_directory)
-    if coh_change == 1
-        data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, psyVis_filename);
+    if Antonia_data == 1
+        data_output = MAT;
+    end
+    if Antonia_data == 1 && coh_change == 1
+        [data_output, cohlvlcoh] = Antonia_coh_level_correction(data_output, psyVis_filename);
+    elseif Antonia_data ~= 1 && coh_change == 1
+        [data_output, cohlvlcoh] = coh_level_correction(data_output, subjnum_s, ...
+        group_s, sex_s, age_s, script_file_directory, data_file_directory, ...
+        task_file_directory, psyVis_filename);
     end
     data_output(data_output(:, 1) == 0, 1) = 3; 
     [right_vs_left, right_group, left_group] = direction_plotter(data_output);
@@ -232,9 +270,13 @@ end
 
 %% Set figure properties
 title(sprintf('Psych. Function Comparison: \n %s', identifier), 'Interpreter','none');
-xlabel( 'Coherence ((+)Rightward, (-)Leftward)', 'Interpreter', 'none');
+xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
 ylabel( '% Rightward Response', 'Interpreter', 'none');
-xlim([-1 1])
+if Antonia_data == 1 && coh_change ~= 1
+    xlim([-5 5])
+else
+    xlim([-1 1])
+end
 ylim([0 1])
 grid on
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)

@@ -28,7 +28,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur=.5; Fs=44100; triallength=2; nbblocks=4; silence=0.03;
 
 % Define Stimulus repetitions
-catchtrials=50; congruent_mstrials=27; incongruent_mstrials=3;
+catchtrials=30; congruent_mstrials=27; incongruent_mstrials=3;
 
 % visual stimulus properties
 maxdotsframe=150; 
