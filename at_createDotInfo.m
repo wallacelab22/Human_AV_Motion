@@ -32,8 +32,6 @@ function dotInfo = at_createDotInfo(inputtype, currviscoh, currvisdir, typeInt, 
 %                           after Flip - this allows incremental drawing of 
 %                           stimuli. Needs to be zero for dots to be erased.
 %   screenInfo.rseed        random # seed, can be empty set[] 
-
-Screen('Preference', 'SkipSyncTests', 0)
 % created June 2006 MKMK
 
 dotInfo.cohSet = currviscoh;

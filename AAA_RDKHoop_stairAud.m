@@ -6,11 +6,11 @@ clear;
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
 % % directories used throughout the experment
-scriptdirectory = '/home/wallace/Human_AV_Motion';
-localdirectory = '/home/wallace/Human_AV_Motion';
-serverdirectory = '/home/wallace/Human_AV_Motion';
-data_directory = '/home/wallace/Human_AV_Motion/data';
-analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot';
+scriptdirectory = '/home/wallace/Human_AV_Motion/';
+localdirectory = '/home/wallace/Human_AV_Motion/';
+serverdirectory = '/home/wallace/Human_AV_Motion/';
+data_directory = '/home/wallace/Human_AV_Motion/data/';
+analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
 cd(scriptdirectory)
 
 % % general variables to smoothly run PTB
