@@ -1,41 +1,42 @@
-function [data_output] = coh_to_cohLevel(data_output, save_name)
+function [outdata] = coh_to_cohLevel(outdata, stimcoh_list, save_name)
 %  Replace coherence levels percentages (0-1) to whole number integers (1-5)
 
-if data_output(:, 2) <= 1
-    unique_vals = unique(data_output(:, 2));
-    val_map = containers.Map('KeyType', 'double', 'ValueType', 'double');
-    counter = 1;
-    for i = 1:length(unique_vals)
-        curr_val = unique_vals(i);
-        
-        if isKey(val_map, curr_val)
-            data_output(data_output(:, 2) == curr_val, 2) = val_map(curr_val);
-        else
-            data_output(data_output(:, 2) == curr_val, 2) = counter;
-            val_map(curr_val) = counter;
-            counter = counter + 1;
+if any(outdata(:, 2) > 0 & outdata(:, 2) < 1)
+    % Replace aud coherence levels with coherences
+    if contains(save_name, 'Aud') || contains(save_name, 'AV')
+        aud_to_replace = [stimcoh_list(1,:), 0]; % Values to replace
+        aud_replace = [7 6 5 4 3 2 1 0]; % Values to replace with
+        for ii = 1:numel(aud_to_replace)
+            idx = ismember(outdata(:,2),aud_to_replace(ii));
+            outdata(idx,2) = aud_replace(ii);
         end
-    end 
-end
-
-if contains(save_name, 'AV')
-    if data_output(:, 4) <= 1
-        unique_vals = unique(data_output(:, 4));
-        val_map = containers.Map('KeyType', 'double', 'ValueType', 'double');
-        counter = 1;
-        for i = 1:length(unique_vals)
-            curr_val = unique_vals(i);
-            
-            if isKey(val_map, curr_val)
-                data_output(data_output(:, 4) == curr_val, 4) = val_map(curr_val);
-            else
-                data_output(data_output(:, 4) == curr_val, 4) = counter;
-                val_map(curr_val) = counter;
-                counter = counter + 1;
-            end
-        end 
+        rows_to_keep = ismember(outdata(:, 2), aud_replace);
+        % Keep rows where the value in column 2 is a whole number value
+        outdata = outdata(rows_to_keep, :);
     end
-end
     
-
+    % Replace vis coherence levels with coherences
+    if contains(save_name, 'AV')
+        vis_to_replace = [stimcoh_list(2,:), 0]; % Values to replace
+        vis_replace = [7 6 5 4 3 2 1 0]; % Values to replace with
+        for ii = 1:numel(vis_to_replace)
+            idx = ismember(outdata(:,4),vis_to_replace(ii));
+            outdata(idx,4) = vis_replace(ii);
+        end
+        rows_to_keep = ismember(outdata(:, 4), vis_replace);
+        % Keep rows where the value in column 2 is a whole number value
+        outdata = outdata(rows_to_keep, :);
+    end
+    
+    if contains(save_name, 'Vis')
+        vis_to_replace = [stimcoh_list(2,:), 0]; % Values to replace
+        vis_replace = [7 6 5 4 3 2 1 0]; % Values to replace with
+        for ii = 1:numel(vis_to_replace)
+            idx = ismember(outdata(:,2),vis_to_replace(ii));
+            outdata(idx,2) = vis_replace(ii);
+        end
+        rows_to_keep = ismember(outdata(:, 2), vis_replace);
+        % Keep rows where the value in column 2 is a whole number value
+        outdata = outdata(rows_to_keep, :);
+    end
 end
