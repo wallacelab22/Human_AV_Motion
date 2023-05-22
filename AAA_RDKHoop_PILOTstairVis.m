@@ -31,7 +31,14 @@ maxdotsframe=150; monWidth=50.8; viewDist =120;
 
 % general drawing color
 cWhite0=255;
-%% collect subjectinformation
+
+% breaking staircase conditions
+recent_acc = 0;
+trial_history = 25;
+lower_lim = 0.55;
+upper_lim = 0.65;
+
+%% collect subject information
 subjnum = input('Enter the subject''s number: ');
 subjnum_s = num2str(subjnum);
 if length(subjnum_s) < 2
@@ -303,7 +310,7 @@ for ii= 1:num_trials
                 keyisdown = 0; %reset to no key down and retry
             end
         end
-    end;
+    end
     while GetSecs - start_time < interval
         WaitSecs(0.0002);
     end
@@ -338,8 +345,16 @@ for ii= 1:num_trials
         trial_status = 0;
         data_output(ii, 6) = trial_status;
     end
-
+    % Compute the trial history accuracy to determine if staircase can be
+    % finished
+    if ii > trial_history
+        recent_acc = mean(data_output((ii-(trial_history-1)):ii, 6));
+        if recent_acc > lower_lim && recent_acc < upper_lim
+            break;
+        end
+    end
 end
+
 
 cd(data_directory)
 save(filename, 'data_output')

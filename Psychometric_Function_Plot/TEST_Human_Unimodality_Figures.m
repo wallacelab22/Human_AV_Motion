@@ -1,7 +1,7 @@
 %% TEST Human Unimodality Figures %%%%%%%%%%
 % written 02/16/23 - Adam Tiesman
 clear;
-close all;
+%close all;
 
 % Version info
 Version = 'TEST_Human_Unimodal_v.2.0' ; % after code changes, change version
@@ -58,12 +58,9 @@ elseif block == 6
 end
 
 underscore = '_';
-save_name = strcat('RDKHoop_', block_analysis, underscore, subjnum_s, ...
-    underscore, group_s, underscore, sex_s, underscore, age_s);
 identifier = strcat(subjnum_s, underscore, group_s, underscore, sex_s, underscore, age_s);
-sprintf(save_name);
+save_name = strcat('RDKHoop_', block_analysis, underscore, identifier);
 load(save_name);
-
 
 cd(script_file_directory)
 %% Provide specific variables 
@@ -154,7 +151,7 @@ end
 
 % if fig_save == 1
 %     cd(figure_file_directory)
-%     if contains(save_name, 'stair') || contains(save_name, 'train')
+%     if contains(save_name, 'stair') || contains(save_name, 'train') && compare_plot == 0
 %         savefig(save_name, 'cohlvlcoh', 'accuracy_plot', 'stairstep_plot', 'normCDF_plot')
 %     elseif contains(save_name, 'stair') || contains(save_name, 'train') && compare_plot == 1
 %         savefig(save_name, 'cohlvlcoh', 'accuracy_plot', 'stairstep_plot', 'fig')
