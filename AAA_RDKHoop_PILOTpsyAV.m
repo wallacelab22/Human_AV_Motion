@@ -442,9 +442,9 @@ for ii=1:length(MAT)
     while KbCheck; end %hold if key is held down
     
     %% save data
-    if resp == 115
+    if resp == 13
         MAT(ii, 5)=1;
-    elseif resp == 114
+    elseif resp == 12
         MAT(ii, 5)=2;
     else
         MAT(ii, 5)= nan;
@@ -462,7 +462,9 @@ end
 
 cd(localdirectory)
 save([data_directory filename], 'MAT');
-save(filename, 'MAT', 'audcoh_file', 'viscoh_file')
+audcoh_list = [audcoh7 audcoh6 audcoh5 audcoh4 audcoh3 audcoh2 audcoh1];
+viscoh_list = [viscoh7 viscoh6 viscoh5 viscoh4 viscoh3 viscoh2 viscoh1];
+save(filename, 'MAT', 'audcoh_list', 'viscoh_list')
 
 %% Goodbye
 cont(curWindow, cWhite0);
