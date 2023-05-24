@@ -41,12 +41,12 @@ if compare_trainAud == 1
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
-    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, trainAud_filename);
     scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'g', 'HandleVisibility', 'off');
     hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'g');
+    plot(x, p, 'LineWidth', 3, 'Color', 'g', 'DisplayName', 'Aud training');
 end
 
 % Visual training
@@ -69,12 +69,12 @@ if compare_trainVis == 1
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
-    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, trainVis_filename);
     scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'g', 'HandleVisibility', 'off');
     hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'g');
+    plot(x, p, 'LineWidth', 3, 'Color', 'g', 'DisplayName', 'Vis training');
 end
 
 
@@ -104,12 +104,12 @@ if compare_stairAud == 1
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
-    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, aud_std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, stairAud_filename);
     scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
     hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'r');
+    plot(x, p, 'LineWidth', 3, 'Color', 'r', 'DisplayName', 'Aud staircase');
 end
 
 % Visual staircase
@@ -138,12 +138,12 @@ if compare_stairVis == 1
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ...
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
-    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, vis_std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, stairVis_filename);
     scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
     hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'b');
+    plot(x, p, 'LineWidth', 3, 'Color', 'b', 'DisplayName', 'Vis staircase');
 end 
 
 % Auditory unisensory
@@ -171,12 +171,18 @@ if compare_psyAud == 1
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ... 
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
-    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, aud_std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
         coherence_frequency, compare_plot, psyAud_filename);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
-    hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'r');
+    if Antonia_data == 1
+        scatter(xData, yData, sz, 'LineWidth', 3, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
+        hold on
+        plot(x, p, 'LineWidth', 4, 'Color', 'r', 'DisplayName', 'Aud unisensory');
+    else
+        scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
+        hold on
+        plot(x, p, 'LineWidth', 3, 'Color', 'r', 'DisplayName', 'Aud unisensory');
+    end
 end
 
 % Visual unisensory
@@ -204,12 +210,18 @@ if compare_psyVis == 1
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, ... 
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
-    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, vis_std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, psyVis_filename);
-    scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
-    hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'b');
+    if Antonia_data == 1
+        scatter(xData, yData, sz, 'LineWidth', 3, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
+        hold on
+        plot(x, p, 'LineWidth', 4, 'Color', 'b', 'DisplayName', 'Vis unisensory');
+    else
+        scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
+        hold on
+        plot(x, p, 'LineWidth', 3, 'Color', 'b', 'DisplayName', 'Vis unisensory');
+    end
 end
 
 % AV PILOT
@@ -287,12 +299,12 @@ if compare_PILOTpsyAV == 1
     coherence_lvls = sort(combined_coh, 'ascend');
     coherence_lvls = unique(coherence_lvls, 'stable');
     coherence_lvls = coherence_lvls';
-    [fig, p_values, ci, threshold, xData, yData, x, p, sz] = normCDF_plotter(coherence_lvls, ...
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, av_std_gaussian] = normCDF_plotter(coherence_lvls, ...
         rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
         coherence_frequency, compare_plot, PILOTpsyAV_filename);
     scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm', 'HandleVisibility', 'off');
     hold on
-    plot(x, p, 'LineWidth', 3, 'Color', 'm');
+    plot(x, p, 'LineWidth', 3, 'Color', 'm', 'DisplayName', 'AV');
 end
 
 if compare_PILOTpsyAV == 1
@@ -310,17 +322,26 @@ end
 
 %% Set figure properties
 title(sprintf('Psych. Function Comparison: \n %s', identifier), 'Interpreter','none');
+legend('Location', 'NorthWest', 'Interpreter', 'none');
 xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
 ylabel( '% Rightward Response', 'Interpreter', 'none');
 if Antonia_data == 1 && coh_change ~= 1
     xlim([-5 5])
 elseif compare_PILOTpsyAV == 1
     xlim([-7 7])
+elseif Antonia_data == 1 && coh_change == 1
+    xlim([-0.6 0.6])
+    axis equal
 else
     xlim([-1 1])
 end
 ylim([0 1])
 grid on
+text(0,0.2,"aud cumulative gaussian std: " + aud_std_gaussian)
+text(0,0.15,"vis cumulative gaussian std: " + vis_std_gaussian)
+if compare_PILOTpsyAV == 1
+    text(0,0.1,"av cumulative gaussian std: " + av_std_gaussian)
+end
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 
 end
