@@ -4,11 +4,12 @@ clear;
 close all;
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
-scriptdirectory = '/home/wallace/Human_AV_Motion';
-localdirectory = '/home/wallace/Human_AV_Motion';
-serverdirectory = '/home/wallace/Human_AV_Motion';
-data_directory = '/home/wallace/Human_AV_Motion/data';
-analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot';
+scriptdirectory = '/home/wallace/Human_AV_Motion/';
+localdirectory = '/home/wallace/Human_AV_Motion/';
+serverdirectory = '/home/wallace/Human_AV_Motion/';
+data_directory = '/home/wallace/Human_AV_Motion/data/';
+analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
+Shadlen_directory = '/home/wallace/Human_AV_Motion/Shadlen_code/';
 cd(scriptdirectory)
 
 %% general variables to smoothly run PTB
@@ -126,14 +127,16 @@ for ii= 1:num_trials
     end
 
     %create info matrix from Visual Stim
-    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed);
+    cd(Shadlen_directory)
+    dotInfo = createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed);
     spf =screenInfo.frameDur; % second per frame
     center=screenInfo.center; %center of the screen
     ppd=screenInfo.ppd; %pixels per degree of visual angle; right now set to 10�/sec
     speed=dotInfo.speed; %speed of dots in �/sec
     dotSize=dotInfo.dotSize; %dot size in pixels
     apD = dotInfo.apXYD(3); %aperture of stimulus in � of visual angle*10; right now set to 5�
-    
+    cd(scriptdirectory)
+
     %% display the stimuli
     while KbCheck; end
     keycorrect=0;
