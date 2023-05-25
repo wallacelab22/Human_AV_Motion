@@ -20,6 +20,10 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
+% Specify the dot speed in the RDK
+deg_sec_dot_speed = input('Dot Speed (in deg/sec): ');
+block_dot_speed = deg_sec_dot_speed/10;
+
 %% general stimlus variables
 dur=.5; triallength=2; nbblocks=2;
 
@@ -122,7 +126,7 @@ for ii= 1:num_trials
     end
 
     %create info matrix from Visual Stim
-    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur);
+    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed);
     spf =screenInfo.frameDur; % second per frame
     center=screenInfo.center; %center of the screen
     ppd=screenInfo.ppd; %pixels per degree of visual angle; right now set to 10�/sec
