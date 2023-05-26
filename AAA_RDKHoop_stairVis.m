@@ -158,6 +158,7 @@ for ii= 1:num_trials
     dxdy = repmat(speed * 10/apD * (3/monRefresh) ...
         * [cos(pi*visInfo.dir/180.0) -sin(pi*visInfo.dir/180.0)], ndots,1);
     
+    
     % ARRAYS, INDICES for loop
     ss = rand(ndots*3, 2); % array of dot positions raw [xposition, yposition]
     
@@ -307,7 +308,7 @@ for ii= 1:num_trials
                 keyisdown = 0; %reset to no key down and retry
             end
         end
-    end;
+    end
     while GetSecs - start_time < interval
         WaitSecs(0.0002);
     end
@@ -322,9 +323,9 @@ for ii= 1:num_trials
         data_output(ii, 1) = visInfo.dir;
     end
     data_output(ii, 2) = visInfo.coh;
-    if resp == 115
+    if resp == 115 || resp == 13
         data_output(ii, 3) = 1;
-    elseif resp == 114
+    elseif resp == 114 || resp == 12
         data_output(ii, 3) = 2;
     else
         data_output(ii, 3) = nan;

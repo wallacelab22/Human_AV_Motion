@@ -5,14 +5,14 @@
 
 % Copyright 2014 Shadlen Lab
 
-addpath('/Users/a.tiesman/Documents/Research/Human_AV_Motion/')
-
+addpath('/home/wallace/Human_AV_Motion/')
+addpath('/home/wallace/Human_AV_Motion/Shadlen_code')
 try
     clear;
     
     % Initialize the screen. This will create a screen in monitor 1. In order to
     % create in monitor 0, replace 1 with 0 in the following line of code.
-    screenInfo = openExperiment(38,50,1);        
+    screenInfo = openExperiment(38,50,0);        
     
     targets = setNumTargets(6); % initialize targets        
     dotInfo = createDotInfo; % initialize dots   

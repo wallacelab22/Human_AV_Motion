@@ -53,7 +53,7 @@ dotInfo.cohSet = currviscoh;
 
 dotInfo.numDotField = 1;
 dotInfo.apXYD = [0 50 50];  
-dotInfo.speed = block_dot_speed;
+dotInfo.speed = block_dot_speed; %5.88;
 dotInfo.coh = dotInfo.cohSet(ceil(rand*length(dotInfo.cohSet)))*1000; 
 dotInfo.dir = dotInfo.dirSet(ceil(rand*length(dotInfo.dirSet)));
 dotInfo.maxDotTime = dur;

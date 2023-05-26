@@ -156,6 +156,7 @@ ndots = min(dotInfo.maxDotsPerFrame, ...
 
 % Don't worry about pre-allocating, the number of dot fields should never be 
 % large enough to cause memory problems.
+
 for df = 1 : dotInfo.numDotField
     % dxdy is an N x 2 matrix that gives jumpsize in units on 0..1
     %   deg/sec * ap-unit/deg * sec/jump = ap-unit/jump

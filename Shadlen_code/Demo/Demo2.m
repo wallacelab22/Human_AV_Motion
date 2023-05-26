@@ -6,12 +6,15 @@
 % to the targets/fixation.
 %
 
+addpath('/home/wallace/Human_AV_Motion/')
+addpath('/home/wallace/Human_AV_Motion/Shadlen_code')
+
 try
     clear;
     
     % Initialize the screen
     % touchscreen is 34, laptop is 32, viewsonic is 38
-    screenInfo = openExperiment(34,50,1);
+    screenInfo = openExperiment(34,50,0);
     
     % Initialize dots
     % 1 means using keyboard, not touchscreen

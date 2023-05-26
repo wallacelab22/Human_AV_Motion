@@ -1,4 +1,4 @@
-function dotInfo = createDotInfo(inputtype, visInfo.coh, visInfo.dir)
+function dotInfo = createDotInfo_PILOT(inputtype)
 % CREATEDOTINFO creates the default dotInfo structure
 %
 % dotInfo = createDotInfo(inputtype)
@@ -14,22 +14,23 @@ if nargin < 1
     %inputtype = 2; % use touchscreen
 end
 
-dotInfo.cohSet = visInfo.coh;
+dotInfo.cohSet = [0.75];
 
 % Left and right are the only directions that make sense for keypress experiment 
 % at the moment. For the keypress experiment, the first number will be associated 
 % with the left arrow, and the second with the right arrow (0 degrees is to the right)
-dotInfo.dirSet = visInfo.dir;
+dotInfo.dirSet = [180, 0];
 
 % For multi set of dots, all the following fields must be provided.
 % Choose either group of codes to use single set or multi set.
 
 dotInfo.numDotField = 1;
 dotInfo.apXYD = [0 0 100];  
-dotInfo.speed = 50;
+dotInfo.speed = 93.8;
 dotInfo.coh = dotInfo.cohSet(ceil(rand*length(dotInfo.cohSet)))*1000; 
 dotInfo.dir = dotInfo.dirSet(ceil(rand*length(dotInfo.dirSet)));
-dotInfo.maxDotTime = 0.5;
+dotInfo.maxDotTime = 10;
+
 
 %{
 dotInfo.numDotField = 2;
