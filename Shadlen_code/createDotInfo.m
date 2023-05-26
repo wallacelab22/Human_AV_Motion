@@ -1,4 +1,4 @@
-function dotInfo = createDotInfo(inputtype, visInfo.coh, visInfo.dir)
+function dotInfo = createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed)
 % CREATEDOTINFO creates the default dotInfo structure
 %
 % dotInfo = createDotInfo(inputtype)
@@ -26,10 +26,10 @@ dotInfo.dirSet = visInfo.dir;
 
 dotInfo.numDotField = 1;
 dotInfo.apXYD = [0 0 100];  
-dotInfo.speed = 50;
+dotInfo.speed = block_dot_speed; % e.g. 50 for this value means 5 deg/sec???
 dotInfo.coh = dotInfo.cohSet(ceil(rand*length(dotInfo.cohSet)))*1000; 
 dotInfo.dir = dotInfo.dirSet(ceil(rand*length(dotInfo.dirSet)));
-dotInfo.maxDotTime = 0.5;
+dotInfo.maxDotTime = dur;
 
 %{
 dotInfo.numDotField = 2;
@@ -158,17 +158,18 @@ end
 % itype = 0 fixed delay, minNum is actual delay time (need minNum)
 % itype = 1 uniform distribution (need minNum and maxNum)
 % itype = 2 exponential distribution (need all three)
-dotInfo.itype = 0;
+dotInfo.itype = typeInt;
 % min - get directly from trialInfo
-dotInfo.imax = [];
-dotInfo.imean = [];
+dotInfo.imin = minNum;
+dotInfo.imax = maxNum;
+dotInfo.imean = meanNum;
 
 %%%%%%% BELOW HERE IS STUFF THAT SHOULD GENERALLY NOT BE CHANGED!
 
 % make time distributions - only has affect if variable distribution
 dotInfo.minTime = makeInterval(dotInfo.itype,dotInfo.durTime,dotInfo.imax,dotInfo.imean);
 
-dotInfo.maxDotsPerFrame = 150;   % by trial and error.  Depends on graphics card
+dotInfo.maxDotsPerFrame = maxdotsframe;   % by trial and error.  Depends on graphics card
 % Use test_dots7_noRex to find out when we miss frames.
 % The dots routine tries to maintain a constant dot density, regardless of
 % aperture size.  However, it respects MaxDotsPerFrame as an upper bound.
