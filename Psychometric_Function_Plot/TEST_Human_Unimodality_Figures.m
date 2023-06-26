@@ -1,7 +1,7 @@
 %% TEST Human Unimodality Figures %%%%%%%%%%
 % written 02/16/23 - Adam Tiesman
 clear;
-close all;
+% close all;
 
 % Version info
 Version = 'TEST_Human_Unimodal_v.2.0' ; % after code changes, change version

@@ -46,14 +46,14 @@ dotInfo.cohSet = currviscoh;
 % elseif currvisdir == 0
 %     dotInfo.dirSet = [180 0];
 % end
- dotInfo.dirSet =currvisdir;
+ dotInfo.dirSet = currvisdir;
 
 % For multi set of dots, all the following fields must be provided.
 % Choose either group of codes to use single set or multi set.
 
 dotInfo.numDotField = 1;
 dotInfo.apXYD = [0 50 50];  
-dotInfo.speed = block_dot_speed; %5.88;
+dotInfo.speed = 5.88; %block_dot_speed; %5.88;
 dotInfo.coh = dotInfo.cohSet(ceil(rand*length(dotInfo.cohSet)))*1000; 
 dotInfo.dir = dotInfo.dirSet(ceil(rand*length(dotInfo.dirSet)));
 dotInfo.maxDotTime = dur;

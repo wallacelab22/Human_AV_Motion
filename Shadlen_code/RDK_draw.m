@@ -1,6 +1,4 @@
-function [dot_info, frames, rseed, start_time, end_time, response, response_time] = ...
-RDK_draw(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, ...
-maxdotsframe, dur, block_dot_speed, screenInfo)
+function [dot_info, frames, rseed, start_time, end_time, response, response_time] = RDK_draw(inputtype, visInfo, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed, screenInfo)
 % This function initializes the RDK on a trial by trial basis
 
 dotInfo = createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed);
