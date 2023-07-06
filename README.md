@@ -6,9 +6,9 @@ This is designed to be used alongside an EEG machine for neural recordings.
 
 _Auditory_ : broadband white noise
  
-    Velocity - 94.52 degrees/sec
+    Velocity - 58.8 degrees/sec
   
-    Displacement - 47.26 degrees of visual angle
+    Displacement - 29.4 degrees of visual angle
   
     Duration - 500 ms
   
