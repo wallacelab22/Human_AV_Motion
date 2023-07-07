@@ -1,4 +1,4 @@
-function dotInfo = at_createDotInfo(inputtype, currviscoh, currvisdir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed)
+function dotInfo = at_createDotInfo(inputtype, currviscoh, currvisdir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, vel_stair, visInfo)
 % CREATEDOTINFO creates the default dotInfo structure
 %
 % dotInfo = createDotInfo(inputtype)
@@ -52,8 +52,12 @@ dotInfo.cohSet = currviscoh;
 % Choose either group of codes to use single set or multi set.
 
 dotInfo.numDotField = 1;
-dotInfo.apXYD = [0 50 50];  
-dotInfo.speed = 5.88; %block_dot_speed; %5.88;
+dotInfo.apXYD = [0 50 50];
+if vel_stair == 1
+    dotInfo.speed = visInfo.vel;
+else
+    dotInfo.speed = 5.88; %block_dot_speed; %5.88;
+end
 dotInfo.coh = dotInfo.cohSet(ceil(rand*length(dotInfo.cohSet)))*1000; 
 dotInfo.dir = dotInfo.dirSet(ceil(rand*length(dotInfo.dirSet)));
 dotInfo.maxDotTime = dur;
