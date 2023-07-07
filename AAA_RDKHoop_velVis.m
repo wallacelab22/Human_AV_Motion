@@ -81,6 +81,7 @@ Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
 Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
+% Create matrix for data to be stored
 data_output = zeros(num_trials, 7);
 
 % Generate the list of possible coherences by decreasing log values
@@ -96,7 +97,7 @@ for i = 1:nlog_coh_steps
     visInfo.cohSet = [visInfo.cohSet nlog_value];
 end
 
-visInfo.velSet = [5 10 15 20 25 30 35 40 45 50];
+visInfo.velSet = [5 10 15 20 25 30 35 40 45 50 55 60];
 
 % Prob 1 = chance of coherence lowering after correct response
 % Prob 2 = chance of direction changing after correct response
