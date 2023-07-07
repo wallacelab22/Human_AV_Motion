@@ -20,11 +20,6 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
-% Specify the dot speed in the RDK
-% deg_sec_dot_speed = input('Dot Speed (in deg/sec): ');
-% block_dot_speed = deg_sec_dot_speed/10;
-block_dot_speed = 5.88;
-
 %% general stimlus variables
 dur=1; triallength=2; nbblocks=2;
 
@@ -85,8 +80,10 @@ Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
 Screen('Flip', curWindow,0);
 WaitSecs(2); %wait for 2s
 
+data_output = zeros(num_trials, 7);
+
 % Generate the list of possible coherences by decreasing log values
-visInfo.cohStart = 1;
+visInfo.cohStart = 0.5;
 nlog_coh_steps = 19;
 nlog_division = sqrt(2);
 visInfo.cohSet = [visInfo.cohStart];
@@ -106,7 +103,7 @@ visInfo.velSet = [5 10 15 20 25 30 35 40 45 50];
 % Prob 4 = chance of direction changing after incorrect response
 % Prob 5 = chance of velocity raising after correct response
 % Prob 6 = chance of velocity lowering after incorrect response
-visInfo.probs = [0.33 0.5 0.66 0.5 0.33 0.66];
+visInfo.probs = [0 0.5 0.66 0.5 0.33 0.66];
 
 %% Experiment Loop
 for ii= 1:num_trials
@@ -118,7 +115,7 @@ for ii= 1:num_trials
         vel_index = 1;
         visInfo.vel = visInfo.velSet(vel_index);
     elseif ii > 1
-        [visInfo, staircase_index] = staircase_procedure(trial_status, stimInfo, staircase_index, vel_stair, vel_index);
+        [visInfo, staircase_index, vel_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
     end
 
     if visInfo.dir == 1
@@ -128,7 +125,7 @@ for ii= 1:num_trials
     end
 
     %create info matrix from Visual Stim
-    dotInfo = at_createDotInfo(inputtype, currviscoh, currvisdir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, vel_stair, visInfo);
+    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, vel_stair, visInfo.vel);
     spf =screenInfo.frameDur; % second per frame
     center=screenInfo.center; %center of the screen
     ppd=screenInfo.ppd; %pixels per degree of visual angle; right now set to 10�/sec
@@ -381,7 +378,7 @@ for ii= 1:num_trials
         trial_status = 0;
         data_output(ii, 6) = trial_status;
     end
-
+    data_output(ii,7) = visInfo.vel;
 end
 
 cd(data_directory)

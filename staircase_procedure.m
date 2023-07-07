@@ -1,4 +1,4 @@
-function [stimInfo, staircase_index] = staircase_procedure(trial_status, stimInfo, staircase_index, vel_stair, vel_index)
+function [stimInfo, staircase_index, vel_index] = staircase_procedure(trial_status, stimInfo, staircase_index, vel_stair, vel_index)
 %% Staircase Procedure
 % Staircase_procedure function checks last trial for accuracy. Then, using
 % preset probabilities, decides whether to LOWER coherence/change direction
