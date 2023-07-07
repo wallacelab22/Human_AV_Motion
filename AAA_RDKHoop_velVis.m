@@ -21,14 +21,15 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
 %% general stimlus variables
-dur=1; triallength=2; nbblocks=2;
+dur=0.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
 num_trials = 500;
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
-maxdotsframe=50; monWidth=50.8; viewDist =120;
-vel_stair = 1;
+maxdotsframe=150; monWidth=50.8; viewDist =120;
+vel_stair = 1; %tells code to use velocity staircase instead of manual velocity
+block_dot_speed = 0; %manually inputted dot speed variable invalid here because we are using staircase inside
 
 % general drawing color
 cWhite0=255;
@@ -84,7 +85,7 @@ data_output = zeros(num_trials, 7);
 
 % Generate the list of possible coherences by decreasing log values
 visInfo.cohStart = 0.5;
-nlog_coh_steps = 19;
+nlog_coh_steps = 5;
 nlog_division = sqrt(2);
 visInfo.cohSet = [visInfo.cohStart];
 for i = 1:nlog_coh_steps
@@ -103,7 +104,7 @@ visInfo.velSet = [5 10 15 20 25 30 35 40 45 50];
 % Prob 4 = chance of direction changing after incorrect response
 % Prob 5 = chance of velocity raising after correct response
 % Prob 6 = chance of velocity lowering after incorrect response
-visInfo.probs = [0 0.5 0.66 0.5 0.33 0.66];
+visInfo.probs = [0.33 0.5 0.66 0.5 0.33 0.66];
 
 %% Experiment Loop
 for ii= 1:num_trials
@@ -125,7 +126,7 @@ for ii= 1:num_trials
     end
 
     %create info matrix from Visual Stim
-    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, vel_stair, visInfo.vel);
+    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed, vel_stair, visInfo.vel);
     spf =screenInfo.frameDur; % second per frame
     center=screenInfo.center; %center of the screen
     ppd=screenInfo.ppd; %pixels per degree of visual angle; right now set to 10�/sec
