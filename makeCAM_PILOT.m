@@ -1,5 +1,5 @@
 % function [CAM] = makeCAM(cLvl,speed, direction, dur, Fs)
-function [CAM] = makeCAM_PILOT(cLvl, direction, dur, silence, Fs, noise_reduction_scalar)
+function [CAM, N3] = makeCAM_PILOT(cLvl, direction, dur, silence, Fs, noise_reduction_scalar)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CAM =       array of voltages to present to speakers                 %
@@ -64,6 +64,5 @@ CAM = makeramp(dur,Fs,CAM);
 % Scales the signal between -1 and 1
 CAM = normalize(CAM);
 CAM = cat(1, silent, CAM);
-
  
 

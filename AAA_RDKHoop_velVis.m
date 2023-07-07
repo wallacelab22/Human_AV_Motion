@@ -35,6 +35,7 @@ maxdotsframe=150; monWidth=50.8; viewDist =120;
 
 % general drawing color
 cWhite0=255;
+
 %% collect subjectinformation
 subjnum = input('Enter the subject''s number: ');
 subjnum_s = num2str(subjnum);

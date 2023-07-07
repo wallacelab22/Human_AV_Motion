@@ -195,9 +195,9 @@ for ii=1:num_trials
     %% save data
     data_output(ii, 1) = audInfo.dir; 
     data_output(ii, 2) = audInfo.coh; 
-    if resp == 115
+    if resp == 115 || resp == 13
         data_output(ii, 3)=1;
-    elseif resp == 114
+    elseif resp == 114 || resp == 12
         data_output(ii, 3)=2;
     else
         data_output(ii, 3)= nan;

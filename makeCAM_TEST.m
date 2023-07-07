@@ -13,10 +13,10 @@ function [CAM] = makeCAM(cLvl, direction, dur, silence, Fs, ii)
 % Fs =        Sampling frequency                                       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% % Initialize Audio
-% PsychPortAudio('Close')
-% InitializePsychSound;
-% pahandle = PsychPortAudio('Open', 5, [], 0, 44100, 2);
+% Initialize Audio
+PsychPortAudio('Close')
+InitializePsychSound;
+pahandle = PsychPortAudio('Open', 2, [], 0, 44100, 2);
 
 audInfo.cohStart = 0.5102;
 nlog_coh_steps = 9;
