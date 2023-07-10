@@ -28,8 +28,8 @@ num_trials = 500;
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
 maxdotsframe=150; monWidth=50.8; viewDist =120;
-vel_stair = 1; %tells code to use velocity staircase instead of manual velocity
-block_dot_speed = 0; %manually inputted dot speed variable invalid here because we are using staircase inside
+vel_stair = 1; % tells code to use velocity staircase instead of manual velocity
+block_dot_speed = 0; % manually inputted dot speed variable invalid here because we are using staircase inside
 
 % general drawing color
 cWhite0=255;
@@ -86,7 +86,7 @@ data_output = zeros(num_trials, 7);
 
 % Generate the list of possible coherences by decreasing log values
 visInfo.cohStart = 0.5;
-nlog_coh_steps = 5;
+nlog_coh_steps = 2;
 nlog_division = sqrt(2);
 visInfo.cohSet = [visInfo.cohStart];
 for i = 1:nlog_coh_steps
