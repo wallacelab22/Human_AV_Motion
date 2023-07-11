@@ -109,7 +109,8 @@ end
 
 % Generate list of velocities and durations if the given velocity were to
 % travel from speaker to speaker
-audInfo.velSet = [55 50 45 40 35 30 25 20 15 10 5];
+audInfo.velStart = 55;
+audInfo.velSet = [55 50 45 40 25 5];
 audInfo.durSet = zeros(1, length(audInfo.velSet));
 audInfo.snipSet = zeros(2, length(audInfo.velSet));
 speaker_distance = 29.4; % in degrees, based on the fact stimulus duration is 0.5 sec and speed is 58.8 deg/s
@@ -126,7 +127,7 @@ end
 % Prob 4 = chance of direction changing after incorrect response
 % Prob 5 = chance of velocity raising after correct response
 % Prob 6 = chance of velocity lowering after incorrect response
-audInfo.probs = [0.33 0.5 0.66 0.5 0.33 0.66];
+audInfo.probs = [0 0.5 0 0.5 0.33 0.66];
 
 %% Experiment Loop
 for ii=1:num_trials
@@ -139,10 +140,12 @@ for ii=1:num_trials
         audInfo.vel = audInfo.velSet(vel_index);
         audInfo.t_start = audInfo.snipSet(1,vel_index);
         audInfo.t_end = audInfo.snipSet(2,vel_index);
+        audInfo.durRaw = audInfo.durSet(vel_index); 
     elseif ii > 1
         [audInfo, staircase_index, vel_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
         audInfo.t_start = audInfo.snipSet(1,vel_index);
         audInfo.t_end = audInfo.snipSet(2,vel_index);
+        audInfo.durRaw = audInfo.durSet(vel_index);
     end
     
     %% display the stimuli
@@ -158,7 +161,7 @@ for ii=1:num_trials
     
     % THE MAIN LOOP
     frames = 0;
-    CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs, noise_reduction_scalar);
+    CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
     CAM = snipCAM(CAM, Fs, audInfo.t_start, audInfo.t_end);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows == number of channels.

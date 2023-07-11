@@ -1,6 +1,7 @@
 function [Snipped_CAM] = snipCAM(CAM, Fs, t_start, t_end)
 %Takes CAM function and snips the given velocity to only last the stimulus
 %duration.
+
 Snipped_CAM_dur = (t_end - t_start); % in s
 CAM_1 = CAM(:,1);
 CAM_2 = CAM(:,2);
