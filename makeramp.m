@@ -11,8 +11,7 @@ rampu = -rampd;
 
 ramp = zeros(length(CAM), 2);
 ramp = .5.*[rampu rampu;x x;rampd rampd]+.5;
-while length(CAM) ~= length(rampt)
+while length(CAM) ~= length(ramp)
     ramp(end+1,:) = 0;
 end
 CAM_r = CAM.*ramp;
-
