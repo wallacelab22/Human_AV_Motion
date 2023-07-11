@@ -136,7 +136,7 @@ for ii=1:num_trials
         audInfo.dir = randi([1,2]);
         audInfo.coh = audInfo.cohSet(staircase_index);
         vel_index = 1;
-        audInfo.vel = audInfo.audSet(vel_index);
+        audInfo.vel = audInfo.velSet(vel_index);
         audInfo.t_start = audInfo.snipSet(1,vel_index);
         audInfo.t_end = audInfo.snipSet(2,vel_index);
     elseif ii > 1

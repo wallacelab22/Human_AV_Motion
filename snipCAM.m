@@ -1,14 +1,13 @@
 function [Snipped_CAM] = snipCAM(CAM, Fs, t_start, t_end)
 %Takes CAM function and snips the given velocity to only last the stimulus
 %duration.
-
-Snipped_CAM_dur = (t_end - t_start)/1000; % in ms
+Snipped_CAM_dur = (t_end - t_start); % in s
 CAM_1 = CAM(:,1);
 CAM_2 = CAM(:,2);
 
 % Convert the start and end time to samples
-samp_start = t_start * (Fs/1000);
-samp_end = t_end * (Fs/1000);
+samp_start = t_start * Fs;
+samp_end = t_end * Fs;
 
 % Cut CAM at sample locations
 if samp_start == 0

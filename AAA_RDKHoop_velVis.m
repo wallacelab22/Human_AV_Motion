@@ -24,7 +24,7 @@ data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 dur=0.5; triallength=2; nbblocks=2;
 
 % Define Stimulus repetitions
-num_trials = 500;
+num_trials = 250;
 % visual stimulus properties
 % maxdotsframe=150; monWidth=42.5; viewDist =120;
 maxdotsframe=150; monWidth=50.8; viewDist =120;
@@ -86,7 +86,7 @@ data_output = zeros(num_trials, 7);
 
 % Generate the list of possible coherences by decreasing log values
 visInfo.cohStart = 0.5;
-nlog_coh_steps = 2;
+nlog_coh_steps = 4;
 nlog_division = sqrt(2);
 visInfo.cohSet = [visInfo.cohStart];
 for i = 1:nlog_coh_steps
@@ -105,7 +105,7 @@ visInfo.velSet = [5 10 15 20 25 30 35 40 45 50 55 60];
 % Prob 4 = chance of direction changing after incorrect response
 % Prob 5 = chance of velocity raising after correct response
 % Prob 6 = chance of velocity lowering after incorrect response
-visInfo.probs = [0.33 0.5 0.66 0.5 0.33 0.66];
+visInfo.probs = [0.1 0.5 0.9 0.5 0.33 0.66];
 
 %% Experiment Loop
 for ii= 1:num_trials
