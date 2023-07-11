@@ -1,7 +1,7 @@
 %% TEST Human Unimodality Figures %%%%%%%%%%
 % written 02/16/23 - Adam Tiesman
 clear;
-% close all;
+close all;
 
 % Version info
 Version = 'TEST_Human_Unimodal_v.2.0' ; % after code changes, change version
@@ -71,6 +71,7 @@ catch_var = 0;
 compare_plot = input('Psychometric Function Comparison? 0 for NO, 1 for YES: ');
 coh_change = input('Coherence level to coherence correction? 0 for No, 1 for YES: ');
 crosscompare_plot = input('Compare Plots across Subj/Group? 0 for NO, 1 for YES: ');
+vel_stair = input('Velocity Staircase? 0 for NO, 1 for YES: ');
 fig_save = input('Save figures? 0 = NO, 1 = YES : ');
 
 % Specific if analyzing Antonia's data
@@ -103,13 +104,21 @@ elseif Antonia_data ~= 1 && coh_change == 1
 end
 
 %% Split the data by direction of motion for the trial
-[right_vs_left, right_group, left_group] = direction_plotter(data_output);
+if vel_stair == 1
+    [right_vs_left, right_group, left_group] = vel_direction_plotter(data_output);
+else
+    [right_vs_left, right_group, left_group] = direction_plotter(data_output);
+end
 
 %% Loop over each coherence level and extract the corresponding rows of the matrix for leftward, catch, and rightward trials
 rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
 
 %% Create frequency count for each coherence level
-[total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+if vel_stair == 1
+    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = vel_frequency_plotter(data_output, right_vs_left);
+else
+    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
+end
 
 %% Create a graph of percent correct at each coherence level
 accuracy_plot = accuracy_plotter(right_vs_left, right_group, left_group, save_name);
@@ -143,6 +152,9 @@ if compare_plot == 1
     end
 elseif compare_plot == 0
     normCDF_plot = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name);
+    if vel_stair == 1
+        xlim(-60, 60)
+    end
     if fig_save == 1
         cd(figure_file_directory)
         saveas(gcf, strcat('Norm_CDF_Function_', save_name, '.jpg'))

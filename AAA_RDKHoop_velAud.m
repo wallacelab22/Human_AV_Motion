@@ -1,7 +1,7 @@
 %% AUDITORY STAIRCASE %%%%%%%%%%
 % written by Adam Tiesman 2/27/2023
 clear;
-% close all;
+close all;
 
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
@@ -107,7 +107,18 @@ for i = 1:nlog_coh_steps
     audInfo.cohSet = [audInfo.cohSet nlog_value];
 end
 
-audInfo.velSet = [60 55 50 45 40 35 30 25 20 15 10 5];
+% Generate list of velocities and durations if the given velocity were to
+% travel from speaker to speaker
+audInfo.velSet = [55 50 45 40 35 30 25 20 15 10 5];
+audInfo.durSet = zeros(1, length(audInfo.velSet));
+audInfo.snipSet = zeros(2, length(audInfo.velSet));
+speaker_distance = 29.4; % in degrees, based on the fact stimulus duration is 0.5 sec and speed is 58.8 deg/s
+for j = 1:length(audInfo.velSet)
+    audInfo.durSet(j) = speaker_distance/audInfo.velSet(j);
+    audInfo.snipSet(1, j) = (audInfo.durSet(j)/2) - (dur/2);
+    audInfo.snipSet(2, j) = (audInfo.durSet(j)/2) + (dur/2);
+end
+
 
 % Prob 1 = chance of coherence lowering after correct response
 % Prob 2 = chance of direction changing after correct response
@@ -126,8 +137,12 @@ for ii=1:num_trials
         audInfo.coh = audInfo.cohSet(staircase_index);
         vel_index = 1;
         audInfo.vel = audInfo.audSet(vel_index);
+        audInfo.t_start = audInfo.snipSet(1,vel_index);
+        audInfo.t_end = audInfo.snipSet(2,vel_index);
     elseif ii > 1
         [audInfo, staircase_index, vel_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
+        audInfo.t_start = audInfo.snipSet(1,vel_index);
+        audInfo.t_end = audInfo.snipSet(2,vel_index);
     end
     
     %% display the stimuli
@@ -143,7 +158,8 @@ for ii=1:num_trials
     
     % THE MAIN LOOP
     frames = 0;
-    CAM=makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs, noise_reduction_scalar);
+    CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs, noise_reduction_scalar);
+    CAM = snipCAM(CAM, Fs, audInfo.t_start, audInfo.t_end);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows == number of channels.
         
@@ -198,7 +214,7 @@ for ii=1:num_trials
                 keyisdown = 0; %reset to no key down and retry
             end
         end
-    end;
+    end
     while GetSecs - start_time < interval
         WaitSecs(0.0002);
     end
