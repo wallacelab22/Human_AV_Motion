@@ -1,5 +1,6 @@
 function [resp,rt,start_time] = at_dotGenerate(visInfo, dotInfo, screenInfo, ...
-    maxdotsframe, dur, curWindow, fix)
+    screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix, ...
+    responded, resp, rt)
 
 spf = screenInfo.frameDur; % second per frame
 center= screenInfo.center; % center of the screen

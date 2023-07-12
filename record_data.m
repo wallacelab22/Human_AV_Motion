@@ -1,4 +1,4 @@
-function [trial_status, data_output] = record_data(data_output, visInfo, resp, rt)
+function [trial_status, data_output] = record_data(data_output, visInfo, resp, rt, ii)
 %% Save data to the initialized data_output matrix
 % Each row is a trial
 %

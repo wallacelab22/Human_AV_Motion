@@ -29,6 +29,7 @@ data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 % at_createDotInfo
 block_dot_speed = input('Dot Speed (in deg/sec): ');
 vel_stair = 0;
+vel_index = 0;
 visInfo.vel = block_dot_speed;
 
 %% General stimlus variables
@@ -103,7 +104,7 @@ for ii= 1:num_trials
         % coherence and direction for the current trial. All based on
         % probabilities, which change depending on if the previous trials
         % was correct or incorrect.
-        [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair);
+        [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
     end
 
     % Necessary variable changing for RDK code. 1 = RIGHT, which is 0 
@@ -130,8 +131,9 @@ for ii= 1:num_trials
     %% Dot Generation.
     % This function plots the dots and updates them frame by frame in
     % accordance with their coherence, direction, and other dotInfo.
-    [resp,rt,start_time] = at_dotGenerate(visInfo, dotInfo, screenInfo, maxdotsframe, ...
-        dur, curWindow, fix);
+    [resp,rt,start_time] = at_dotGenerate(visInfo, dotInfo, screenInfo, ...
+    screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix, ...
+    responded, resp, rt);
     
     %% Erase last dots & go back to only plotting fixation
     Screen('DrawingFinished',curWindow);
@@ -139,10 +141,10 @@ for ii= 1:num_trials
     Screen('Flip', curWindow,0);
     
     %%  ITI & response recording
-    [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time);
+    [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
     
     %% Save data into data_output on a trial by trial basis
-    [trial_status, data_output] = record_data(data_output, visInfo, resp, rt);
+    [trial_status, data_output] = record_data(data_output, visInfo, resp, rt, ii);
 
 end
 

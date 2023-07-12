@@ -1,4 +1,4 @@
-function [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time)
+function [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt)
 %%  ITI & response recording
 interval=makeInterval(typeInt,minNum,maxNum,meanNum);
 interval=interval+dur;
