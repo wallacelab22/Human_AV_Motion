@@ -1,6 +1,9 @@
 function [Snipped_CAM] = snipCAM(CAM, Fs, t_start, t_end)
+% 7/11/23 - Adam Tiesman
 %Takes CAM function and snips the given velocity to only last the stimulus
-%duration.
+%duration. The stimulus start (t_start) and end (t_end) of the CAM function
+%is dependent on the raw duration it takes for signal (CAM) to move from
+%one speaker to another.
 
 Snipped_CAM_dur = (t_end - t_start); % in s
 CAM_1 = CAM(:,1);

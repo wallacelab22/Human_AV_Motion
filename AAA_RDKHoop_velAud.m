@@ -94,23 +94,24 @@ WaitSecs(2); %wait for 2s
 % Create matrix for data to be stored
 data_output = zeros(num_trials, 7);
 
-% Generate the list of possible coherences by decreasing log values
+% Generate the list of possible coherences of decreasing log values
 audInfo.cohStart = 0.5;
 nlog_coh_steps = 5;
 nlog_division = sqrt(2);  
-audInfo.cohSet = [audInfo.cohStart];
-for i = 1:nlog_coh_steps
-    if i == 1
-        nlog_value = audInfo.cohStart;
-    end
-    nlog_value = nlog_value/nlog_division;
-    audInfo.cohSet = [audInfo.cohSet nlog_value];
+audInfo.cohSet = zeros(1, nlog_coh_steps);
+for i = 1:length(audInfo.cohSet)
+    audInfo.cohSet(i) = audInfo.cohStart/(nlog_division^(i-1));
 end
 
 % Generate list of velocities and durations if the given velocity were to
 % travel from speaker to speaker
 audInfo.velStart = 55;
-audInfo.velSet = [55 50 45 40 25 5];
+vel_steps = 11;
+audInfo.velSet = zeros(1, vel_steps);
+vel_subtract = 5;
+for i = 1:length(audInfo.velSet)
+        audInfo.velSet(i) = audInfo.velStart - ((i-1)*vel_subtract);
+end
 audInfo.durSet = zeros(1, length(audInfo.velSet));
 audInfo.snipSet = zeros(2, length(audInfo.velSet));
 speaker_distance = 29.4; % in degrees, based on the fact stimulus duration is 0.5 sec and speed is 58.8 deg/s
@@ -161,7 +162,12 @@ for ii=1:num_trials
     
     % THE MAIN LOOP
     frames = 0;
+    % makeCAM and makeCAM_PILOT create an array voltages to be presented
+    % via speakers that creates perceptual auditory motion from one speaker
+    % to another
     CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
+    % snipCAM snips the CAM file so the duration stays constant, and the
+    % displacement is changed, dependent on the velocity of the trial
     CAM = snipCAM(CAM, Fs, audInfo.t_start, audInfo.t_end);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows == number of channels.

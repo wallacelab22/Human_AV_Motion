@@ -152,9 +152,6 @@ if compare_plot == 1
     end
 elseif compare_plot == 0
     normCDF_plot = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name);
-    if vel_stair == 1
-        xlim(-60, 60)
-    end
     if fig_save == 1
         cd(figure_file_directory)
         saveas(gcf, strcat('Norm_CDF_Function_', save_name, '.jpg'))
