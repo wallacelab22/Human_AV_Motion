@@ -12,18 +12,42 @@ data_directory = '/home/wallace/Human_AV_Motion/data/';
 analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
 cd(scriptdirectory)
 
-% % general variables to smoothly run PTB
- KbName('UnifyKeyNames');
+%% General variables to smoothly run PTB
+% Necessary for psychtoolbox to read keyboard inputs.
+KbName('UnifyKeyNames');
+AssertOpenGL; % was not in Aud stim code before
 
 %% define general values how long recording iTis for, might have been poisson distribution
+% minNum, maxNum, and meanNum all deal with the intertrial interval, which
+% is generated in the function iti_response_recording.
 inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
-%% general stimlus variables duration of trial, trial length to keep it open for rt reasons, 
-dur=.5; Fs=44100; triallength=2; nbblocks=2; silence=0.03; audtrials=20;
-buffersize=(dur+silence)*Fs; s.Rate=44100; num_trials = 100;
+% Set these parameters to 0 so staircase_procedure function knows not to
+% manipulate velocity.
+vel_stair = 0;
+vel_index = 0;
 
-% visual stimulus properties number of dots, viewing distance from monitor
-maxdotsframe=150; monWidth=42.5; viewDist =120; cWhite0=255;
+%% General stimlus variables
+% dur is stimulus duration, triallength is total length of 1 trial (this is
+% currently unused in code), nbblocks is used to divide up num_trials 
+% into equal parts to give subject breaks if there are many trials. 
+% Set to 0 if num_trials is short and subject does not need break(s).
+dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 2; 
+
+% Define buffersize in order to make CAM (auditory stimulus)
+silence=0.03; buffersize=(dur+silence)*Fs; s.Rate=44100; 
+
+% Define stimulus repetitions
+num_trials = 100;
+
+% Visual stimulus properties relating to monitor (measure yourself),
+% maxdotsframe is for RDK and is a limitation of your graphics card. The
+% only way you can know its limit is by trial and error. Variables monWidth
+% and viewDist are measured in centimeters.
+maxdotsframe = 150; monWidth = 50.8; viewDist = 120;
+
+% General drawing color used for RDK, instructions, etc.
+cWhite0 = 255;
 
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
@@ -34,43 +58,23 @@ dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound 
 % convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
 
-%% collect subjectinformation
-subjnum = input('Enter the subject''s number: ');
-subjnum_s = num2str(subjnum);
-if length(subjnum_s) < 2
-    subjnum_s = strcat(['0' subjnum_s]);
-end
-group = input('Enter the test group: ');
-group_s = num2str(group);
-if length(group_s) < 2
-    group_s = strcat(['0' group_s]);
-end
-sex = input('Enter the subject''s sex (1 = female; 2 = male): ');
-sex_s=num2str(sex);
-if length(sex_s) < 2
-    sex_s = strcat(['0' sex_s]);
-end
-age = input('Enter the subject''s age: ');
-age_s=num2str(age);
-if length(age_s) < 2
-    age_s = strcat(['0' age_s]);
-end
-
-underscore = '_';
-filename = strcat('RDKHoop_stairAud',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
-
-cd(datadirectory)
-save(filename,'filename')
-cd(scriptdirectory)
+%% Collect subject information
+% Manually set block depending on what task code this is. Function
+% collect_subject_information then prompts you to fill in numbers for
+% subject that will allow you to uniquely identify subjects. Variable
+% filename will be also used as the save_name, so be sure to remember in
+% order to access later.
+block = 'RDKHoop_stairVis';
+filename = collect_subject_information(block);
 
 %% Initialize
+% curScreen = 0 if there is only one monitor. If more than one monitor, 
+% check display settings on PC. curScreen will probably equal 1 or 2 
+% (e.g. monitor for stimulus presentation and monitor to run MATLAB code).
 curScreen=0;
-Screen('Preference', 'SkipSyncTests', 1);
-screenInfo = openExperiment(monWidth, viewDist, curScreen);
-curWindow= screenInfo.curWindow;
-screenRect= screenInfo.screenRect;
-% Enable alpha blending with proper blend-function. We need it for drawing
-% of smoothed points.
+
+% Opens psychtoolbox and initializes experiment
+[screenInfo, curWindow, screenRect] = initialize_exp(monWidth, viewDist, curScreen);
 
 %% Initialize Audio
 PsychPortAudio('Close')

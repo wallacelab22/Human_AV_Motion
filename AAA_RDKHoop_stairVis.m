@@ -22,7 +22,7 @@ AssertOpenGL;
 %% define general values
 % minNum, maxNum, and meanNum all deal with the intertrial interval, which
 % is generated in the function iti_response_recording.
-inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
+inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 
 % Specify if you want data analysis. If 1, task code will print out figures
 % after code has completed.
@@ -35,15 +35,14 @@ visInfo.vel = block_dot_speed;
 
 % Set these parameters to 0 so staircase_procedure function knows not to
 % manipulate velocity.
-vel_stair = 0;
-vel_index = 0;
+vel_stair = 0; vel_index = 0;
 
-%% General stimlus variables
-% dur is stimulus duration, triallength is total length of 1 trial (this is
-% currently unused in code), nbblocks is used to divide up num_trials 
+%% General stimulus variables
+% dur is stimulus duration (in sec), triallength is total length of 1 trial
+% (currently unused in code), nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur= 0.5; triallength=2; nbblocks=2;
+dur = 0.5; triallength = 2; nbblocks = 2;
 
 % Define stimulus repetitions
 num_trials = 100;
@@ -55,8 +54,9 @@ num_trials = 100;
 maxdotsframe = 150; monWidth = 50.8; viewDist = 120;
 
 % General drawing color used for RDK, instructions, etc.
-cWhite0=255;
+cWhite0 = 255;
 
+%% Collect subject information
 % Manually set block depending on what task code this is. Function
 % collect_subject_information then prompts you to fill in numbers for
 % subject that will allow you to uniquely identify subjects. Variable
@@ -69,7 +69,7 @@ filename = collect_subject_information(block);
 % curScreen = 0 if there is only one monitor. If more than one monitor, 
 % check display settings on PC. curScreen will probably equal 1 or 2 
 % (e.g. monitor for stimulus presentation and monitor to run MATLAB code).
-curScreen=0;
+curScreen = 0;
 
 % Opens psychtoolbox and initializes experiment
 [screenInfo, curWindow, screenRect] = initialize_exp(monWidth, viewDist, curScreen);
@@ -81,7 +81,7 @@ curScreen=0;
 instructions_psyVis(curWindow, cWhite0);
 
 %% Flip up fixation dot
-fix = fixation_dot_flip(screenRect,curWindow);
+fix = fixation_dot_flip(screenRect, curWindow);
 
 % Initialize matrix to store data. Data is recorded every trial using
 % function record_data
@@ -138,7 +138,7 @@ for ii = 1:num_trials
     %% Dot Generation.
     % This function plots the dots and updates them frame by frame in
     % accordance with their coherence, direction, and other dotInfo.
-    [resp, rt, start_time] = at_dotGenerate(visInfo, dotInfo, screenInfo, ...
+    [resp, rt, start_time] = at_generateDot(visInfo, dotInfo, screenInfo, ...
     screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix, ...
     responded, resp, rt);
     
