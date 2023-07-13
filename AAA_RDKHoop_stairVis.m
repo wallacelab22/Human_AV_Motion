@@ -81,7 +81,7 @@ curScreen = 0;
 instructions_psyVis(curWindow, cWhite0);
 
 %% Flip up fixation dot
-fix = fixation_dot_flip(screenRect, curWindow);
+[fix, s] = fixation_dot_flip(screenRect,curWindow);
 
 % Initialize matrix to store data. Data is recorded every trial using
 % function record_data

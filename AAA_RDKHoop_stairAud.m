@@ -24,8 +24,7 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
 % Set these parameters to 0 so staircase_procedure function knows not to
 % manipulate velocity.
-vel_stair = 0;
-vel_index = 0;
+vel_stair = 0; vel_index = 0;
 
 %% General stimlus variables
 % dur is stimulus duration, triallength is total length of 1 trial (this is
@@ -77,33 +76,23 @@ curScreen=0;
 [screenInfo, curWindow, screenRect] = initialize_exp(monWidth, viewDist, curScreen);
 
 %% Initialize Audio
-PsychPortAudio('Close')
-Screen('BlendFunction', curWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-InitializePsychSound;
-pahandle = PsychPortAudio('Open', 5, [], 0, Fs, 2);
+[pahandle] = initialize_aud(curWindow, Fs);
 
 %% Welcome and Instrctions for the Suject
 instructions_psyAud(curWindow, cWhite0);
 
 %% Flip up fixation dot
-fix=[screenRect(3)/2,screenRect(4)/2]; %define fix position of fix dot
-Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
-Screen('Flip', curWindow,0);
-s.NotifyWhenScansQueuedBelow = 22050;
-WaitSecs(2); %wait for 2s
+[fix, s] = fixation_dot_flip(screenRect,curWindow);
+
+% Initialize matrix to store data. Data is recorded every trial using
+% function record_data
+data_output = zeros(num_trials, 6);
 
 % Generate the list of possible coherences by decreasing log values
 audInfo.cohStart = 0.5;
-nlog_coh_steps = 19;
-nlog_division = sqrt(2);  
-audInfo.cohSet = [audInfo.cohStart];
-for i = 1:nlog_coh_steps
-    if i == 1
-        nlog_value = audInfo.cohStart;
-    end
-    nlog_value = nlog_value/nlog_division;
-    audInfo.cohSet = [audInfo.cohSet nlog_value];
-end
+nlog_coh_steps = 12;
+nlog_division = sqrt(2);
+audInfo = cohSet_generation(audInfo, nlog_coh_steps, nlog_division);
 
 % Prob 1 = chance of coherence lowering after correct response
 % Prob 2 = chance of direction changing after correct response
@@ -112,14 +101,22 @@ end
  audInfo.probs = [0.33 0.5 0.66 0.5];
 
 %% Experiment Loop
-for ii=1:num_trials
+% Loop through every trial.
+for ii = 1:num_trials
     
-    if ii == 1 
-        staircase_index = 1; % Start staircase on coherence of 1
+    if ii == 1 % the first trial in the staircase
+        staircase_index = 1;
+        % Start staircase on random direction (left or right)
         audInfo.dir = randi([1,2]);
+        % Start staircase on first coherence in cohSet
         audInfo.coh = audInfo.cohSet(staircase_index);
-    elseif ii > 1
-        [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index);
+    elseif ii > 1 % every trial in staircase except for first trial
+        % Function staircase_procedure takes the previous trial's accuracy
+        % (incorr or corr) and uses a random number (0 to 1) to determine the
+        % coherence and direction for the current trial. All based on
+        % probabilities, which change depending on if the previous trials
+        % was correct or incorrect.t
+        [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
     end
     
     %% display the stimuli
@@ -135,9 +132,9 @@ for ii=1:num_trials
     
     % THE MAIN LOOP
     frames = 0;
-    CAM=makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs, noise_reduction_scalar);
+    CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs, noise_reduction_scalar);
     wavedata = CAM;
-    nrchannels = size(wavedata,1); % Number of rows == number of channels.
+    nrchannels = size(wavedata,1); % Number of rows = number of channels.
         
     while continue_show
         %DS look for key down if no response yet
