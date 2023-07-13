@@ -1,4 +1,4 @@
-function [trial_status, data_output] = record_data(data_output, visInfo, resp, rt, ii)
+function [trial_status, data_output] = record_data(data_output, stimInfo, resp, rt, ii)
 %% Save data to the initialized data_output matrix
 % Each row is a trial
 %
@@ -9,14 +9,8 @@ function [trial_status, data_output] = record_data(data_output, visInfo, resp, r
 % Column 5 = subject character press, number denotes key pressed
 % Column 6 = whether subject was correct (1) or incorrect (0) for trial
 
-if visInfo.dir == 0
-    visInfo.dir = 1;
-    data_output(ii, 1) = visInfo.dir; 
-elseif visInfo.dir == 180
-    visInfo.dir = 2;
-    data_output(ii, 1) = visInfo.dir;
-end
-data_output(ii, 2) = visInfo.coh;
+data_output(ii, 1) = stimInfo.dir;
+data_output(ii, 2) = stimInfo.coh;
 if resp == 115 || resp == 13
     data_output(ii, 3) = 1;
 elseif resp == 114 || resp == 12

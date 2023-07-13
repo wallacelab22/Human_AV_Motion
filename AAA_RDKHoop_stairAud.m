@@ -1,14 +1,13 @@
 %% AUDITORY STAIRCASE %%%%%%%%%%
-% written by Adam Tiesman 2/27/2023
+% written by Adam Tiesman - adam.j.tiesman@vanderbilt.edu
+% Initial commit on 2/27/2023
 clear;
-% close all;
+close all;
 
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
 % %% define general variables
 % % directories used throughout the experment
 scriptdirectory = '/home/wallace/Human_AV_Motion/';
-localdirectory = '/home/wallace/Human_AV_Motion/';
-serverdirectory = '/home/wallace/Human_AV_Motion/';
 data_directory = '/home/wallace/Human_AV_Motion/data/';
 analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
 cd(scriptdirectory)
@@ -60,7 +59,7 @@ end
 underscore = '_';
 filename = strcat('RDKHoop_stairAud',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
 
-cd(localdirectory)
+cd(datadirectory)
 save(filename,'filename')
 cd(scriptdirectory)
 

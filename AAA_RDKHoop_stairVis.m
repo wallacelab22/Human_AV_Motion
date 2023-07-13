@@ -101,7 +101,7 @@ visInfo.probs = [0.33 0.5 0.66 0.5];
 
 %% Experiment Loop
 % Loop through every trial.
-for ii= 1:num_trials
+for ii = 1:num_trials
     
     if ii == 1 % the first trial in the staircase
         staircase_index = 1;
@@ -114,17 +114,13 @@ for ii= 1:num_trials
         % (incorr or corr) and uses a random number (0 to 1) to determine the
         % coherence and direction for the current trial. All based on
         % probabilities, which change depending on if the previous trials
-        % was correct or incorrect.
+        % was correct or incorrect.t
         [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
     end
 
     % Necessary variable changing for RDK code. 1 = RIGHT, which is 0 
     % degrees on unit circle, 2 = LEFT, which is 180 degrees on unit circle
-    if visInfo.dir == 1
-        visInfo.dir=0; % RIGHTward
-    elseif visInfo.dir == 2
-        visInfo.dir=180; % LEFTward
-    end
+    visInfo = direction_conversion(visInfo);
 
     %% Create info matrix for Visual Stim. 
     % This dotInfo  output informs at_dotGenerate how to generate the RDK. 
@@ -154,8 +150,12 @@ for ii= 1:num_trials
     %%  ITI & response recording
     [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
     
+    %% Direction conversion
+    visInfo = direction_conversion(visInfo);
+
     %% Save data into data_output on a trial by trial basis
     [trial_status, data_output] = record_data(data_output, visInfo, resp, rt, ii);
+
 
 end
 
