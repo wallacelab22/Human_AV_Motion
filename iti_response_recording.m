@@ -3,7 +3,7 @@ function [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, d
 interval=makeInterval(typeInt,minNum,maxNum,meanNum);
 interval=interval+dur;
 %DS loop until interval is over
-%while KbCheck; end %hold if key is held down
+while KbCheck; end %hold if key is held down
 while ~keyisdown %while no key is down
     [keyisdown,secs,keycode] = KbCheck; %look for a key
     if GetSecs - start_time >= interval %if elapsed time since stim onset is > ISI

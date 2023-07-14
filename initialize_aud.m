@@ -9,16 +9,16 @@ devices = PsychPortAudio('GetDevices');
 
 % Search for audio devices containing 'UMC' in their name
 % 'UMC' is the name of our audio interface
-selectedDevice = [];
+selectedDeviceIndex = [];
 audioName = 'UMC';
 for i = 1:length(devices)
     deviceName = devices(i).DeviceName;
     if contains(deviceName, audioName)
-        selectedDevice = devices(i).DeviceIndex;
+        selectedDeviceIndex = devices(i).DeviceIndex;
         break;
     end
 end
 
-pahandle = PsychPortAudio('Open', selectedDevice, [], 0, Fs, 2);
+pahandle = PsychPortAudio('Open', selectedDeviceIndex, [], 0, Fs, 2);
 
 end

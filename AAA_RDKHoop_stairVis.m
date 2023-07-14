@@ -6,10 +6,8 @@ close all;
 
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION; 2=LEFTWARD MOTION
 
-% Variables created to navigate code folders throughout script.
+% Directories created to navigate code folders throughout script.
 scriptdirectory = '/home/wallace/Human_AV_Motion';
-localdirectory = '/home/wallace/Human_AV_Motion';
-serverdirectory = '/home/wallace/Human_AV_Motion';
 data_directory = '/home/wallace/Human_AV_Motion/data';
 analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot';
 cd(scriptdirectory)
@@ -114,7 +112,7 @@ for ii = 1:num_trials
         % (incorr or corr) and uses a random number (0 to 1) to determine the
         % coherence and direction for the current trial. All based on
         % probabilities, which change depending on if the previous trials
-        % was correct or incorrect.t
+        % was correct or incorrect.
         [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
     end
 
@@ -159,10 +157,6 @@ for ii = 1:num_trials
 
 end
 
-cd(data_directory)
-save(filename, 'data_output')
-
-cd(scriptdirectory)
 %% Goodbye
 cont(curWindow, cWhite0);
 
@@ -181,9 +175,8 @@ if data_analysis == 1
     catch_var = 0;
     save_name = filename;
 
-    cd(analysis_directory)
     % This function has functions that plot the currect data
-    [accuracy, stairstep] = analyze_data(data_output);
+    [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory);
 end
 
 cd(data_directory)

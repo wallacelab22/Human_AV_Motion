@@ -5,8 +5,8 @@ clear;
 close all;
 
 %% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
-% %% define general variables
-% % directories used throughout the experment
+
+% Directories created to navigate code folders throughout script
 scriptdirectory = '/home/wallace/Human_AV_Motion/';
 data_directory = '/home/wallace/Human_AV_Motion/data/';
 analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
@@ -34,7 +34,7 @@ vel_stair = 0; vel_index = 0;
 dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 2; 
 
 % Define buffersize in order to make CAM (auditory stimulus)
-silence=0.03; buffersize=(dur+silence)*Fs; s.Rate=44100; 
+silence = 0.03; buffersize = (dur+silence)*Fs; s.Rate = 44100; 
 
 % Define stimulus repetitions
 num_trials = 100;
@@ -70,7 +70,7 @@ filename = collect_subject_information(block);
 % curScreen = 0 if there is only one monitor. If more than one monitor, 
 % check display settings on PC. curScreen will probably equal 1 or 2 
 % (e.g. monitor for stimulus presentation and monitor to run MATLAB code).
-curScreen=0;
+curScreen = 0;
 
 % Opens psychtoolbox and initializes experiment
 [screenInfo, curWindow, screenRect] = initialize_exp(monWidth, viewDist, curScreen);
@@ -115,7 +115,7 @@ for ii = 1:num_trials
         % (incorr or corr) and uses a random number (0 to 1) to determine the
         % coherence and direction for the current trial. All based on
         % probabilities, which change depending on if the previous trials
-        % was correct or incorrect.t
+        % was correct or incorrect.
         [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
     end
     
@@ -130,96 +130,26 @@ for ii = 1:num_trials
     priorityLevel = MaxPriority(curWindow,'KbCheck'); %make sure Window commands are correct
     Priority(priorityLevel);
     
-    % THE MAIN LOOP
+    %% THE MAIN LOOP
+    % Generates auditory stimulus
     frames = 0;
     CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs, noise_reduction_scalar);
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows = number of channels.
-        
-    while continue_show
-        %DS look for key down if no response yet
-        if ~responded %if no response
-            [key,secs,keycode] = KbCheck; %look for a key
-            WaitSecs(0.0002); %tiny wait
-            if key %if there was a key
-                resp = find(keycode,1,'last');
-                rt = GetSecs - start_time; %calculate rt from start time earlier
-                responded = 1; %note that there was a response
-            end
-        end
-        
-        % Now do next drawing commands
-        Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
-        % After all computations, flip
-        Screen('Flip', curWindow,0);
-        frames = frames + 1;
-        
-        %% get RTs
-        if frames == 1
-            start_time = GetSecs;
-	        PsychPortAudio('FillBuffer', pahandle, wavedata');
-	        PsychPortAudio('Start', pahandle, 1);
-        end
-        
-        % Check for end of loop
-        continue_show = continue_show - 1;
-    end
+    
+    % Presents auditory stimulus and gets reaction time both at frame = 1.
+    % Presents stimulus for duration specified in dur, which is the length
+    % of CAM (wavedata)
+    [resp, rt, start_time] = at_generateAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata);
   
     %%  ITI & response recording
-    interval=makeInterval(typeInt,minNum,maxNum,meanNum);
-    interval=interval+dur;
-    %DS loop until interval is over
-    while KbCheck; end %hold if key is held down
-    while ~keyisdown %while no key is down
-        [keyisdown,secs,keycode] = KbCheck; %look for a key
-        if GetSecs - start_time >= interval %if elapsed time since stim onset is > ISI
-            break %break loop
-        elseif keyisdown && ~responded %if a key is down
-            if length(find(keycode,1)) == 1 %block multikey, if 1 key down
-                responded = 1; %mark that they responded
-                resp = find(keycode,1,'last');
-                rt = GetSecs - start_time; %record rt
-                while GetSecs - start_time < interval %wait for rest of ISI
-                    WaitSecs(0.0002);
-                end
-                break; % and break
-            else
-                keyisdown = 0; %reset to no key down and retry
-            end
-        end
-    end;
-    while GetSecs - start_time < interval
-        WaitSecs(0.0002);
-    end
-    while KbCheck; end %hold if key is held down
-    %% save data
-    data_output(ii, 1) = audInfo.dir; 
-    data_output(ii, 2) = audInfo.coh; 
-    if resp == 115 || resp == 13
-        data_output(ii, 3)=1;
-    elseif resp == 114 || resp == 12
-        data_output(ii, 3)=2;
-    else
-        data_output(ii, 3)= nan;
-    end
-    data_output(ii, 4)=rt;
-    data_output(ii,5)=char(resp);
-    if data_output(ii, 3) == data_output(ii, 1)% If response is the same as direction, Correct Trial
-        trial_status = 1;
-        data_output(ii, 6) = trial_status;
-    else 
-        trial_status = 0;
-        data_output(ii, 6) = trial_status;
-    end
+    [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
+    
+    %% Save data into data_output on a trial by trial basis
+    [trial_status, data_output] = record_data(data_output, audInfo, resp, rt, ii);
 
 end
 
-
-
-cd(data_directory)
-save(filename, 'data_output');
-
-cd(scriptdirectory)
 %% Goodbye
 cont(curWindow, cWhite0);
 
@@ -239,27 +169,9 @@ if data_analysis == 1
     catch_var = 0;
     save_name = filename;
 
-    cd(analysis_directory)
-
-    %% Split the data by direction of motion for the trial
-    [right_vs_left, right_group, left_group] = direction_plotter(data_output);
-    
-    %% Loop over each coherence level and extract the corresponding rows of the matrix for leftward, catch, and rightward trials
-    rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
-    
-    %% Create frequency count for each coherence level
-    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
-    
-    %% Create a graph of percent correct at each coherence level
-    accuracy = accuracy_plotter(right_vs_left, right_group, left_group, save_name);
-    
-    %% Create a Normal Cumulative Distribution Function (NormCDF)
-%     CDF = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, save_name);
-    
-    %% Create a stairstep graph for visualizing staircase
-    stairstep = stairstep_plotter(data_output, save_name);
+    % This function has functions that plot the currect data
+    [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory);
 end
 
 cd(data_directory)
 save(filename)
-

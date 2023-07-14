@@ -1,4 +1,7 @@
-function [accuracy, stairstep] = analyze_data(data_output)
+function [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory)
+
+cd(analysis_directory)
+
 %% Split the data by direction of motion for the trial
 [right_vs_left, right_group, left_group] = direction_plotter(data_output);
 
