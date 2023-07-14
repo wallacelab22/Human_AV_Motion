@@ -1,4 +1,4 @@
-function [resp, rt, start_time] = at_generateAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata)
+function [resp, rt, start_time] = at_generateAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, markers)
 % % Generates auditory stimulus and waits for key response for the
 % stimulus duration
 
@@ -25,6 +25,9 @@ while continue_show
         start_time = GetSecs;
         PsychPortAudio('FillBuffer', pahandle, wavedata');
         PsychPortAudio('Start', pahandle, 1);
+        if EEG_nature == 1
+            outlet.push_sample({markers});
+        end
     end
     
     % Check for end of loop
