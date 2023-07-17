@@ -25,12 +25,7 @@ if training_nature == 1
     % Training sound properties
     correct_freq = 2000;
     incorrect_freq = 800;
-    correct_sound = MakeBeep(correct_freq, (dur+silence), Fs);
-    corr_soundout = [correct_sound', correct_sound'];
-    corr_soundout = normalize(corr_soundout);
-    incorrect_sound = MakeBeep(incorrect_freq, (dur+silence), Fs);
-    incorr_soundout = [incorrect_sound', incorrect_sound'];
-    incorr_soundout = normalize(incorr_soundout);
+    [corr_soundout, incorr_soundout] = at_createBeep(correct_freq, incorr_freq, dur, silence, Fs);
 end
 
 % Directories created to navigate code folders throughout script.
@@ -118,7 +113,13 @@ visInfo = cohSet_generation(visInfo, nlog_coh_steps, nlog_division);
 % Prob 2 = chance of direction changing after correct response
 % Prob 3 = chance of coherence raising after incorrect response
 % Prob 4 = chance of direction changing after incorrect response
-visInfo.probs = [0.33 0.5 0.66 0.5];
+% Prob 5 = chance of velocity raising after correct response
+% Prob 6 = chance of velocity lowering after incorrect response
+if vel_stair == 1
+    visInfo.probs = [0.1 0.5 0.9 0.5 0.33 0.66];
+else
+    visInfo.probs = [0.33 0.5 0.66 0.5 0 0];
+end
 
 %% Experiment Loop
 % Loop through every trial.

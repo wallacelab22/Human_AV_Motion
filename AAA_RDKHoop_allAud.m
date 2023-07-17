@@ -5,15 +5,18 @@ clear;
 close all;
 clc;
 
-%% FOR RESPONSE CODING: 1= RIGHTWARD MOTION ; 2=LEFTWARD MOTION
+%% FOR RESPONSE CODING: 1 = RIGHTWARD MOTION; 2 = LEFTWARD MOTION
+right_var = 1; left_var = 2; catch_var = 0;
 
 %% Specify parameters of the block
-disp('This is the main script for the AUDITORY ONLY motion task.')
+disp('This is the main script for the AUDITORY ONLY motion discrimination task.')
 task_nature = input('Staircase = 1;  Method of constant stimuli (MCS) = 2 : ');
 if task_nature == 1
     velocity_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
-    if velocity_nature == 1 || velocity_nature == 2
+    if velocity_nature == 2 || velocity_nature == 3
         vel_stair = 1;
+    elseif velocity_nature == 1
+        vel_stair = 0;
     end
 else 
     % Set these parameters to 0 so staircase_procedure function knows not to
@@ -26,12 +29,7 @@ if training_nature == 1
     % Training sound properties
     correct_freq = 2000;
     incorrect_freq = 800;
-    correct_sound = MakeBeep(correct_freq, (dur+silence), Fs);
-    corr_soundout = [correct_sound', correct_sound'];
-    corr_soundout = normalize(corr_soundout);
-    incorrect_sound = MakeBeep(incorrect_freq, (dur+silence), Fs);
-    incorr_soundout = [incorrect_sound', incorrect_sound'];
-    incorr_soundout = normalize(incorr_soundout);
+    [corr_soundout, incorr_soundout] = at_createBeep(correct_freq, incorr_freq, dur, silence, Fs);
 end
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES :');
 if EEG_nature == 1
@@ -50,7 +48,7 @@ if EEG_nature == 1
 end
 
 
-% Directories created to navigate code folders throughout script
+%% Directories created to navigate code folders throughout script
 script_directory = '/home/wallace/Human_AV_Motion/';
 data_directory = '/home/wallace/Human_AV_Motion/data/';
 analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
@@ -64,12 +62,12 @@ cd(script_directory)
 KbName('UnifyKeyNames');
 AssertOpenGL; % was not in Aud stim code before
 
-%% define general values how long recording iTis for, might have been poisson distribution
+%% Define general values how long recording iTis for, might have been poisson distribution
 % minNum, maxNum, and meanNum all deal with the intertrial interval, which
 % is generated in the function iti_response_recording.
 inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 
-%% General stimlus variables
+%% General stimulus variables
 % dur is stimulus duration, triallength is total length of 1 trial (this is
 % currently unused in code), nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
@@ -77,10 +75,13 @@ inputtype=1; typeInt=1; minNum=1.5; maxNum=2.5; meanNum=2;
 dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 2; 
 
 % Define buffersize in order to make CAM (auditory stimulus)
-silence = 0.03; buffersize = (dur+silence)*Fs; s.Rate = 44100; 
+silence = 0.03; buffersize = (dur+silence)*Fs;
 
-% Define stimulus repetitions
-num_trials = 100;
+% All variables that define stimulus repetitions; num_trials defines total
+% number of staircase trials, stimtrials defines number of stimulus trials
+% per condition for MCS, catchtrials defines total number of catch trials
+% for MCS.
+num_trials = 100; stimtrials = 12; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -132,43 +133,46 @@ if task_nature == 1
     % Prob 2 = chance of direction changing after correct response
     % Prob 3 = chance of coherence raising after incorrect response
     % Prob 4 = chance of direction changing after incorrect response
-     audInfo.probs = [0.33 0.5 0.66 0.5];
+    % Prob 5 = chance of velocity raising after correct response
+    % Prob 6 = chance of velocity lowering after incorrect response
+    if velocity_nature == 2 % velocity ONLY staircase
+        audInfo.probs = [0 0.5 0 0.5 0.33 0.66];
+    elseif velocity_nature == 3 % coherence and velocity staircase
+        audInfo.probs = [0.1 0.5 0.9 0.5 0.33 0.66];
+    else % coherence ONLY staircase
+        audInfo.probs = [0.33 0.5 0.66 0.5 0 0];
+    end
 elseif task_nature == 2
     % Create coherences for participant if method of constant stimuli is to be
     % used. Coherences genereated via the same participant's staircase
     % performance. Matrix generation is randomized and determined by the number
     % of audtrials per condition and number of catchtrials.
     % Load the auditory staircase data
-    cd(data_directory)
     stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat',subjnum_s, group_s, sex_s, age_s);
-    load(horzcat(data_directory, stairAud_filename), 'data_output');
-    cd(script_directory)
+    try
+        % Load the staircase data from same participant to generate
+        % coherences
+        cd(data_directory)
+        load(horzcat(data_directory, stairAud_filename), 'data_output');
+        cd(script_directory)
 
-    % Generate auditory coherence levels based on staircase, manipulate aud coherences
-    % generated by coherence_calc by changing variables in the function
-    [audInfo] = coherence_calc(data_output);
-    
-    % Save coherence set
-    audcoh_file = strcat('audInfo.cohSet',underscore,subjnum_s,underscore,group_s, underscore, sex_s, underscore, age_s);
-    
-    cd(data_directory)
-    save(audcoh_file, 'audInfo.cohSet')
-    cd(script_directory)
-    
-    % Auditory coherence levels
-    audcoh1 = audInfo.cohSet(7); 
-    audcoh2 = audInfo.cohSet(6); 
-    audcoh3 = audInfo.cohSet(5); 
-    audcoh4 = audInfo.cohSet(4); 
-    audcoh5 = audInfo.cohSet(3); 
-    audcoh6 = audInfo.cohSet(2); 
-    audcoh7 = audInfo.cohSet(1);
-    
-    clear("data_output")
+        % Generate auditory coherence levels based on staircase, manipulate aud coherences
+        % generated by coherence_calc by changing variables in the function
+        [audInfo] = coherence_calc(data_output);
+
+        clear("data_output")
+    catch
+        warning('Problem finding staircase data for participant. Assigning general coherences for MCS.');
+        % Generate the list of possible coherences by decreasing log values
+        audInfo.cohStart = 0.5;
+        nlog_coh_steps = 7;
+        nlog_division = sqrt(2);
+        audInfo = cohSet_generation(audInfo, nlog_coh_steps, nlog_division);
+    end
 
     % Create trial matrix
     rng('shuffle')
-    data_output = at_RDKHoopMatrix_psyAud(catchtrials,audtrials);
+    data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var);
 else
     error('Could not generate coherences. Task nature determines how coherences are generated.')
 end
@@ -196,7 +200,7 @@ else
 end
 
 %% Flip up fixation dot
-[fix, s] = fixation_dot_flip(screenRect,curWindow);
+[fix, s] = fixation_dot_flip(screenRect, curWindow);
 
 %% Experiment Loop
 % Loop through every trial.
@@ -219,6 +223,7 @@ for ii = 1:length(data_output)
         end
     elseif task_nature == 2
         audInfo.dir = data_output(ii, 1);
+        audInfo.coh = data_output(ii, 2);
         if audInfo.dir == 0
             audInfo.dir = randi(2);
         end
@@ -252,7 +257,7 @@ for ii = 1:length(data_output)
     % Presents auditory stimulus and gets reaction time both at frame = 1.
     % Presents stimulus for duration specified in dur, which is the length
     % of CAM (wavedata)
-    [resp, rt, start_time] = at_generateAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, markers);
+    [resp, rt, start_time] = at_generateAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, outlet, markers);
   
     %%  ITI & response recording
     [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
@@ -289,13 +294,10 @@ PsychPortAudio('Close', pahandle);
 if data_analysis == 1
     % Provide specific variables 
     chosen_threshold = 0.72;
-    right_var = 1;
-    left_var = 2;
-    catch_var = 0;
     save_name = filename;
 
     % This function has functions that plot the currect data
-    [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory);
+    [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
 end
 
 cd(data_directory)

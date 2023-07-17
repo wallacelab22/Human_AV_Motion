@@ -1,4 +1,4 @@
-function [resp, rt, start_time] = at_generateAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, markers)
+function [resp, rt, start_time] = at_generateAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, outlet, markers)
 % % Generates auditory stimulus and waits for key response for the
 % stimulus duration
 

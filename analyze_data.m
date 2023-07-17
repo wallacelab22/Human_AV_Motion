@@ -1,4 +1,4 @@
-function [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory)
+function [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var)
 
 cd(analysis_directory)
 
