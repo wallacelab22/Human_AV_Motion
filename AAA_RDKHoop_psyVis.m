@@ -297,6 +297,7 @@ for ii=1:length(data_output)
         %% get RTs
         if frames == 1
             start_time = GetSecs;
+            
         end
         % Update the arrays so xor works next time
         xs(Lthis, :) = this_x;

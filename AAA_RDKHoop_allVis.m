@@ -1,18 +1,22 @@
-%% VISUAL STAIRCASE %%%%%%%%%%
+%% VISUAL MOTION DISCRIMINATION TASK CODE %%%%%%%%%%%%%
 % written by Adam Tiesman - adam.j.tiesman@vanderbilt.edu
 % Initial commit on 2/27/2023
 clear;
 close all;
+clc;
 
-%% FOR RESPONSE CODING: 1= RIGHTWARD MOTION; 2=LEFTWARD MOTION
+%% FOR RESPONSE CODING: 1 = RIGHTWARD MOTION; 2 = LEFTWARD MOTION
+right_var = 1; left_var = 2; catch_var = 0;
 
 %% Specify parameters of the block
-disp('This is the main script for the AUDITORY ONLY motion task.')
-task_nature = input('Staircase = 1;  Method of constant stimuli = 2 : ');
+disp('This is the main script for the VISUAL ONLY motion discrimination task.')
+task_nature = input('Staircase = 1;  Method of constant stimuli (MCS) = 2 : ');
 if task_nature == 1
     velocity_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
-    if velocity_nature == 1 || velocity_nature == 2
+    if velocity_nature == 2 || velocity_nature == 3
         vel_stair = 1;
+    elseif velocity_nature == 1
+        vel_stair = 0;
     end
 else 
     % Set these parameters to 0 so staircase_procedure function knows not to
@@ -27,31 +31,47 @@ if training_nature == 1
     incorrect_freq = 800;
     [corr_soundout, incorr_soundout] = at_createBeep(correct_freq, incorr_freq, dur, silence, Fs);
 end
+EEG_nature = input('EEG recording? 0 = NO; 1 = YES :');
+if EEG_nature == 1
+    addpath('/add/path/to/liblsl-Matlab-master/');
+    addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
+    
+    % Instantiate the LSL library (LSL stands for lab streaming layer and
+    % it is what we use to send stimulus triggers from MATLAB to our EEG
+    % recording software to note stimulus onset, stimulus offset, key
+    % press, etc.)
+    lib = lsl_loadlib();
+     
+    % Make a new stream outlet  e.g.: (name: BioSemi, type: EEG. 8 channels, 100Hz)
+    info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
+    outlet = lsl_outlet(info);
+end
+% Specify the dot speed in the RDK, wil be an input to function
+% at_createDotInfo
+block_dot_speed = input('Dot Speed (in deg/sec): ');
+visInfo.vel = block_dot_speed;
+% Specify if you want data analysis
+data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 
-% Directories created to navigate code folders throughout script.
-scriptdirectory = '/home/wallace/Human_AV_Motion';
-data_directory = '/home/wallace/Human_AV_Motion/data';
-analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot';
-cd(scriptdirectory)
+
+%% Directories created to navigate code folders throughout script
+script_directory = '/home/wallace/Human_AV_Motion/';
+data_directory = '/home/wallace/Human_AV_Motion/data/';
+analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
+if EEG_nature == 1
+    lsl_directory = '/home/wallace/Human_AV_Motion/EEG/';
+end
+cd(script_directory)
 
 %% General variables to smoothly run PTB
 % Necessary for psychtoolbox to read keyboard inputs.
 KbName('UnifyKeyNames');
 AssertOpenGL;
 
-%% define general values
+%% Define general values how long recording iTis for, might have been poisson distribution
 % minNum, maxNum, and meanNum all deal with the intertrial interval, which
 % is generated in the function iti_response_recording.
 inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
-
-% Specify if you want data analysis. If 1, task code will print out figures
-% after code has completed.
-data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-
-% Specify the dot speed in the RDK, wil be an input to function
-% at_createDotInfo
-block_dot_speed = input('Dot Speed (in deg/sec): ');
-visInfo.vel = block_dot_speed;
 
 %% General stimulus variables
 % dur is stimulus duration (in sec), triallength is total length of 1 trial
@@ -60,8 +80,11 @@ visInfo.vel = block_dot_speed;
 % Set to 0 if num_trials is short and subject does not need break(s).
 dur = 0.5; triallength = 2; nbblocks = 2;
 
-% Define stimulus repetitions
-num_trials = 100;
+% All variables that define stimulus repetitions; num_trials defines total
+% number of staircase trials, stimtrials defines number of stimulus trials
+% per condition for MCS, catchtrials defines total number of catch trials
+% for MCS.
+num_trials = 100; stimtrials = 12; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -78,8 +101,78 @@ cWhite0 = 255;
 % subject that will allow you to uniquely identify subjects. Variable
 % filename will be also used as the save_name, so be sure to remember in
 % order to access later.
-block = 'RDKHoop_stairVis';
-filename = collect_subject_information(block);
+if task_nature == 1
+    block = 'RDKHoop_stairVis';
+elseif task_nature == 2
+    block = 'RDKHoop_psyVis';
+else
+    error('Need to specify what block task falls under.')
+end
+
+[filename subjnum_s, group_s, sex_s, age_s] = collect_subject_information(block);
+
+%% Coherence and trial matrix generation for Staircase and MCS
+if task_nature == 1
+    % Initialize matrix to store data. Data is recorded every trial using
+    % function record_data
+    data_output = zeros(num_trials, 6);
+    
+    % Generate the list of possible coherences by decreasing log values
+    visInfo.cohStart = 0.5;
+    nlog_coh_steps = 12;
+    nlog_division = sqrt(2);
+    visInfo = cohSet_generation(visInfo, nlog_coh_steps, nlog_division);
+    
+    % Prob 1 = chance of coherence lowering after correct response
+    % Prob 2 = chance of direction changing after correct response
+    % Prob 3 = chance of coherence raising after incorrect response
+    % Prob 4 = chance of direction changing after incorrect response
+    % Prob 5 = chance of velocity raising after correct response
+    % Prob 6 = chance of velocity lowering after incorrect response
+    if velocity_nature == 2 % velocity ONLY staircase
+        visInfo.probs = [0 0.5 0 0.5 0.33 0.66];
+    elseif velocity_nature == 3 % coherence and velocity staircase
+        visInfo.probs = [0.1 0.5 0.9 0.5 0.33 0.66];
+    else % coherence ONLY staircase
+        visInfo.probs = [0.33 0.5 0.66 0.5 0 0];
+    end
+elseif task_nature == 2
+    % Create coherences for participant if method of constant stimuli is to be
+    % used. Coherences genereated via the same participant's staircase
+    % performance. Matrix generation is randomized and determined by the number
+    % of stimtrials per condition and number of catchtrials.
+    % Load the visual staircase data
+    stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+    try
+        % Load the staircase data from same participant to generate
+        % coherences
+        cd(data_directory)
+        load(horzcat(data_directory, stairVis_filename), 'data_output');
+        cd(script_directory)
+
+        % Generate stimulus coherence levels based on staircase, manipulate stim coherences
+        % generated by coherence_calc by changing variables in the function
+        [visInfo] = coherence_calc(data_output);
+
+        clear("data_output")
+    catch
+        warning('Problem finding staircase data for participant. Assigning general coherences for MCS.');
+        % Generate the list of possible coherences by decreasing log values
+        visInfo.cohStart = 0.5;
+        nlog_coh_steps = 7;
+        nlog_division = sqrt(2);
+        visInfo = cohSet_generation(visInfo, nlog_coh_steps, nlog_division);
+    end
+
+    % Create trial matrix
+    rng('shuffle')
+    data_output = at_generateMatrix(catchtrials, stimtrials, visInfo, right_var, left_var, catch_var);
+else
+    error('Could not generate coherences. Task nature determines how coherences are generated.')
+end
+
+% Create break time variable to check when it is time to break during task
+tt = length(data_output)/nbblocks: length(data_output)/nbblocks : length(data_output)-length(data_output)/nbblocks;
 
 %% Initialize
 % curScreen = 0 if there is only one monitor. If more than one monitor, 
@@ -94,50 +187,39 @@ curScreen = 0;
 % Opens psychtoolbox instructions for participant for the specific task 
 % (psyVis for all visual tasks, psyAud for all auditory only tasks, psyAV 
 % for all audiovisual tasks). trainAud and trainVis have separate instructions.
-instructions_psyVis(curWindow, cWhite0);
+if training_nature == 1
+    instructions_trainVis(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout);
+else
+    instructions_psyVis(curWindow, cWhite0);
+end
 
 %% Flip up fixation dot
 [fix, s] = fixation_dot_flip(screenRect,curWindow);
 
-% Initialize matrix to store data. Data is recorded every trial using
-% function record_data
-data_output = zeros(num_trials, 6);
-
-% Generate the list of possible coherences by decreasing log values
-visInfo.cohStart = 0.5;
-nlog_coh_steps = 12;
-nlog_division = sqrt(2);
-visInfo = cohSet_generation(visInfo, nlog_coh_steps, nlog_division);
-
-% Prob 1 = chance of coherence lowering after correct response
-% Prob 2 = chance of direction changing after correct response
-% Prob 3 = chance of coherence raising after incorrect response
-% Prob 4 = chance of direction changing after incorrect response
-% Prob 5 = chance of velocity raising after correct response
-% Prob 6 = chance of velocity lowering after incorrect response
-if vel_stair == 1
-    visInfo.probs = [0.1 0.5 0.9 0.5 0.33 0.66];
-else
-    visInfo.probs = [0.33 0.5 0.66 0.5 0 0];
-end
-
 %% Experiment Loop
 % Loop through every trial.
-for ii = 1:num_trials
+for ii = 1:length(data_output)
     
-    if ii == 1 % the first trial in the staircase
-        staircase_index = 1;
-        % Start staircase on random direction (left or right)
-        visInfo.dir = randi([1,2]);
-        % Start staircase on first coherence in cohSet
-        visInfo.coh = visInfo.cohSet(staircase_index);
-    elseif ii > 1 % every trial in staircase except for first trial
-        % Function staircase_procedure takes the previous trial's accuracy
-        % (incorr or corr) and uses a random number (0 to 1) to determine the
-        % coherence and direction for the current trial. All based on
-        % probabilities, which change depending on if the previous trials
-        % was correct or incorrect.
-        [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
+    if task_nature == 1
+        if ii == 1 % the first trial in the staircase
+            staircase_index = 1;
+            % Start staircase on random direction (left or right)
+            visInfo.dir = randi([1,2]);
+            % Start staircase on first coherence in cohSet
+            visInfo.coh = visInfo.cohSet(staircase_index);
+        elseif ii > 1 % every trial in staircase except for first trial
+            % Function staircase_procedure takes the previous trial's accuracy
+            % (incorr or corr) and uses a random number (0 to 1) to determine the
+            % coherence and direction for the current trial. All based on
+            % probabilities, which change depending on if the previous trials
+            % was correct or incorrect.
+            [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
+        end
+    elseif task_nature == 2
+        % Stimulus direction and coherence for a given trial is pre
+        % determined via the output of at_generateMatrix.
+        visInfo.dir = data_output(ii, 1);
+        visInfo.coh = data_output(ii, 2);
     end
 
     % Necessary variable changing for RDK code. 1 = RIGHT, which is 0 
@@ -149,21 +231,24 @@ for ii = 1:num_trials
     dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, ...
         minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed, vel_stair, visInfo.vel);
     
-    %% Display the stimuli
+    %% Keypress input initialize variables, define frames for presentation
     while KbCheck; end
     keycorrect=0;
     keyisdown=0;
     responded = 0; %DS mark as no response yet
     resp = nan; %default response is nan
     rt = nan; %default rt in case no response is recorded
+
     
     %% Dot Generation.
-    % This function plots the dots and updates them frame by frame in
-    % accordance with their coherence, direction, and other dotInfo.
-    [resp, rt, start_time] = at_generateDot(visInfo, dotInfo, screenInfo, ...
-    screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix, ...
-    responded, resp, rt);
+    % This function generates the dots that will be presented to
+    % participant in accordance with their coherence, direction, and other dotInfo.
+    [center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show] = at_generateDot(visInfo, dotInfo, screenInfo, screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix);
     
+    %% Dot Presentation
+    % This function uses psychtoolbox to present dots to participant.
+    [resp, rt, start_time] = at_presentDot(visInfo, center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show, curWindow, fix, responded, resp, rt, EEG_nature, outlet, markers);
+
     %% Erase last dots & go back to only plotting fixation
     Screen('DrawingFinished',curWindow);
     Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
@@ -178,6 +263,19 @@ for ii = 1:num_trials
     %% Save data into data_output on a trial by trial basis
     [trial_status, data_output] = record_data(data_output, visInfo, resp, rt, ii);
 
+        
+    %% Present stimulus feedback if requested
+    if training_nature == 1
+        at_presentFeedback(trial_status, pahandle, corr_soundout, incorr_soundout);
+    end
+
+    %% Check if it is break time for participant
+    if ismember(ii, tt) == 1
+        takebreak(curWindow, cWhite0) % breaks every 5-6 min. Total of nbblocks
+        Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
+        Screen('Flip', curWindow,0);
+        WaitSecs(2)
+    end
 
 end
 
@@ -194,13 +292,10 @@ Screen('CloseAll')
 if data_analysis == 1
     % Provide specific variables 
     chosen_threshold = 0.72;
-    right_var = 1;
-    left_var = 2;
-    catch_var = 0;
     save_name = filename;
 
     % This function has functions that plot the currect data
-    [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory);
+    [accuracy, stairstep, CDF] = analyze_data(data_output, save_name, analysis_directory);
 end
 
 cd(data_directory)
