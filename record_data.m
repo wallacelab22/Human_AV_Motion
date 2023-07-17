@@ -1,4 +1,4 @@
-function [trial_status, data_output] = record_data(data_output, stimInfo, resp, rt, ii)
+function [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, stimInfo, resp, rt, ii, vel_stair)
 %% Save data to the initialized data_output matrix
 % Each row is a trial
 %
@@ -11,10 +11,10 @@ function [trial_status, data_output] = record_data(data_output, stimInfo, resp, 
 
 data_output(ii, 1) = stimInfo.dir;
 data_output(ii, 2) = stimInfo.coh;
-if resp == 115 || resp == 13
-    data_output(ii, 3) = 1;
-elseif resp == 114 || resp == 12
-    data_output(ii, 3) = 2;
+if ismember(resp, right_keypress)
+    data_output(ii, 3) = right_var;
+elseif ismember(resp, left_keypress)
+    data_output(ii, 3) = left_var;
 else
     data_output(ii, 3) = nan;
 end
@@ -30,6 +30,9 @@ if data_output(ii, 3) == data_output(ii, 1)
 else 
     trial_status = 0;
     data_output(ii, 6) = trial_status;
+end
+if vel_stair == 1
+    data_output(ii, 7) = stimInfo.vel;
 end
 
 end

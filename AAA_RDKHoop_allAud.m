@@ -6,7 +6,7 @@ close all;
 clc;
 
 %% FOR RESPONSE CODING: 1 = RIGHTWARD MOTION; 2 = LEFTWARD MOTION
-right_var = 1; left_var = 2; catch_var = 0;
+right_var = 1; left_var = 2; catch_var = 0; dur = 0.5; silence = 0.03; Fs = 44100;
 
 %% Specify parameters of the block
 disp('This is the main script for the AUDITORY ONLY motion discrimination task.')
@@ -28,7 +28,7 @@ if training_nature == 1
     % Training sound properties
     correct_freq = 2000;
     incorrect_freq = 800;
-    [corr_soundout, incorr_soundout] = at_createBeep(correct_freq, incorr_freq, dur, silence, Fs);
+    [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
 end
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES :');
 if EEG_nature == 1
@@ -65,6 +65,11 @@ cd(script_directory)
 % Necessary for psychtoolbox to read keyboard inputs.
 KbName('UnifyKeyNames');
 AssertOpenGL; % was not in Aud stim code before
+% Assigned keyboard variables in Linux for left and right arrow keys and extended
+% keyboard device. Change depending on what you are using to have
+% participants report direction.
+right_keypress = [115 13];
+left_keypress = [114 12];
 
 %% Define general values how long recording iTis for, might have been poisson distribution
 % minNum, maxNum, and meanNum all deal with the intertrial interval, which
@@ -110,13 +115,17 @@ else
     error('Need to specify what block task falls under.')
 end
 
-[filename subjnum_s, group_s, sex_s, age_s] = collect_subject_information(block);
+[filename, subjnum_s, group_s, sex_s, age_s] = collect_subject_information(block);
 
 %% Coherence and trial matrix generation for Staircase and MCS
 if task_nature == 1
-    % Initialize matrix to store data. Data is recorded every trial using
-    % function record_data
-    data_output = zeros(num_trials, 6);
+    if vel_stair == 1
+        data_output = zeros(num_trials, 7);
+    else
+        % Initialize matrix to store data. Data is recorded every trial using
+        % function record_data
+        data_output = zeros(num_trials, 6);
+    end
     
     % Generate the list of possible coherences by decreasing log values
     audInfo.cohStart = 0.5;
@@ -189,8 +198,11 @@ elseif task_nature == 2
     % Create trial matrix
     rng('shuffle')
     data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var);
+
+    % Define duration in audInfo for makCAM function
+    audInfo.durRaw = dur;
 else
-    error('Could not generate coherences. Task nature determines how coherences are generated.')
+    error('Could not generate coherences. Task nature determines how coherences are generated')
 end
 
 % Create break time variable to check when it is time to break during task
@@ -304,11 +316,12 @@ for ii = 1:length(data_output)
     [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
     
     %% Save data into data_output on a trial by trial basis
-    [trial_status, data_output] = record_data(data_output, audInfo, resp, rt, ii);
+    [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, resp, rt, ii, vel_stair);
     
     %% Present stimulus feedback if requested
     if training_nature == 1
         at_presentFeedback(trial_status, pahandle, corr_soundout, incorr_soundout);
+        WaitSecs(1)
     end
 
     %% Check if it is break time for participant
