@@ -22,7 +22,6 @@ else
     % Set these parameters to 0 so staircase_procedure function knows not to
     % manipulate velocity.
     vel_stair = 0;
-    vel_index = 0;
 end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
@@ -109,7 +108,7 @@ else
     error('Need to specify what block task falls under.')
 end
 
-[filename subjnum_s, group_s, sex_s, age_s] = collect_subject_information(block);
+[filename, subjnum_s, group_s, sex_s, age_s] = collect_subject_information(block);
 
 %% Coherence and trial matrix generation for Staircase and MCS
 if task_nature == 1
@@ -122,6 +121,10 @@ if task_nature == 1
     nlog_coh_steps = 12;
     nlog_division = sqrt(2);
     visInfo = cohSet_generation(visInfo, nlog_coh_steps, nlog_division);
+    
+    if vel_stair == 1
+        visInfo.velSet = [5 10 15 20 25 30 35 40 45 50 55];
+    end
     
     % Prob 1 = chance of coherence lowering after correct response
     % Prob 2 = chance of direction changing after correct response
@@ -157,6 +160,7 @@ elseif task_nature == 2
         clear("data_output")
     catch
         warning('Problem finding staircase data for participant. Assigning general coherences for MCS.');
+        cd(script_directory)
         % Generate the list of possible coherences by decreasing log values
         visInfo.cohStart = 0.5;
         nlog_coh_steps = 7;
@@ -207,13 +211,23 @@ for ii = 1:length(data_output)
             visInfo.dir = randi([1,2]);
             % Start staircase on first coherence in cohSet
             visInfo.coh = visInfo.cohSet(staircase_index);
+            if vel_stair == 1
+                vel_index = 1;
+                visInfo.vel = visInfo.velSet(vel_index);
+            else
+                vel_index = 0;
+            end
         elseif ii > 1 % every trial in staircase except for first trial
             % Function staircase_procedure takes the previous trial's accuracy
             % (incorr or corr) and uses a random number (0 to 1) to determine the
             % coherence and direction for the current trial. All based on
             % probabilities, which change depending on if the previous trials
             % was correct or incorrect.
-            [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
+            if vel_stair == 1
+                [visInfo, staircase_index, vel_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
+            else
+                [visInfo, staircase_index] = staircase_procedure(trial_status, visInfo, staircase_index, vel_stair, vel_index);
+            end
         end
     elseif task_nature == 2
         % Stimulus direction and coherence for a given trial is pre
@@ -239,7 +253,16 @@ for ii = 1:length(data_output)
     resp = nan; %default response is nan
     rt = nan; %default rt in case no response is recorded
 
-    
+    % Create marker for EEG
+    if EEG_nature == 1
+        dir_id = num2str(data_output(ii,1));
+        coh_id = num2str(data_output(ii,2));
+        markers = strcat([dir_id coh_id]); % unique identifier for LSL
+    else
+        markers = NaN; % needed for function at_generateAud
+        outlet = NaN;
+    end
+
     %% Dot Generation.
     % This function generates the dots that will be presented to
     % participant in accordance with their coherence, direction, and other dotInfo.

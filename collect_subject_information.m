@@ -1,4 +1,4 @@
-function [filename] = collect_subject_information(block)
+function [filename, subjnum_s, group_s, sex_s, age_s] = collect_subject_information(block)
 %% Collect Subject Information
 subjnum = input('Enter the subject''s number: ');
 subjnum_s = num2str(subjnum);

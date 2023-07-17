@@ -22,7 +22,6 @@ else
     % Set these parameters to 0 so staircase_procedure function knows not to
     % manipulate velocity.
     vel_stair = 0;
-    vel_index = 0;
 end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
@@ -125,6 +124,26 @@ if task_nature == 1
     nlog_division = sqrt(2);
     audInfo = cohSet_generation(audInfo, nlog_coh_steps, nlog_division);
     
+    if vel_stair == 1
+        % Generate list of velocities and durations if the given velocity were to
+        % travel from speaker to speaker
+        audInfo.velStart = 55;
+        vel_steps = 11;
+        audInfo.velSet = zeros(1, vel_steps);
+        vel_subtract = 5;
+        for i = 1:length(audInfo.velSet)
+                audInfo.velSet(i) = audInfo.velStart - ((i-1)*vel_subtract);
+        end
+        audInfo.durSet = zeros(1, length(audInfo.velSet));
+        audInfo.snipSet = zeros(2, length(audInfo.velSet));
+        speaker_distance = 29.4; % in degrees, based on the fact stimulus duration is 0.5 sec and speed is 58.8 deg/s
+        for j = 1:length(audInfo.velSet)
+            audInfo.durSet(j) = speaker_distance/audInfo.velSet(j);
+            audInfo.snipSet(1, j) = (audInfo.durSet(j)/2) - (dur/2);
+            audInfo.snipSet(2, j) = (audInfo.durSet(j)/2) + (dur/2);
+        end
+    end
+
     % Prob 1 = chance of coherence lowering after correct response
     % Prob 2 = chance of direction changing after correct response
     % Prob 3 = chance of coherence raising after incorrect response
@@ -159,6 +178,7 @@ elseif task_nature == 2
         clear("data_output")
     catch
         warning('Problem finding staircase data for participant. Assigning general coherences for MCS.');
+        cd(script_directory)
         % Generate the list of possible coherences by decreasing log values
         audInfo.cohStart = 0.5;
         nlog_coh_steps = 7;
@@ -212,13 +232,30 @@ for ii = 1:length(data_output)
             audInfo.dir = randi([1,2]);
             % Start staircase on first coherence in cohSet
             audInfo.coh = audInfo.cohSet(staircase_index);
+            if vel_stair == 1
+                vel_index = 1;
+                audInfo.vel = audInfo.velSet(vel_index);
+                audInfo.t_start = audInfo.snipSet(1,vel_index);
+                audInfo.t_end = audInfo.snipSet(2,vel_index);
+                audInfo.durRaw = audInfo.durSet(vel_index); 
+            else
+                vel_index = 0;
+                audInfo.durRaw = dur;
+            end
         elseif ii > 1 % every trial in staircase except for first trial
             % Function staircase_procedure takes the previous trial's accuracy
             % (incorr or corr) and uses a random number (0 to 1) to determine the
             % coherence and direction for the current trial. All based on
             % probabilities, which change depending on if the previous trials
             % was correct or incorrect.
-            [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
+            if vel_stair == 1
+                [audInfo, staircase_index, vel_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
+                audInfo.t_start = audInfo.snipSet(1,vel_index);
+                audInfo.t_end = audInfo.snipSet(2,vel_index);
+                audInfo.durRaw = audInfo.durSet(vel_index); 
+            else
+                [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
+            end
         end
     elseif task_nature == 2
         % Stimulus direction and coherence for a given trial is pre
@@ -241,7 +278,10 @@ for ii = 1:length(data_output)
     %% Generate and present the auditory stimulus
     % Generates auditory stimulus
     frames = 0;
-    CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, dur, silence, Fs, noise_reduction_scalar);
+    CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
+    if vel_stair == 1
+        CAM = snipCAM(CAM, Fs, audInfo.t_start, audInfo.t_end);
+    end
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows = number of channels.
     
@@ -252,6 +292,7 @@ for ii = 1:length(data_output)
         markers = strcat([dir_id coh_id]); % unique identifier for LSL
     else
         markers = NaN; % needed for function at_generateAud
+        outlet = NaN;
     end
 
     % Presents auditory stimulus and gets reaction time both at frame = 1.
