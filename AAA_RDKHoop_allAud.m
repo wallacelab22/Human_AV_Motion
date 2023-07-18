@@ -1,4 +1,5 @@
-%% AUDITORY MOTION DISCRIMINATION TASK CODE %%%%%%%%%%%%%
+%% HUMAN AUDITORY MOTION DISCRIMINATION TASK CODE %%%%%%%%%%%%%
+% Wallace Multisensory Lab - Vanderbilt University
 % written by Adam Tiesman - adam.j.tiesman@vanderbilt.edu
 % Initial commit on 2/27/2023
 clear;
@@ -42,7 +43,7 @@ if EEG_nature == 1
     lib = lsl_loadlib();
      
     % Make a new stream outlet  e.g.: (name: BioSemi, type: EEG. 8 channels, 100Hz)
-    info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
+    info = lsl_streaminfo(lib, 'MyMarkerStream', 'Markers', 1, 0, 'cf_string', 'wallacelab');
     outlet = lsl_outlet(info);
 end
 % Auditory stimulus properties
@@ -62,7 +63,8 @@ end
 cd(script_directory)
 
 %% General variables to smoothly run PTB
-% Necessary for psychtoolbox to read keyboard inputs.
+% Necessary for psychtoolbox to read keyboard inputs. UnifyKeyNames allows
+% for portability of script. 
 KbName('UnifyKeyNames');
 AssertOpenGL; % was not in Aud stim code before
 % Assigned keyboard variables in Linux for left and right arrow keys and extended
@@ -72,8 +74,10 @@ right_keypress = [115 13];
 left_keypress = [114 12];
 
 %% Define general values how long recording iTis for, might have been poisson distribution
-% minNum, maxNum, and meanNum all deal with the intertrial interval, which
-% is generated in the function iti_response_recording.
+% inputtype, typeInt, minNum, maxNum, and meanNum all deal with the intertrial interval, which
+% is generated in the function iti_response_recording. menaNum is the mean
+% time in sec that the iti will be. mMn and max time for iti defined by minNum
+% and maxNum respectively.
 inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 
 %% General stimulus variables
@@ -81,7 +85,7 @@ inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 % currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 2; 
+dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 0; 
 
 % Define buffersize in order to make CAM (auditory stimulus)
 silence = 0.03; buffersize = (dur+silence)*Fs;
@@ -172,7 +176,7 @@ elseif task_nature == 2
     % performance. Matrix generation is randomized and determined by the number
     % of stimtrials per condition and number of catchtrials.
     % Load the auditory staircase data
-    stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat',subjnum_s, group_s, sex_s, age_s);
+    stairAud_filename = sprintf('RDKHoop_%s_%s_%s_%s_%s.mat', block, subjnum_s, group_s, sex_s, age_s);
     try
         % Load the staircase data from same participant to generate
         % coherences
@@ -186,7 +190,7 @@ elseif task_nature == 2
 
         clear("data_output")
     catch
-        warning('Problem finding staircase data for participant. Assigning general coherences for MCS.');
+        warning('Problem finding staircase data for participant. Assigning general coherences for MCS.')
         cd(script_directory)
         % Generate the list of possible coherences by decreasing log values
         audInfo.cohStart = 0.5;
@@ -206,7 +210,16 @@ else
 end
 
 % Create break time variable to check when it is time to break during task
-tt = length(data_output)/nbblocks: length(data_output)/nbblocks : length(data_output)-length(data_output)/nbblocks;
+len_data_output = size(data_output, 1);
+block_length = floor(len_data_output/nbblocks);
+tt = block_length:block_length:len_data_output;
+% Combine last two blocks if the last block length is smaller than half the
+% other block lengths
+last_block_length = len_data_output - tt(1, nbblocks);
+if last_block_length < block_length/2
+    tt(1, nbblocks) = NaN;
+    warning('Last block will be longer than the rest.')
+end
 
 %% Initialize
 % curScreen = 0 if there is only one monitor. If more than one monitor, 
@@ -216,6 +229,7 @@ curScreen = 0;
 
 % Opens psychtoolbox and initializes experiment
 [screenInfo, curWindow, screenRect] = initialize_exp(monWidth, viewDist, curScreen);
+monRefresh = 1/screenInfo.frameDur;
 
 %% Initialize Audio
 [pahandle] = initialize_aud(curWindow, Fs);
@@ -278,20 +292,25 @@ for ii = 1:length(data_output)
     
     %% Keypress input initialize variables, define frames for presentation
     while KbCheck; end
-    keycorrect=0;
-    keyisdown=0;
+    keycorrect = 0;
+    keyisdown = 0;
     responded = 0; %DS mark as no response yet
     resp = nan; %default response is nan
     rt = nan; %default rt in case no response is recorded
-    continue_show = round(dur*60);
-    priorityLevel = MaxPriority(curWindow,'KbCheck'); %make sure Window commands are correct
+    continue_show = round(dur*monRefresh);
+    priorityLevel = MaxPriority(curWindow, 'KbCheck'); %make sure Window commands are correct
     Priority(priorityLevel);
     
     %% Generate and present the auditory stimulus
     % Generates auditory stimulus
     frames = 0;
+    % makeCAM and makeCAM_PILOT create an array voltages to be presented
+    % via speakers that creates perceptual auditory motion from one speaker
+    % to another
     CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
     if vel_stair == 1
+        % snipCAM snips the CAM file so the duration stays constant and the
+        % displacement is changed, dependent on the velocity of the trial
         CAM = snipCAM(CAM, Fs, audInfo.t_start, audInfo.t_end);
     end
     wavedata = CAM;
@@ -303,13 +322,12 @@ for ii = 1:length(data_output)
         coh_id = num2str(data_output(ii,2));
         markers = strcat([dir_id coh_id]); % unique identifier for LSL
     else
-        markers = NaN; % needed for function at_generateAud
+        markers = NaN; % needed for function at_presentAud
         outlet = NaN;
     end
 
-    % Presents auditory stimulus and gets reaction time both at frame = 1.
-    % Presents stimulus for duration specified in dur, which is the length
-    % of CAM (wavedata)
+    % Presents auditory stimulus and gets reaction time. Presents stimulus 
+    % for duration specified in dur, which is the length of CAM (wavedata)
     [resp, rt, start_time] = at_presentAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, outlet, markers);
   
     %%  ITI & response recording
@@ -326,10 +344,10 @@ for ii = 1:length(data_output)
 
     %% Check if it is break time for participant
     if ismember(ii, tt) == 1
-        takebreak(curWindow, cWhite0) % breaks every 5-6 min. Total of nbblocks
-        Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
-        Screen('Flip', curWindow,0);
-        WaitSecs(2)
+        breaks = ii == tt;
+        break_num = find(breaks);
+        % Participant can take break given amount of blocks specified in nbblocks
+        takebreak(curWindow, cWhite0, fix, break_num, nbblocks)
     end
 
 end

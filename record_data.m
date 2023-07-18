@@ -3,11 +3,12 @@ function [trial_status, data_output] = record_data(data_output, right_var, left_
 % Each row is a trial
 %
 % Column 1 = direction of trial, 1 = right, 2 = left
-% Column 2 = coherence of trial,0 = 0% coherence, 0.5 = 50% coherence, etc.
+% Column 2 = coherence of trial, 0 = 0% coherence, 0.5 = 50% coherence, etc.
 % Column 3 = subject reported direction of trial, 1 = right, 2 = left
 % Column 4 = subject reaction time of trial, reported in seconds
 % Column 5 = subject character press, number denotes key pressed
 % Column 6 = whether subject was correct (1) or incorrect (0) for trial
+% Column 7 = velocity of trial (in deg/sec)
 
 data_output(ii, 1) = stimInfo.dir;
 data_output(ii, 2) = stimInfo.coh;

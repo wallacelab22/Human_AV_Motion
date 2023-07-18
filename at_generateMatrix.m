@@ -14,6 +14,7 @@ function data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right
 catchs = [catch_var catch_var];
 
 % Stimulus [direction coherence]
+% sr = stimulus rightl; sl = stimulus left
 for i = 1:length(audInfo.cohSet)
     right_var_name = strcat('sr', num2str(i));
     eval([right_var_name, ' = [right_var audInfo.cohSet(i)];'])
@@ -27,6 +28,9 @@ end
 catchmat = repmat(catchs, catchtrials, 1);
 
 % Stimulus trials
+% Duplicate all stimulus conditions by how much stimtrials is. If
+% stimtrials = 10, each stimulus condition (predefined above) will have 10
+% repetitions.
 right_matrix = cell(length(audInfo.cohSet), 1);
 left_matrix = cell(length(audInfo.cohSet), 1);
 
@@ -38,8 +42,9 @@ for i = 1:length(audInfo.cohSet)
     left_matrix{i} = repmat(eval(left_var_name), stimtrials, 1);
 end
 
-%concatenate all conditions into 1 big matrix 
-for i = 1:numel(right_matrix)
+% Concatenate all conditions into 1 big matrix (rightward trials, leftward
+% trials, and catch trials)
+for i = 1:numel(right_matrix) % could also be left_matrix (they are same size)
     if i == 1
         trialStruc = cat(1, catchmat, right_matrix{i}, left_matrix{i});
     else
@@ -48,15 +53,17 @@ for i = 1:numel(right_matrix)
 end
 
 %% Define single columns
-% add trial order and response recording columns
+% Add trial order and response recording columns to be filled as the task
+% progresses
 nbtrials = size(trialStruc(:,1));
 
-resp = zeros(nbtrials(1), 1); % will be randomized
-rt = zeros(nbtrials(1), 1); % will be randomized
-keys = zeros(nbtrials(1), 1);
-trial_status = zeros(nbtrials(1), 1);
+resp = zeros(nbtrials(1), 1); % whether they responded left or right
+rt = zeros(nbtrials(1), 1); % reaction time
+keys = zeros(nbtrials(1), 1); % keypress value
+trial_status = zeros(nbtrials(1), 1); % if trial was correct
 
-%% create trial structure
+%% Create trial structure
+% Create a randomized order the trials will be presented to the participant
 rng('shuffle');
 order = randperm(nbtrials(1));  %new trial order
 trialOrder = trialStruc(order, :);

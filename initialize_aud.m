@@ -8,7 +8,7 @@ InitializePsychSound;
 devices = PsychPortAudio('GetDevices');
 
 % Search for audio devices containing 'UMC' in their name
-% 'UMC' is the name of our audio interface
+% 'UMC' is the name of our audio interface. 
 selectedDeviceIndex = [];
 audioName = 'UMC';
 for i = 1:length(devices)

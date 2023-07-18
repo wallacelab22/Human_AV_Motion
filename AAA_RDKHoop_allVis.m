@@ -1,4 +1,5 @@
-%% VISUAL MOTION DISCRIMINATION TASK CODE %%%%%%%%%%%%%
+%% HUMAN VISUAL MOTION DISCRIMINATION TASK CODE %%%%%%%%%%%%%
+% Wallace Multisensory Lab - Vanderbilt University
 % written by Adam Tiesman - adam.j.tiesman@vanderbilt.edu
 % Initial commit on 2/27/2023
 clear;
@@ -41,8 +42,8 @@ if EEG_nature == 1
     % press, etc.)
     lib = lsl_loadlib();
      
-    % Make a new stream outlet  e.g.: (name: BioSemi, type: EEG. 8 channels, 100Hz)
-    info = lsl_streaminfo(lib,'MyMarkerStream','Markers',1,0,'cf_string','wallacelab');
+    % Make a new stream outlet- e.g.: (name: BioSemi, type: EEG. 8 channels, 100Hz)
+    info = lsl_streaminfo(lib, 'MyMarkerStream', 'Markers', 1, 0, 'cf_string', 'wallacelab');
     outlet = lsl_outlet(info);
 end
 if vel_stair ~= 1
@@ -67,7 +68,8 @@ end
 cd(script_directory)
 
 %% General variables to smoothly run PTB
-% Necessary for psychtoolbox to read keyboard inputs.
+% Necessary for psychtoolbox to read keyboard inputs. UnifyKeyNames allows
+% for portability of script. 
 KbName('UnifyKeyNames');
 AssertOpenGL;
 % Assigned keyboard variables in Linux for left and right arrow keys and extended
@@ -77,8 +79,10 @@ right_keypress = [115 13];
 left_keypress = [114 12];
 
 %% Define general values how long recording iTis for, might have been poisson distribution
-% minNum, maxNum, and meanNum all deal with the intertrial interval, which
-% is generated in the function iti_response_recording.
+% inputtype, typeInt, minNum, maxNum, and meanNum all deal with the intertrial interval, which
+% is generated in the function iti_response_recording. menaNum is the mean
+% time in sec that the iti will be. mMn and max time for iti defined by minNum
+% and maxNum respectively.
 inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 
 %% General stimulus variables
@@ -86,7 +90,7 @@ inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 % (currently unused in code), nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; triallength = 2; nbblocks = 2;
+dur = 0.5; triallength = 2; nbblocks = 0;
 
 % All variables that define stimulus repetitions; num_trials defines total
 % number of staircase trials, stimtrials defines number of stimulus trials
@@ -158,7 +162,7 @@ elseif task_nature == 2
     % performance. Matrix generation is randomized and determined by the number
     % of stimtrials per condition and number of catchtrials.
     % Load the visual staircase data
-    stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+    stairVis_filename = sprintf('RDKHoop_%s_%s_%s_%s_%s.mat', block, subjnum_s, group_s, sex_s, age_s);
     try
         % Load the staircase data from same participant to generate
         % coherences
@@ -189,7 +193,15 @@ else
 end
 
 % Create break time variable to check when it is time to break during task
-tt = length(data_output)/nbblocks: length(data_output)/nbblocks : length(data_output)-length(data_output)/nbblocks;
+len_data_output = size(data_output, 1);
+block_length = floor(len_data_output/nbblocks);
+tt = block_length:block_length:len_data_output;
+% Combine last two blocks if the last block length is smaller than half the
+% other block lengths
+last_block_length = len_data_output - tt(1, nbblocks);
+if last_block_length < block_length/2
+    tt(1, nbblocks) = NaN;
+end
 
 %% Initialize
 % curScreen = 0 if there is only one monitor. If more than one monitor, 
@@ -216,7 +228,7 @@ else
 end
 
 %% Flip up fixation dot
-[fix, s] = fixation_dot_flip(screenRect,curWindow);
+[fix, s] = fixation_dot_flip(screenRect, curWindow);
 
 %% Experiment Loop
 % Loop through every trial.
@@ -265,8 +277,8 @@ for ii = 1:length(data_output)
     
     %% Keypress input initialize variables, define frames for presentation
     while KbCheck; end
-    keycorrect=0;
-    keyisdown=0;
+    keycorrect = 0;
+    keyisdown = 0;
     responded = 0; %DS mark as no response yet
     resp = nan; %default response is nan
     rt = nan; %default rt in case no response is recorded
@@ -277,7 +289,7 @@ for ii = 1:length(data_output)
         coh_id = num2str(data_output(ii,2));
         markers = strcat([dir_id coh_id]); % unique identifier for LSL
     else
-        markers = NaN; % needed for function at_generateAud
+        markers = NaN; % needed for function at_presentDot
         outlet = NaN;
     end
 
@@ -312,10 +324,10 @@ for ii = 1:length(data_output)
 
     %% Check if it is break time for participant
     if ismember(ii, tt) == 1
-        takebreak(curWindow, cWhite0) % breaks every 5-6 min. Total of nbblocks
-        Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
-        Screen('Flip', curWindow,0);
-        WaitSecs(2)
+        breaks = ii == tt;
+        break_num = find(breaks);
+        % Participant can take break given amount of blocks specified in nbblocks
+        takebreak(curWindow, cWhite0, fix, break_num, nbblocks) 
     end
 
 end
@@ -323,7 +335,8 @@ end
 %% Goodbye
 cont(curWindow, cWhite0);
 
-%% Finalize
+%% Finalize 
+% Close psychtoolbox window
 closeExperiment;
 close all
 Screen('CloseAll')
@@ -335,7 +348,7 @@ if data_analysis == 1
     chosen_threshold = 0.72;
     save_name = filename;
 
-    % This function has functions that plot the currect data
+    % This function has functions that plot the current data
     [accuracy, stairstep, CDF] = analyze_data(data_output, save_name, analysis_directory);
 end
 
