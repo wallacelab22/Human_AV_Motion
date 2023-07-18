@@ -94,7 +94,7 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % number of staircase trials, stimtrials defines number of stimulus trials
 % per condition for MCS, catchtrials defines total number of catch trials
 % for MCS.
-num_trials = 100; stimtrials = 12; catchtrials = 25;
+num_trials = 250; stimtrials = 12; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -133,7 +133,7 @@ if task_nature == 1
     
     % Generate the list of possible coherences by decreasing log values
     audInfo.cohStart = 0.5;
-    nlog_coh_steps = 12;
+    nlog_coh_steps = 4;
     nlog_division = sqrt(2);
     audInfo = cohSet_generation(audInfo, nlog_coh_steps, nlog_division);
     
@@ -209,16 +209,18 @@ else
     error('Could not generate coherences. Task nature determines how coherences are generated')
 end
 
-% Create break time variable to check when it is time to break during task
-len_data_output = size(data_output, 1);
-block_length = floor(len_data_output/nbblocks);
-tt = block_length:block_length:len_data_output;
-% Combine last two blocks if the last block length is smaller than half the
-% other block lengths
-last_block_length = len_data_output - tt(1, nbblocks);
-if last_block_length < block_length/2
-    tt(1, nbblocks) = NaN;
-    warning('Last block will be longer than the rest.')
+if nbblocks > 0
+    % Create break time variable to check when it is time to break during task
+    len_data_output = size(data_output, 1);
+    block_length = floor(len_data_output/nbblocks);
+    tt = block_length:block_length:len_data_output;
+    % Combine last two blocks if the last block length is smaller than half the
+    % other block lengths
+    last_block_length = len_data_output - tt(1, nbblocks);
+    if last_block_length < block_length/2
+        tt(1, nbblocks) = NaN;
+        warning('Last block will be longer than the rest.')
+    end
 end
 
 %% Initialize
@@ -343,11 +345,13 @@ for ii = 1:length(data_output)
     end
 
     %% Check if it is break time for participant
-    if ismember(ii, tt) == 1
-        breaks = ii == tt;
-        break_num = find(breaks);
-        % Participant can take break given amount of blocks specified in nbblocks
-        takebreak(curWindow, cWhite0, fix, break_num, nbblocks)
+    if nbblocks >0
+        if ismember(ii, tt) == 1
+            breaks = ii == tt;
+            break_num = find(breaks);
+            % Participant can take break given amount of blocks specified in nbblocks
+            takebreak(curWindow, cWhite0, fix, break_num, nbblocks)
+        end
     end
 
 end
@@ -369,7 +373,12 @@ if data_analysis == 1
     save_name = filename;
 
     % This function has functions that plot the currect data
-    [accuracy, stairstep, CDF] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
+    try
+        [accuracy, stairstep, CDF] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
+    catch
+        [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
+    end
+
 end
 
 cd(data_directory)
