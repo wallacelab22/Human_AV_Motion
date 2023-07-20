@@ -237,7 +237,7 @@ end
 
 if stim_matching_nature == 2
     % Generate a slider for the participant to respond to
-    [audInfo, StopPixel_M] = at_generate_audSlider(audInfo, right_keypress, left_keypress, space_keypress, screenRect, curWindow, cWhite0, xCenter, yCenter, silence, Fs, noise_reduction_scalar, pahandle);
+    [audInfo, StopPixel_M] = at_generate_audSlider(right_keypress, left_keypress, space_keypress, screenInfo, screenRect, curWindow, cWhite0, xCenter, yCenter, silence, Fs, noise_reduction_scalar, pahandle);
 end
 
 %% Flip up fixation dot

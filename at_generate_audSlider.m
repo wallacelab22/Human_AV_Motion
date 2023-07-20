@@ -1,4 +1,7 @@
-function [audInfo, StopPixel_M] = at_generate_audSlider(audInfo, right_keypress, left_keypress, space_keypress, screenInfo, screenRect, curWindow, cWhite0, xCenter, yCenter, silence, Fs, noise_reduction_scalar, pahandle)
+function [audInfo, StopPixel_M] = at_generate_audSlider(right_keypress, left_keypress, space_keypress, screenInfo, screenRect, curWindow, cWhite0, xCenter, yCenter, silence, Fs, noise_reduction_scalar, pahandle)
+
+slack = Screen('GetFlipInterval', curWindow);
+vbl = Screen('Flip', curWindow);
 
 % Needed to present stimuli
 EEG_nature = 0;
@@ -8,10 +11,8 @@ markers = NaN;
 % Variables for nonchanging visual stimulus
 inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2; maxdotsframe = 150;
 block_dot_speed = 15; vel_stair = 0; visInfo.vel = 58.8; dur = 0.5;
-monWidth = 50.8; viewDist = 120;
+monWidth = 50.8; viewDist = 120; givenCoh = 0.5;
 
-slack = Screen('GetFlipInterval', curWindow);
-vbl = Screen('Flip', curWindow);
 
 % Parameters for your scale and text that you want
 question = 'USE THE SLIDER TO MATCH THE VISUAL NOISINESS TO THE AUDITORY NOISINESS.';
@@ -122,6 +123,9 @@ while true
         % for duration specified in dur, which is the length of CAM (wavedata)
         [resp, rt, start_time] = at_presentAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, outlet, markers);
     end
+
+    vbl = Screen('Flip', curWindow, vbl + (waitframes - 0.5) *  slack);
+    WaitSecs(3)
 
     %% Erase last dots & go back to only plotting fixation
     Screen('DrawingFinished',curWindow);
