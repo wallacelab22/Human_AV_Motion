@@ -13,10 +13,10 @@ right_var = 1; left_var = 2; catch_var = 0; dur = 0.5; silence = 0.03; Fs = 4410
 disp('This is the main script for the VISUAL ONLY motion discrimination task.')
 task_nature = input('Staircase = 1;  Method of constant stimuli (MCS) = 2 : ');
 if task_nature == 1
-    velocity_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
-    if velocity_nature == 2 || velocity_nature == 3
+    staircase_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
+    if staircase_nature == 2 || staircase_nature == 3
         vel_stair = 1;
-    elseif velocity_nature == 1
+    elseif staircase_nature == 1
         vel_stair = 0;
     end
 else 
@@ -24,10 +24,12 @@ else
     % manipulate velocity.
     vel_stair = 0;
 end
+disp('How do you want to match the visual and auditory stimuli?')
+stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
     % Training sound properties
-    correct_freq = 2000;
+    correct_fr beq = 2000;
     incorrect_freq = 800;
     [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
 end
@@ -35,16 +37,7 @@ EEG_nature = input('EEG recording? 0 = NO; 1 = YES :');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
-    
-    % Instantiate the LSL library (LSL stands for lab streaming layer and
-    % it is what we use to send stimulus triggers from MATLAB to our EEG
-    % recording software to note stimulus onset, stimulus offset, key
-    % press, etc.)
-    lib = lsl_loadlib();
-     
-    % Make a new stream outlet- e.g.: (name: BioSemi, type: EEG. 8 channels, 100Hz)
-    info = lsl_streaminfo(lib, 'MyMarkerStream', 'Markers', 1, 0, 'cf_string', 'wallacelab');
-    outlet = lsl_outlet(info);
+    [lib, info, outlet] = initialize_lsl;
 end
 if vel_stair ~= 1
     % Specify the dot speed in the RDK, wil be an input to function
@@ -135,12 +128,17 @@ if task_nature == 1
     
     % Generate the list of possible coherences by decreasing log values
     visInfo.cohStart = 0.5;
-    nlog_coh_steps = 12;
-    nlog_division = sqrt(2);
-    visInfo = cohSet_generation(visInfo, nlog_coh_steps, nlog_division);
+    visInfo.nlog_coh_steps = 12;
+    visInfo.nlog_division = sqrt(2);
+    visInfo = cohSet_generation(visInfo, block);
     
     if vel_stair == 1
-        visInfo.velSet = [5 10 15 20 25 30 35 40 45 50 55];
+        % Generate list of velocities and durations if the given velocity were to
+        % travel from speaker to speaker
+        visInfo.velStart = 55;
+        visInfo.vel_steps = 11;
+        visInfo.vel_subtract = 5;
+        visInfo = velSet_generation(visInfo, block);
     end
     
     % Prob 1 = chance of coherence lowering after correct response
@@ -149,9 +147,9 @@ if task_nature == 1
     % Prob 4 = chance of direction changing after incorrect response
     % Prob 5 = chance of velocity raising after correct response
     % Prob 6 = chance of velocity lowering after incorrect response
-    if velocity_nature == 2 % velocity ONLY staircase
+    if staircase_nature == 2 % velocity ONLY staircase
         visInfo.probs = [0 0.5 0 0.5 0.33 0.66];
-    elseif velocity_nature == 3 % coherence and velocity staircase
+    elseif staircase_nature == 3 % coherence and velocity staircase
         visInfo.probs = [0.1 0.5 0.9 0.5 0.33 0.66];
     else % coherence ONLY staircase
         visInfo.probs = [0.33 0.5 0.66 0.5 0 0];
@@ -192,15 +190,17 @@ else
     error('Could not generate coherences. Task nature determines how coherences are generated.')
 end
 
-% Create break time variable to check when it is time to break during task
-len_data_output = size(data_output, 1);
-block_length = floor(len_data_output/nbblocks);
-tt = block_length:block_length:len_data_output;
-% Combine last two blocks if the last block length is smaller than half the
-% other block lengths
-last_block_length = len_data_output - tt(1, nbblocks);
-if last_block_length < block_length/2
-    tt(1, nbblocks) = NaN;
+if nbblocks > 0
+    % Create break time variable to check when it is time to break during task
+    len_data_output = size(data_output, 1);
+    block_length = floor(len_data_output/nbblocks);
+    tt = block_length:block_length:len_data_output;
+    % Combine last two blocks if the last block length is smaller than half the
+    % other block lengths
+    last_block_length = len_data_output - tt(1, nbblocks);
+    if last_block_length < block_length/2
+        tt(1, nbblocks) = NaN;
+    end
 end
 
 %% Initialize
@@ -323,11 +323,13 @@ for ii = 1:length(data_output)
     end
 
     %% Check if it is break time for participant
-    if ismember(ii, tt) == 1
-        breaks = ii == tt;
-        break_num = find(breaks);
-        % Participant can take break given amount of blocks specified in nbblocks
-        takebreak(curWindow, cWhite0, fix, break_num, nbblocks) 
+    if nbblocks > 0
+        if ismember(ii, tt) == 1
+            breaks = ii == tt;
+            break_num = find(breaks);
+            % Participant can take break given amount of blocks specified in nbblocks
+            takebreak(curWindow, cWhite0, fix, break_num, nbblocks) 
+        end
     end
 
 end
@@ -348,8 +350,13 @@ if data_analysis == 1
     chosen_threshold = 0.72;
     save_name = filename;
 
-    % This function has functions that plot the current data
-    [accuracy, stairstep, CDF] = analyze_data(data_output, save_name, analysis_directory);
+    % This function has functions that plot the currect data
+    try
+        [accuracy, stairstep, CDF] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
+    catch
+        warning('Could not plot CDF function.')
+        [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
+    end
 end
 
 cd(data_directory)

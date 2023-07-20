@@ -1,6 +1,6 @@
 function [fig, p_values, ci, threshold, xData, yData, x, p, sz, std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-    coherence_frequency, compare_plot, save_name)
+    coherence_frequency, compare_plot, save_name, vel_stair)
 %CREATEFIT(COH_LIST,PC_AUD)
 %  Create a fit.
 %
@@ -23,9 +23,11 @@ function [fig, p_values, ci, threshold, xData, yData, x, p, sz, std_gaussian] = 
 %
 % Define the mean and standard deviation of the normal distribution
 
-
-
 [xData, yData] = prepareCurveData(coherence_lvls, rightward_prob);
+
+if vel_stair == 1
+    xData = flip(xData);
+end
 
 mu = mean(yData);
 sigma = std(yData);
@@ -77,11 +79,15 @@ elseif compare_plot == 0
     if contains(save_name, 'Aud')
         scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
         hold on
-        plot(x, p, 'LineWidth', 3, 'Color', 'r');
+        if vel_stair ~= 1
+            plot(x, p, 'LineWidth', 3, 'Color', 'r');
+        end
     elseif contains(save_name, 'Vis')
         scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
         hold on
-        plot(x, p, 'LineWidth', 3, 'Color', 'b');
+        if vel_stair ~= 1
+            plot(x, p, 'LineWidth', 3, 'Color', 'b');
+        end
     elseif contains(save_name, 'AV')
         scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm');
         hold on

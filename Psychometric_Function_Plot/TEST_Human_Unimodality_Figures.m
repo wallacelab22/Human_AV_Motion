@@ -130,7 +130,7 @@ end
 
 %% Create a stairstep graph for visualizing staircase
 if contains(save_name, 'stair') || contains(save_name, 'train')
-    stairstep_plot = stairstep_plotter(data_output, save_name);
+    stairstep_plot = stairstep_plotter(data_output, save_name, vel_stair);
     if fig_save == 1
         cd(figure_file_directory)
         saveas(gcf, strcat('Stairstep_Function_', save_name, '.jpg'))
@@ -151,7 +151,7 @@ if compare_plot == 1
         cd(script_file_directory)
     end
 elseif compare_plot == 0
-    normCDF_plot = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name);
+    normCDF_plot = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name, vel_stair);
     if fig_save == 1
         cd(figure_file_directory)
         saveas(gcf, strcat('Norm_CDF_Function_', save_name, '.jpg'))

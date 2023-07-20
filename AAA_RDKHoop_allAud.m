@@ -13,10 +13,10 @@ right_var = 1; left_var = 2; catch_var = 0; dur = 0.5; silence = 0.03; Fs = 4410
 disp('This is the main script for the AUDITORY ONLY motion discrimination task.')
 task_nature = input('Staircase = 1;  Method of constant stimuli (MCS) = 2 : ');
 if task_nature == 1
-    velocity_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
-    if velocity_nature == 2 || velocity_nature == 3
+    staircase_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
+    if staircase_nature == 2 || staircase_nature == 3
         vel_stair = 1;
-    elseif velocity_nature == 1
+    elseif staircase_nature == 1
         vel_stair = 0;
     end
 else 
@@ -24,6 +24,8 @@ else
     % manipulate velocity.
     vel_stair = 0;
 end
+disp('How do you want to match the visual and auditory stimuli?')
+stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
     % Training sound properties
@@ -35,16 +37,7 @@ EEG_nature = input('EEG recording? 0 = NO; 1 = YES :');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
-    
-    % Instantiate the LSL library (LSL stands for lab streaming layer and
-    % it is what we use to send stimulus triggers from MATLAB to our EEG
-    % recording software to note stimulus onset, stimulus offset, key
-    % press, etc.)
-    lib = lsl_loadlib();
-     
-    % Make a new stream outlet  e.g.: (name: BioSemi, type: EEG. 8 channels, 100Hz)
-    info = lsl_streaminfo(lib, 'MyMarkerStream', 'Markers', 1, 0, 'cf_string', 'wallacelab');
-    outlet = lsl_outlet(info);
+    [lib, info, outlet] = initialize_lsl;
 end
 % Auditory stimulus properties
 dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
@@ -133,28 +126,19 @@ if task_nature == 1
     
     % Generate the list of possible coherences by decreasing log values
     audInfo.cohStart = 0.5;
-    nlog_coh_steps = 4;
-    nlog_division = sqrt(2);
-    audInfo = cohSet_generation(audInfo, nlog_coh_steps, nlog_division);
+    audInfo.nlog_coh_steps = 4;
+    audInfo.nlog_division = sqrt(2);
+    audInfo = cohSet_generation(audInfo, block);
     
     if vel_stair == 1
+        audInfo.velStart = 55;
+        audInfo.vel_steps = 11;
+        audInfo.vel_subtract = 5;
+        % Speaker distance in degrees, based on the fact stimulus duration is 0.5 sec and speed is 58.8 deg/s
+        audInfo.speaker_distance = 29.4;
         % Generate list of velocities and durations if the given velocity were to
         % travel from speaker to speaker
-        audInfo.velStart = 55;
-        vel_steps = 11;
-        audInfo.velSet = zeros(1, vel_steps);
-        vel_subtract = 5;
-        for i = 1:length(audInfo.velSet)
-                audInfo.velSet(i) = audInfo.velStart - ((i-1)*vel_subtract);
-        end
-        audInfo.durSet = zeros(1, length(audInfo.velSet));
-        audInfo.snipSet = zeros(2, length(audInfo.velSet));
-        speaker_distance = 29.4; % in degrees, based on the fact stimulus duration is 0.5 sec and speed is 58.8 deg/s
-        for j = 1:length(audInfo.velSet)
-            audInfo.durSet(j) = speaker_distance/audInfo.velSet(j);
-            audInfo.snipSet(1, j) = (audInfo.durSet(j)/2) - (dur/2);
-            audInfo.snipSet(2, j) = (audInfo.durSet(j)/2) + (dur/2);
-        end
+        [audInfo] = velSet_generation(audInfo, block);
     end
 
     % Prob 1 = chance of coherence lowering after correct response
@@ -163,9 +147,9 @@ if task_nature == 1
     % Prob 4 = chance of direction changing after incorrect response
     % Prob 5 = chance of velocity raising after correct response
     % Prob 6 = chance of velocity lowering after incorrect response
-    if velocity_nature == 2 % velocity ONLY staircase
+    if staircase_nature == 2 % velocity ONLY staircase
         audInfo.probs = [0 0.5 0 0.5 0.33 0.66];
-    elseif velocity_nature == 3 % coherence and velocity staircase
+    elseif staircase_nature == 3 % coherence and velocity staircase
         audInfo.probs = [0.1 0.5 0.9 0.5 0.33 0.66];
     else % coherence ONLY staircase
         audInfo.probs = [0.33 0.5 0.66 0.5 0 0];
@@ -263,8 +247,8 @@ for ii = 1:length(data_output)
             if vel_stair == 1
                 vel_index = 1;
                 audInfo.vel = audInfo.velSet(vel_index);
-                audInfo.t_start = audInfo.snipSet(1,vel_index);
-                audInfo.t_end = audInfo.snipSet(2,vel_index);
+                audInfo.snip_start = audInfo.snipSet(1,vel_index);
+                audInfo.snip_end = audInfo.snipSet(2,vel_index);
                 audInfo.durRaw = audInfo.durSet(vel_index); 
             else
                 vel_index = 0;
@@ -278,8 +262,8 @@ for ii = 1:length(data_output)
             % was correct or incorrect.
             if vel_stair == 1
                 [audInfo, staircase_index, vel_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
-                audInfo.t_start = audInfo.snipSet(1,vel_index);
-                audInfo.t_end = audInfo.snipSet(2,vel_index);
+                audInfo.snip_start = audInfo.snipSet(1,vel_index);
+                audInfo.snip_end = audInfo.snipSet(2,vel_index);
                 audInfo.durRaw = audInfo.durSet(vel_index); 
             else
                 [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
@@ -313,7 +297,7 @@ for ii = 1:length(data_output)
     if vel_stair == 1
         % snipCAM snips the CAM file so the duration stays constant and the
         % displacement is changed, dependent on the velocity of the trial
-        CAM = snipCAM(CAM, Fs, audInfo.t_start, audInfo.t_end);
+        CAM = snipCAM(CAM, Fs, audInfo.snip_start, audInfo.snip_end);
     end
     wavedata = CAM;
     nrchannels = size(wavedata,1); % Number of rows = number of channels.
@@ -376,6 +360,7 @@ if data_analysis == 1
     try
         [accuracy, stairstep, CDF] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
     catch
+        warning('Could not plot CDF function.')
         [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
     end
 

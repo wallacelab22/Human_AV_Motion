@@ -4,7 +4,7 @@ function [right_vs_left, right_group, left_group, catch_group] = vel_direction_p
 right_or_left = data_output(:, 1);
 right_vs_left = splitapply(@(x){x}, data_output, right_or_left);
 
-% Isolate coherences for right and left groups and catch
+% Isolate velocities for right and left groups and catch
 right_group = findgroups(right_vs_left{1,1}(:,7));
 left_group = findgroups(right_vs_left{2,1}(:,7));
 if size(right_vs_left, 1) >= 3 && size(right_vs_left{3,1}, 2) >= 2
