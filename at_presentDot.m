@@ -1,6 +1,6 @@
-function [resp, rt, start_time] = at_presentDot(visInfo, center, dotSize, ...
+function [resp, rt, start_time] = at_presentDot(visInfo, dotInfo, center, dotSize, ...
     d_ppd, ndots, dxdy, ss, Ls, continue_show, curWindow, fix, responded, ...
-    resp, rt, EEG_nature, outlet, markers)
+    resp, rt, EEG_nature, outlet, markers,)
 
 % THE MAIN LOOP
 frames = 0;
@@ -61,7 +61,7 @@ while continue_show
     Screen('Flip', curWindow,0);
     % Now do next drawing commands
     Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
-    Screen('DrawDots', curWindow, dot_show, dotSize, [255 255 255], center);
+    Screen('DrawDots', curWindow, dot_show, dotSize, dotInfo.dotColor, center);
     % Presentation
     Screen('DrawingFinished',curWindow);
     frames = frames + 1;

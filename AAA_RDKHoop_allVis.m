@@ -310,7 +310,7 @@ for ii = 1:length(data_output)
     
     %% Dot Presentation
     % This function uses psychtoolbox to present dots to participant.
-    [resp, rt, start_time] = at_presentDot(visInfo, center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show, curWindow, fix, responded, resp, rt, EEG_nature, outlet, markers);
+    [resp, rt, start_time] = at_presentDot(visInfo, dotInfo, center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show, curWindow, fix, responded, resp, rt, EEG_nature, outlet, markers);
 
     %% Erase last dots & go back to only plotting fixation
     Screen('DrawingFinished',curWindow);
