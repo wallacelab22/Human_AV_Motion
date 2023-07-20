@@ -1,4 +1,4 @@
-function [stimInfo] = velSet_generation(stimInfo, block)
+function [stimInfo] = velSet_generation(stimInfo, block, dur)
 
 % For both auditory and visual, create velSet by just jumping in increments
 % of vel_substract, starting with velStart. E.g., start with 55 deg/s and 
@@ -18,7 +18,7 @@ elseif contains(block, 'Aud')
     stimInfo.durSet = zeros(1, length(stimInfo.velSet));
     stimInfo.snipSet = zeros(2, length(stimInfo.velSet));
     for j = 1:length(stimInfo.velSet)
-        stimInfo.durSet(j) = stimInfo.speaker_distance/stimInfo.velSet(j);
+        stimInfo.durSet(j) = stimInfo.speakerDistance/stimInfo.velSet(j);
         stimInfo.snipSet(1, j) = (stimInfo.durSet(j)/2) - (dur/2);
         stimInfo.snipSet(2, j) = (stimInfo.durSet(j)/2) + (dur/2);
     end

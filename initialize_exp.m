@@ -1,4 +1,4 @@
-function [screenInfo, curWindow, screenRect, xCenter, yCenter] = initialize_exp(monWidth,viewDist,curScreen)
+function [screenInfo, curWindow, screenRect, xCenter, yCenter] = initialize_exp(monWidth, viewDist, curScreen)
 %Initialize experiment via psychtoolbox functions. 0 for SkipSyncTests
 %tells psychtoolbox to check for sync issues. Important not to skip if
 %timing of stimulus presentation is important. viewDist is manually set by

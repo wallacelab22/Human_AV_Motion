@@ -143,7 +143,7 @@ if task_nature == 1
         visInfo.velStart = 55;
         visInfo.vel_steps = 11;
         visInfo.vel_subtract = 5;
-        visInfo = velSet_generation(visInfo, block);
+        visInfo = velSet_generation(visInfo, block, dur);
     end
     
     % Prob 1 = chance of coherence lowering after correct response

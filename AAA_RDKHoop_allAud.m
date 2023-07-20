@@ -41,12 +41,17 @@ if EEG_nature == 1
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
     [lib, info, outlet] = initialize_lsl;
 end
-% Auditory stimulus properties
+% Specify if you want data analysis
+data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
+
+%% Auditory stimulus properties
+% dB SNR 
 dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
 % Convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
-% Specify if you want data analysis
-data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
+% Auditory Velocity
+aud_vel = input('Enter auditory velocity (if 0, will use original 58.8 deg/sec): ');
+
 
 %% Directories created to navigate code folders throughout script
 script_directory = '/home/wallace/Human_AV_Motion/';
@@ -95,8 +100,19 @@ num_trials = 250; stimtrials = 12; catchtrials = 25;
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
 % only way you can know its limit is by trial and error. Variables monWidth
-% and viewDist are measured in centimeters.
-maxdotsframe = 150; monWidth = 50.8; viewDist = 120;
+% and viewDist are measured in centimeters. Speaker distance in degrees,
+% measured from center of one speaker to center of the other. Because
+% speakerDistance = 29.4 and dur = 0.5, auditory velocity if not otherwise 
+% specified is 58.8 deg/s. maxVel is maximum velocity that can be presented
+% as an auditory stimulus with a 0.5 sec dur.
+maxdotsframe = 150; monWidth = 50.8; viewDist = 120; audInfo.speakerDistance = 29.4;
+audInfo.maxVel = 58.8;
+
+% Velocity of trial set to maxVel if not otherwise specified. This will
+% make auditory stimulus completely travel from one speaker to the other.
+if aud_vel == 0
+    audInfo.vel = audInfo.maxVel;
+end
 
 % General drawing color used for RDK, instructions, etc.
 cWhite0 = 255;
@@ -137,11 +153,9 @@ if task_nature == 1
         audInfo.velStart = 55;
         audInfo.vel_steps = 11;
         audInfo.vel_subtract = 5;
-        % Speaker distance in degrees, based on the fact stimulus duration is 0.5 sec and speed is 58.8 deg/s
-        audInfo.speaker_distance = 29.4;
         % Generate list of velocities and durations if the given velocity were to
         % travel from speaker to speaker
-        [audInfo] = velSet_generation(audInfo, block);
+        [audInfo] = velSet_generation(audInfo, block, dur);
     end
 
     % Prob 1 = chance of coherence lowering after correct response
@@ -198,6 +212,15 @@ else
     error('Could not generate coherences. Task nature determines how coherences are generated')
 end
 
+%% Velocity generation for Auditory Stimulus
+if aud_vel ~= 0
+    audInfo.velStart = aud_vel;
+    audInfo.vel_steps = 1;
+    audInfo.vel_subtract = 0;
+    audInfo = velSet_generation(audInfo, block, dur);
+end
+
+%% Break time creation
 if nbblocks > 0
     % Create break time variable to check when it is time to break during task
     len_data_output = size(data_output, 1);
@@ -257,9 +280,14 @@ for ii = 1:length(data_output)
             if vel_stair == 1
                 vel_index = 1;
                 audInfo.vel = audInfo.velSet(vel_index);
+                audInfo.durRaw = audInfo.durSet(vel_index); 
                 audInfo.snip_start = audInfo.snipSet(1,vel_index);
                 audInfo.snip_end = audInfo.snipSet(2,vel_index);
-                audInfo.durRaw = audInfo.durSet(vel_index); 
+            elseif aud_vel ~= 0
+                audInfo.vel = audInfo.velSet;
+                audInfo.durRaw = audInfo.durSet;
+                audInfo.snip_start = audInfo.snipSet(1);
+                audInfo.snip_end = audInfo.snipSet(2);
             else
                 vel_index = 0;
                 audInfo.durRaw = dur;
@@ -272,14 +300,22 @@ for ii = 1:length(data_output)
             % was correct or incorrect.
             if vel_stair == 1
                 [audInfo, staircase_index, vel_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
+                audInfo.durRaw = audInfo.durSet(vel_index); 
                 audInfo.snip_start = audInfo.snipSet(1,vel_index);
                 audInfo.snip_end = audInfo.snipSet(2,vel_index);
-                audInfo.durRaw = audInfo.durSet(vel_index); 
             else
                 [audInfo, staircase_index] = staircase_procedure(trial_status, audInfo, staircase_index, vel_stair, vel_index);
             end
         end
     elseif task_nature == 2
+        if ii == 1 && aud_vel ~= 0
+            audInfo.vel = audInfo.velSet;
+            audInfo.durRaw = audInfo.durSet;
+            audInfo.snip_start = audInfo.snipSet(1);
+            audInfo.snip_end = audInfo.snipSet(2);
+        elseif ii == 1 && aud_vel == 0
+            audInfo.durRaw = dur;
+        end
         % Stimulus direction and coherence for a given trial is pre
         % determined via the output of at_generateMatrix.
         audInfo.dir = data_output(ii, 1);
@@ -304,7 +340,7 @@ for ii = 1:length(data_output)
     % via speakers that creates perceptual auditory motion from one speaker
     % to another
     CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
-    if vel_stair == 1
+    if audInfo.vel < audInfo.maxVel
         % snipCAM snips the CAM file so the duration stays constant and the
         % displacement is changed, dependent on the velocity of the trial
         CAM = snipCAM(CAM, Fs, audInfo.snip_start, audInfo.snip_end);
