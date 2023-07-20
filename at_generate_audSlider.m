@@ -1,9 +1,14 @@
-function [audInfo, StopPixel_M] = at_generate_audSlider(audInfo, right_keypress, left_keypress, space_keypress, screenRect, curWindow, cWhite0, xCenter, yCenter, silence, Fs, noise_reduction_scalar, pahandle)
+function [audInfo, StopPixel_M] = at_generate_audSlider(audInfo, right_keypress, left_keypress, space_keypress, screenInfo, screenRect, curWindow, cWhite0, xCenter, yCenter, silence, Fs, noise_reduction_scalar, pahandle)
 
+% Needed to present stimuli
 EEG_nature = 0;
 outlet = NaN;
 markers = NaN;
 
+% Variables for nonchanging visual stimulus
+inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2; maxdotsframe = 150;
+block_dot_speed = 15; vel_stair = 0; visInfo.vel = 58.8; dur = 0.5;
+monWidth = 50.8; viewDist = 120;
 
 slack = Screen('GetFlipInterval', curWindow);
 vbl = Screen('Flip', curWindow);

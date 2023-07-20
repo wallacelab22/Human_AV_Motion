@@ -24,8 +24,10 @@ else
     % manipulate velocity.
     vel_stair = 0;
 end
-disp('How do you want to match the visual and auditory stimuli?')
-stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response');
+if task_nature == 2
+    disp('How do you want to match the visual and auditory stimuli?')
+    stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
+end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
     % Training sound properties
@@ -235,7 +237,7 @@ end
 
 if stim_matching_nature == 2
     % Generate a slider for the participant to respond to
-    [visInfo, StopPixel_M, currentRating] = at_generateSlider(visInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter);
+    [audInfo, StopPixel_M] = at_generate_audSlider(audInfo, right_keypress, left_keypress, space_keypress, screenRect, curWindow, cWhite0, xCenter, yCenter, silence, Fs, noise_reduction_scalar, pahandle);
 end
 
 %% Flip up fixation dot
