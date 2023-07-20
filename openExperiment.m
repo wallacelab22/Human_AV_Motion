@@ -1,4 +1,4 @@
-function screenInfo = openExperiment(monWidth, viewDist, curScreen)
+function [screenInfo, xCenter, yCenter] = openExperiment(monWidth, viewDist, curScreen)
 % OPENEXPERIMENT initialize screen settings for new experiment
 %
 % screenInfo = openExperiment(monWidth, viewDist, curScreen)
