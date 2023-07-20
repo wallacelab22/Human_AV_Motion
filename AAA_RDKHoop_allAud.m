@@ -35,7 +35,7 @@ if training_nature == 1
     incorrect_freq = 800;
     [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
 end
-EEG_nature = input('EEG recording? 0 = NO; 1 = YES :');
+EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');

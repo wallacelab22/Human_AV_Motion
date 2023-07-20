@@ -52,7 +52,7 @@ dotInfo.cohSet = currviscoh;
 % Choose either group of codes to use single set or multi set.
 
 dotInfo.numDotField = 1;
-dotInfo.apXYD = [0 50 50];
+dotInfo.apXYD = [0 50 65];
 if vel_stair == 1
     dotInfo.speed = currvisvel;
 else
@@ -76,7 +76,7 @@ end
 dotInfo.dotColor = [0 0 0]; %black
 
 % dot size in pixels
-dotInfo.dotSize = 2;
+dotInfo.dotSize = 4;
 
 % fixation x,y coordinates
 dotInfo.fixXY = [0 -20];

@@ -27,15 +27,17 @@ end
 if task_nature == 2
     disp('How do you want to match the visual and auditory stimuli?')
     stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
+else
+    stim_matching_nature = 0;
 end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
     % Training sound properties
-    correct_fr beq = 2000;
+    correct_freq = 2000;
     incorrect_freq = 800;
     [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
 end
-EEG_nature = input('EEG recording? 0 = NO; 1 = YES :');
+EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
