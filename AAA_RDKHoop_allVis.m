@@ -24,8 +24,10 @@ else
     % manipulate velocity.
     vel_stair = 0;
 end
-disp('How do you want to match the visual and auditory stimuli?')
-stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response');
+if task_nature == 2
+    disp('How do you want to match the visual and auditory stimuli?')
+    stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
+end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
     % Training sound properties
@@ -70,7 +72,7 @@ AssertOpenGL;
 % participants report direction.
 right_keypress = [115 13];
 left_keypress = [114 12];
-space_keypress = [ ];
+space_keypress = [66 14];
 
 %% Define general values how long recording iTis for, might have been poisson distribution
 % inputtype, typeInt, minNum, maxNum, and meanNum all deal with the intertrial interval, which
@@ -232,7 +234,7 @@ end
 
 if stim_matching_nature == 2
     % Generate a slider for the participant to respond to
-    [visInfo, StopPixel_M, currentRating] = at_generateSlider(visInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter);
+    [visInfo, StopPixel_M] = at_generateSlider(visInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter);
 end
 
 %% Flip up fixation dot

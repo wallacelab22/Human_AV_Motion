@@ -1,14 +1,17 @@
-function [stimInfo, StopPixel_M, currentRating] = at_generateSlider(stimInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter)
+function [stimInfo, StopPixel_M] = at_generateSlider(stimInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter)
+
+slack = Screen('GetFlipInterval', curWindow);
+vbl = Screen('Flip', curWindow);
 
 % Parameters for your scale and text that you want
 question = 'USE THE SLIDER TO MATCH THE VISUAL NOISINESS TO THE AUDITORY NOISINESS.';
-lowerText = 'Less Noisy';
-upperText = 'More Noisy';
+lowerText = 'More Noisy';
+upperText = 'Less Noisy';
 pixelsPerPress = 2;
 waitframes = 1;
 lineLength = 500; % in pixels
 halfLength = lineLength/2;
-divider = lineLength/10; % for a rating of 1:10
+divider = lineLength/100; % for a rating of 1:10
 
 baseRect = [0 0 10 30]; % size of slider
 LineX = xCenter;
@@ -26,7 +29,7 @@ while true
         LineX = LineX + pixelsPerPress;
     elseif ismember(pressedKeys, left_keypress)
         LineX = LineX - pixelsPerPress;
-    elseif ismember(pressedKeys, space_press)
+    elseif ismember(pressedKeys, space_keypress)
         StopPixel_M = ((LineX - xCenter) + halfLength)/divider; % for a rating of between 0 and 10. Tweak this as necessary
         break
     end
