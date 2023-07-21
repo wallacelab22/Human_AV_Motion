@@ -29,7 +29,7 @@ rng(rseed,'v5uniform'); % v5 random generator
 screenInfo = struct('rseed',rseed);
 white = WhiteIndex(curScreen);
 black = BlackIndex(curScreen);
-gray = GrayIndex(curScreen, 0.3);
+gray = GrayIndex(curScreen, 0.5);
 % Open screen, make stuff behave itself in OS X with multiple monitors
 %Screen('Preference', 'VisualDebugLevel',0);
 

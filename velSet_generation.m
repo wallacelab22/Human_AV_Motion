@@ -1,5 +1,16 @@
 function [stimInfo] = velSet_generation(stimInfo, block, dur)
 
+try 
+    stimInfo.vel_steps = stimInfo.vel_steps;
+    stimInfo.velStart = stimInfo.velStart;
+    stimInfo.vel_subtract = stimInfo.vel_subtract;
+catch
+    stimInfo.vel_steps = 1;
+    stimInfo.velStart = stimInfo.vel;
+    stimInfo.vel_subtract = 0;
+end
+
+
 % For both auditory and visual, create velSet by just jumping in increments
 % of vel_substract, starting with velStart. E.g., start with 55 deg/s and 
 % end with 15 deg/sec, going down by increments of 5.

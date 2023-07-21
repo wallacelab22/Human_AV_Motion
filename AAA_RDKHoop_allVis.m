@@ -104,8 +104,13 @@ num_trials = 100; stimtrials = 12; catchtrials = 25;
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
 % only way you can know its limit is by trial and error. Variables monWidth
-% and viewDist are measured in centimeters.
-maxdotsframe = 150; monWidth = 50.8; viewDist = 120;
+% and viewDist are measured in centimeters. Speaker distance in degrees,
+% measured from center of one speaker to center of the other. Because
+% speakerDistance = 29.4 and dur = 0.5, auditory velocity if not otherwise 
+% specified is 58.8 deg/s. maxVel is maximum velocity that can be presented
+% as an auditory stimulus with a 0.5 sec dur.
+maxdotsframe = 150; monWidth = 50.8; viewDist = 120; audInfo.speakerDistance = 29.4;
+audInfo.maxVel = 58.8;
 
 % General drawing color used for RDK, instructions, etc.
 cWhite0 = 255;
@@ -241,12 +246,12 @@ end
 % to the size of the visual aperture.
 if aperture_nature == 1
     try
-        visInfo.velSet = audInfo.velSet;
+        audInfo.velSet = visInfo.velSet;
     catch
         warning('No visInfo.velSet variable, using visInfo.vel variable instead.')
-        visInfo.vel = audInfo.velSet;
+        audInfo.velSet = visInfo.vel;
     end
-    visInfo.vel = audInfo.vel;
+    audInfo.vel = visInfo.vel;
     opp_block = 'Aud';
     audInfo = velSet_generation(audInfo, opp_block, dur);
     visInfo.displaceSet = audInfo.displaceSet*10;
