@@ -31,7 +31,7 @@ else
     stim_matching_nature = 0;
 end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
-noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES');
+noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
@@ -115,7 +115,7 @@ if aud_vel == 0
 end
 
 % General drawing color used for RDK, instructions, etc.
-cWhite0 = 255;
+cWhite0 = 255; fixation_color = [255 0 0];
 
 %% Collect subject information
 % Manually set block depending on what task code this is. Function

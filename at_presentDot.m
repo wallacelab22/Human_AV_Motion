@@ -51,7 +51,7 @@ while continue_show
     
     % Convert to stuff we can actually plot
     this_x(:,1:2) = floor(d_ppd(1) * this_s); % pix/ApUnit
-    
+
     % This assumes that zero is at the top left, but we want it to be in the
     % center, so shift the dots up and left, which just means adding half of
     % the aperture size to both the x and y direction.
@@ -59,7 +59,7 @@ while continue_show
 
     %  NaN out-of-circle dots
     xyDis = dot_show;
-    outCircle = sqrt(xyDis(1,:).^2 + xyDis(2,:).^2) + dotInfo.dotSize/2 > center(1,3);        
+    outCircle = sqrt(xyDis(1,:).^2 + xyDis(2,:).^2) + dotInfo.dotSize/2 > center(1);        
     dots2Display = dot_show;
     dots2Display(:,outCircle) = NaN;
     
@@ -67,7 +67,7 @@ while continue_show
     Screen('Flip', curWindow,0);
     % Now do next drawing commands
     Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
-    Screen('DrawDots', curWindow, dots2Display, dotSize, dotInfo.dotColor, center);
+    Screen('DrawDots', curWindow, dots2Display, dotSize, dotInfo.dotColor, center(1:2));
     % Presentation
     Screen('DrawingFinished',curWindow);
     frames = frames + 1;
