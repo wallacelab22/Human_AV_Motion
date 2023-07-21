@@ -7,7 +7,7 @@ close all;
 clc;
 
 %% FOR RESPONSE CODING: 1 = RIGHTWARD MOTION; 2 = LEFTWARD MOTION
-right_var = 1; left_var = 2; catch_var = 0; dur = 0.5; silence = 0.03; Fs = 44100;
+right_var = 1; left_var = 2; catch_var = 0;
 
 %% Specify parameters of the block
 disp('This is the main script for the VISUAL ONLY motion discrimination task.')
@@ -31,17 +31,12 @@ else
     stim_matching_nature = 0;
 end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
-if training_nature == 1
-    % Training sound properties
-    correct_freq = 2000;
-    incorrect_freq = 800;
-    [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
-end
 aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
 if aperture_nature ~= 1
     % Original aperture size, in tens of visual degrees (i.e. 50 is 5 degrees)
     aperture_size = 50;
 end
+noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
@@ -89,11 +84,14 @@ space_keypress = [66 14];
 inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 
 %% General stimulus variables
-% dur is stimulus duration (in sec), triallength is total length of 1 trial
-% (currently unused in code), nbblocks is used to divide up num_trials 
+% dur is stimulus duration, triallength is total length of 1 trial (this is
+% currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; triallength = 2; nbblocks = 0;
+dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 0; 
+
+% Define buffersize in order to make CAM (auditory stimulus)
+silence = 0.03; buffersize = (dur+silence)*Fs;
 
 % All variables that define stimulus repetitions; num_trials defines total
 % number of staircase trials, stimtrials defines number of stimulus trials
@@ -220,8 +218,14 @@ curScreen = 0;
 % Opens psychtoolbox and initializes experiment
 [screenInfo, curWindow, screenRect, xCenter, yCenter] = initialize_exp(monWidth, viewDist, curScreen);
 
-%% Initialize Audio
+%% Initialize Audio for Feedback
 if training_nature == 1
+    % Training sound properties
+    correct_freq = 2000;
+    incorrect_freq = 800;
+    % Generate tones for correct and incorrect responses
+    [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
+    % Open a pahandle
     [pahandle] = initialize_aud(curWindow, Fs);
 end
 
@@ -235,7 +239,7 @@ else
     instructions_psyVis(curWindow, cWhite0);
 end
 
-%% Matching Coherence Across Modalities
+%% Stimulus Matching Across Modalities
 % Generate and present a slider for participant to subjectively match
 % coherence across modalities
 if stim_matching_nature == 2
@@ -245,22 +249,13 @@ end
 % Match the computed auditory displacement for a given velocity given dur
 % to the size of the visual aperture.
 if aperture_nature == 1
-    try
-        audInfo.velSet = visInfo.velSet;
-    catch
-        warning('No visInfo.velSet variable, using visInfo.vel variable instead.')
-        audInfo.velSet = visInfo.vel;
-    end
-    audInfo.vel = visInfo.vel;
-    opp_block = 'Aud';
-    audInfo = velSet_generation(audInfo, opp_block, dur);
-    visInfo.displaceSet = audInfo.displaceSet*10;
+    [audInfo, visInfo] = at_generateApertureInfo(audInfo, visInfo, dur);
 else
     visInfo.displaceSet = aperture_size;
 end
 
 %% Flip up fixation dot
-[fix, s] = fixation_dot_flip(screenRect, curWindow);
+[fix, s] = at_presentFix(screenRect, curWindow);
 
 %% Experiment Loop
 % Loop through every trial.

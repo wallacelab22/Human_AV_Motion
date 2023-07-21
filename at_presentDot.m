@@ -56,12 +56,18 @@ while continue_show
     % center, so shift the dots up and left, which just means adding half of
     % the aperture size to both the x and y direction.
     dot_show = (this_x(:,1:2) - d_ppd/2)';
+
+    %  NaN out-of-circle dots
+    xyDis = dot_show;
+    outCircle = sqrt(xyDis(1,:).^2 + xyDis(2,:).^2) + dotInfo.dotSize/2 > center(1,3);        
+    dots2Display = dot_show;
+    dots2Display(:,outCircle) = NaN;
     
     % After all computations, flip
     Screen('Flip', curWindow,0);
     % Now do next drawing commands
     Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
-    Screen('DrawDots', curWindow, dot_show, dotSize, dotInfo.dotColor, center);
+    Screen('DrawDots', curWindow, dots2Display, dotSize, dotInfo.dotColor, center);
     % Presentation
     Screen('DrawingFinished',curWindow);
     frames = frames + 1;

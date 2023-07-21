@@ -7,7 +7,7 @@ close all;
 clc;
 
 %% FOR RESPONSE CODING: 1 = RIGHTWARD MOTION; 2 = LEFTWARD MOTION
-right_var = 1; left_var = 2; catch_var = 0; dur = 0.5; silence = 0.03; Fs = 44100;
+right_var = 1; left_var = 2; catch_var = 0;
 
 %% Specify parameters of the block
 disp('This is the main script for the AUDITORY ONLY motion discrimination task.')
@@ -31,12 +31,7 @@ else
     stim_matching_nature = 0;
 end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
-if training_nature == 1
-    % Training sound properties
-    correct_freq = 2000;
-    incorrect_freq = 800;
-    [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
-end
+noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
@@ -241,6 +236,12 @@ curScreen = 0;
 monRefresh = 1/screenInfo.frameDur;
 
 %% Initialize Audio
+% Training sound properties
+correct_freq = 2000;
+incorrect_freq = 800;
+% Generate tones for correct and incorrect responses
+[corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
+% Open a pahandle
 [pahandle] = initialize_aud(curWindow, Fs);
 
 %% Welcome and Instrctions for the Suject
@@ -259,7 +260,7 @@ if stim_matching_nature == 2
 end
 
 %% Flip up fixation dot
-[fix, s] = fixation_dot_flip(screenRect, curWindow);
+[fix, s] = at_presentFix(screenRect, curWindow);
 
 %% Experiment Loop
 % Loop through every trial.
