@@ -27,6 +27,8 @@ end
 if task_nature == 2
     disp('How do you want to match the visual and auditory stimuli?')
     stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
+else
+    stim_matching_nature = 0;
 end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 if training_nature == 1
@@ -40,6 +42,8 @@ if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
     [lib, info, outlet] = initialize_lsl;
+else
+    outlet = NaN;
 end
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
@@ -49,9 +53,10 @@ data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
 dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
 % Convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
-% Auditory Velocity
-aud_vel = input('Enter auditory velocity (if 0, will use original 58.8 deg/sec): ');
-
+if vel_stair ~= 1
+    % Auditory velocity
+    aud_vel = input('Enter auditory velocity (if 0, will use original 58.8 deg/sec): ');
+end
 
 %% Directories created to navigate code folders throughout script
 script_directory = '/home/wallace/Human_AV_Motion/';
@@ -67,12 +72,12 @@ cd(script_directory)
 % for portability of script. 
 KbName('UnifyKeyNames');
 AssertOpenGL; % was not in Aud stim code before
-% Assigned keyboard variables in Linux for left and right arrow keys and extended
+% Assigned keyboard variables in Linux for left arrow, right arrow, and space keys and extended
 % keyboard device. Change depending on what you are using to have
 % participants report direction.
 right_keypress = [115 13];
 left_keypress = [114 12];
-space_keypress = [ ]; % used for the slider
+space_keypress = [66 14]; % used for the slider
 
 %% Define general values how long recording iTis for, might have been poisson distribution
 % inputtype, typeInt, minNum, maxNum, and meanNum all deal with the intertrial interval, which
@@ -222,17 +227,7 @@ end
 
 %% Break time creation
 if nbblocks > 0
-    % Create break time variable to check when it is time to break during task
-    len_data_output = size(data_output, 1);
-    block_length = floor(len_data_output/nbblocks);
-    tt = block_length:block_length:len_data_output;
-    % Combine last two blocks if the last block length is smaller than half the
-    % other block lengths
-    last_block_length = len_data_output - tt(1, nbblocks);
-    if last_block_length < block_length/2
-        tt(1, nbblocks) = NaN;
-        warning('Last block will be longer than the rest.')
-    end
+    [tt] = breaktime_var(data_output, nbblocks);
 end
 
 %% Initialize
@@ -283,7 +278,7 @@ for ii = 1:length(data_output)
                 audInfo.durRaw = audInfo.durSet(vel_index); 
                 audInfo.snip_start = audInfo.snipSet(1,vel_index);
                 audInfo.snip_end = audInfo.snipSet(2,vel_index);
-            elseif aud_vel ~= 0
+            elseif aud_vel ~= 0 && vel_stair ~= 1
                 audInfo.vel = audInfo.velSet;
                 audInfo.durRaw = audInfo.durSet;
                 audInfo.snip_start = audInfo.snipSet(1);
@@ -349,14 +344,7 @@ for ii = 1:length(data_output)
     nrchannels = size(wavedata,1); % Number of rows = number of channels.
     
     % Create marker for EEG
-    if EEG_nature == 1
-        dir_id = num2str(data_output(ii,1));
-        coh_id = num2str(data_output(ii,2));
-        markers = strcat([dir_id coh_id]); % unique identifier for LSL
-    else
-        markers = NaN; % needed for function at_presentAud
-        outlet = NaN;
-    end
+    [markers] = at_generateMarkers(data_output, ii, EEG_nature);
 
     % Presents auditory stimulus and gets reaction time. Presents stimulus 
     % for duration specified in dur, which is the length of CAM (wavedata)
@@ -371,7 +359,6 @@ for ii = 1:length(data_output)
     %% Present stimulus feedback if requested
     if training_nature == 1
         at_presentFeedback(trial_status, pahandle, corr_soundout, incorr_soundout);
-        WaitSecs(1)
     end
 
     %% Check if it is break time for participant

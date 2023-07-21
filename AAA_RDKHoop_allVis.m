@@ -37,19 +37,24 @@ if training_nature == 1
     incorrect_freq = 800;
     [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
 end
+aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
+if aperture_nature ~= 1
+    % Original aperture size, in tens of visual degrees (i.e. 50 is 5 degrees)
+    aperture_size = 50;
+end
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
     [lib, info, outlet] = initialize_lsl;
+else
+    outlet = NaN;
 end
 if vel_stair ~= 1
     % Specify the dot speed in the RDK, wil be an input to function
     % at_createDotInfo
     block_dot_speed = input('Dot Speed (in deg/sec): ');
     visInfo.vel = block_dot_speed;
-else
-    block_dot_speed = NaN;
 end
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
@@ -198,16 +203,7 @@ else
 end
 
 if nbblocks > 0
-    % Create break time variable to check when it is time to break during task
-    len_data_output = size(data_output, 1);
-    block_length = floor(len_data_output/nbblocks);
-    tt = block_length:block_length:len_data_output;
-    % Combine last two blocks if the last block length is smaller than half the
-    % other block lengths
-    last_block_length = len_data_output - tt(1, nbblocks);
-    if last_block_length < block_length/2
-        tt(1, nbblocks) = NaN;
-    end
+    [tt] = breaktime_var(data_output, nbblocks);
 end
 
 %% Initialize
@@ -234,9 +230,28 @@ else
     instructions_psyVis(curWindow, cWhite0);
 end
 
+%% Matching Coherence Across Modalities
+% Generate and present a slider for participant to subjectively match
+% coherence across modalities
 if stim_matching_nature == 2
     % Generate a slider for the participant to respond to
     [visInfo, StopPixel_M] = at_generateSlider(visInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter);
+end
+% Match the computed auditory displacement for a given velocity given dur
+% to the size of the visual aperture.
+if aperture_nature == 1
+    try
+        visInfo.velSet = audInfo.velSet;
+    catch
+        warning('No visInfo.velSet variable, using visInfo.vel variable instead.')
+        visInfo.vel = audInfo.velSet;
+    end
+    visInfo.vel = audInfo.vel;
+    opp_block = 'Aud';
+    audInfo = velSet_generation(audInfo, opp_block, dur);
+    visInfo.displaceSet = audInfo.displaceSet*10;
+else
+    visInfo.displaceSet = aperture_size;
 end
 
 %% Flip up fixation dot
@@ -285,7 +300,7 @@ for ii = 1:length(data_output)
     %% Create info matrix for Visual Stim. 
     % This dotInfo  output informs at_dotGenerate how to generate the RDK. 
     dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, ...
-        minNum, maxNum, meanNum, maxdotsframe, dur, block_dot_speed, vel_stair, visInfo.vel);
+        minNum, maxNum, meanNum, maxdotsframe, dur, visInfo.vel, visInfo.displaceSet);
     
     %% Keypress input initialize variables, define frames for presentation
     while KbCheck; end
@@ -296,14 +311,7 @@ for ii = 1:length(data_output)
     rt = nan; %default rt in case no response is recorded
 
     % Create marker for EEG
-    if EEG_nature == 1
-        dir_id = num2str(data_output(ii,1));
-        coh_id = num2str(data_output(ii,2));
-        markers = strcat([dir_id coh_id]); % unique identifier for LSL
-    else
-        markers = NaN; % needed for function at_presentDot
-        outlet = NaN;
-    end
+    [markers] = at_generateMarkers(data_output, ii, EEG_nature);
 
     %% Dot Generation.
     % This function generates the dots that will be presented to
@@ -331,7 +339,6 @@ for ii = 1:length(data_output)
     %% Present stimulus feedback if requested
     if training_nature == 1
         at_presentFeedback(trial_status, pahandle, corr_soundout, incorr_soundout);
-        WaitSecs(1)
     end
 
     %% Check if it is break time for participant

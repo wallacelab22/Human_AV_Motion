@@ -29,7 +29,7 @@ Screen('DrawText', curWindow, 'After every trial you will be informed if you wer
 Screen('DrawText', curWindow, 'The following HIGH pitched tone will be played if you are CORRECT.',300,400,cWhite0);
 Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',300,650,cWhite0);
 Screen('Flip',curWindow);
-WaitSecs(4)
+WaitSecs(3)
 PsychPortAudio('FillBuffer', pahandle, corr_soundout')
 PsychPortAudio('Start', pahandle)
 keytest_unbound
@@ -49,7 +49,7 @@ Screen('DrawText', curWindow, 'After every trial you will be informed if you wer
 Screen('DrawText', curWindow, 'The following LOW pitched tone will be played if you are INCORRECT.',300,400,cWhite0);
 Screen('DrawText', curWindow, 'Press any key to continue after tone is played...',300,650,cWhite0);
 Screen('Flip',curWindow);
-WaitSecs(4)
+WaitSecs(3)
 PsychPortAudio('FillBuffer', pahandle, incorr_soundout')
 PsychPortAudio('Start', pahandle)
 keytest_unbound
