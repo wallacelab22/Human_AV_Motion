@@ -80,6 +80,9 @@ space_keypress = [66 14]; % used for the slider
 % time in sec that the iti will be. mMn and max time for iti defined by minNum
 % and maxNum respectively.
 inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
+if noise_jitter_nature == 1
+    minJitter = 0.2; maxJitter = 0.6; meanJitter = 0.4;
+end
 
 %% General stimulus variables
 % dur is stimulus duration, triallength is total length of 1 trial (this is
@@ -106,7 +109,7 @@ num_trials = 250; stimtrials = 12; catchtrials = 25;
 % specified is 58.8 deg/s. maxVel is maximum velocity that can be presented
 % as an auditory stimulus with a 0.5 sec dur.
 maxdotsframe = 150; monWidth = 50.8; viewDist = 120; audInfo.speakerDistance = 29.4;
-audInfo.maxVel = 58.8;
+audInfo.maxVel = audInfo.speakerDistance/dur;
 
 % Velocity of trial set to maxVel if not otherwise specified. This will
 % make auditory stimulus completely travel from one speaker to the other.
@@ -341,7 +344,15 @@ for ii = 1:length(data_output)
         % displacement is changed, dependent on the velocity of the trial
         CAM = snipCAM(CAM, Fs, audInfo.snip_start, audInfo.snip_end);
     end
-    wavedata = CAM;
+    if noise_jitter_nature == 1
+        before_jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
+        after_jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
+        beforeCAM = makeCAM_PILOT(0, 0, before_jittertime, silence, Fs, noise_reduction_scalar);
+        afterCAM = makeCAM_PILOT(0, 0, after_jittertime, silence, Fs, noise_reduction_scalar);
+        wavedata = [beforeCAM, CAM, afterCAM];
+    else
+        wavedata = CAM;
+    end
     nrchannels = size(wavedata,1); % Number of rows = number of channels.
     
     % Create marker for EEG

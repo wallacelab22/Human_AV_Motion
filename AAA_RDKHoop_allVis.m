@@ -108,7 +108,7 @@ num_trials = 100; stimtrials = 12; catchtrials = 25;
 % specified is 58.8 deg/s. maxVel is maximum velocity that can be presented
 % as an auditory stimulus with a 0.5 sec dur.
 maxdotsframe = 150; monWidth = 50.8; viewDist = 120; audInfo.speakerDistance = 29.4;
-audInfo.maxVel = 58.8;
+audInfo.maxVel = audInfo.speakerDistance/dur;
 
 % General drawing color used for RDK, instructions, etc.
 cWhite0 = 255; fixation_color = [255 0 0];
