@@ -12,6 +12,6 @@ end
 audInfo.vel = visInfo.vel;
 opp_block = 'Aud';
 audInfo = velSet_generation(audInfo, opp_block, dur);
-visInfo.displaceSet = audInfo.displaceSet*10;
+visInfo.displaceSet = audInfo.displaceSet*10; % need to multiply by 10 b/c that is what dotInfo does to aperture variable
 
 end

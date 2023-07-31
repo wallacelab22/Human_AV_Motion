@@ -36,7 +36,7 @@ EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
     addpath('/add/path/to/liblsl-Matlab-master/');
     addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
-    [lib, info, outlet] = initialize_lsl;
+    [lib, info, outlet] = initialize_exp;
 else
     outlet = NaN;
 end
@@ -81,7 +81,7 @@ space_keypress = [66 14]; % used for the slider
 % and maxNum respectively.
 inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 if noise_jitter_nature == 1
-    minJitter = 0.2; maxJitter = 0.6; meanJitter = 0.4;
+    minJitter = 0.04; maxJitter = 0.08; meanJitter = 0.06;
 end
 
 %% General stimulus variables
@@ -137,12 +137,12 @@ end
 [filename, subjnum_s, group_s, sex_s, age_s] = collect_subject_information(block);
 
 %% Coherence and trial matrix generation for Staircase and MCS
-if task_nature == 1
+if task_nature == 1 % Staircase
+    % Initialize matrix to store data. Data is recorded every trial using
+    % function record_data
     if vel_stair == 1
         data_output = zeros(num_trials, 7);
     else
-        % Initialize matrix to store data. Data is recorded every trial using
-        % function record_data
         data_output = zeros(num_trials, 6);
     end
     
@@ -174,7 +174,7 @@ if task_nature == 1
     else % coherence ONLY staircase
         audInfo.probs = [0.33 0.5 0.66 0.5 0 0];
     end
-elseif task_nature == 2
+elseif task_nature == 2 % Method of constant stimuli
     if stim_matching_nature == 1
         % Create coherences for participant if method of constant stimuli is to be
         % used. Coherences genereated via the same participant's staircase
@@ -345,10 +345,9 @@ for ii = 1:length(data_output)
         CAM = snipCAM(CAM, Fs, audInfo.snip_start, audInfo.snip_end);
     end
     if noise_jitter_nature == 1
-        before_jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
-        after_jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
-        beforeCAM = makeCAM_PILOT(0, 0, before_jittertime, silence, Fs, noise_reduction_scalar);
-        afterCAM = makeCAM_PILOT(0, 0, after_jittertime, silence, Fs, noise_reduction_scalar);
+        jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
+        beforeCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar);
+        afterCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar);
         wavedata = [beforeCAM, CAM, afterCAM];
     else
         wavedata = CAM;
@@ -408,7 +407,6 @@ if data_analysis == 1
         warning('Could not plot CDF function.')
         [accuracy, stairstep] = analyze_data(data_output, save_name, analysis_directory, right_var, left_var, catch_var);
     end
-
 end
 
 cd(data_directory)
