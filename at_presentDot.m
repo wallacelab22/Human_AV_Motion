@@ -98,7 +98,7 @@ if ~responded %if no response
     end
 end
 
-Screen('Flip', curWindow,0);
+Screen('Flip', curWindow, 0);
 
 if ~responded %if no response
     [key,secs,keycode] = KbCheck; %look for a key
