@@ -193,9 +193,9 @@ elseif task_nature == 2
             cd(script_directory)
             % Generate the list of possible coherences by decreasing log values
             visInfo.cohStart = 0.5;
-            nlog_coh_steps = 7;
-            nlog_division = sqrt(2);
-            visInfo = cohSet_generation(visInfo, nlog_coh_steps, nlog_division);
+            visInfo.nlog_coh_steps = 7;
+            visInfo.nlog_division = sqrt(2);
+            visInfo = cohSet_generation(visInfo, block);
         end
     
         % Create trial matrix

@@ -200,9 +200,9 @@ elseif task_nature == 2 % Method of constant stimuli
             cd(script_directory)
             % Generate the list of possible coherences by decreasing log values
             audInfo.cohStart = 0.5;
-            nlog_coh_steps = 7;
-            nlog_division = sqrt(2);
-            audInfo = cohSet_generation(audInfo, nlog_coh_steps, nlog_division);
+            audInfo.nlog_coh_steps = 7;
+            audInfo.nlog_division = sqrt(2);
+            audInfo = cohSet_generation(audInfo, block);
         end
     
         % Create trial matrix

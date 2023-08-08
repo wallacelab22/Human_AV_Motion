@@ -34,12 +34,15 @@ gray = GrayIndex(curScreen, 0.5);
 %Screen('Preference', 'VisualDebugLevel',0);
 
 % Set the background color to the default background value - black
-screenInfo.bckgnd = gray;
+%screenInfo.bckgnd = gray;
+screenInfo.bckgnd = black;
 %screenInfo.bckgnd = 0;
 
 [screenXpixels, screenYpixels] = Screen('WindowSize', curScreen);
 [xCenter, yCenter] = RectCenter([0 0 screenXpixels screenYpixels]);
-[screenInfo.curWindow, screenInfo.screenRect] = PsychImaging('OpenWindow', curScreen, gray);
+%[screenInfo.curWindow, screenInfo.screenRect] = PsychImaging('OpenWindow', curScreen, gray);
+[screenInfo.curWindow, screenInfo.screenRect] = PsychImaging('OpenWindow', curScreen, black);
+
 
 % [screenInfo.curWindow, screenInfo.screenRect] = Screen('OpenWindow',curScreen,...
 %      screenInfo.bckgnd, [],32,2);

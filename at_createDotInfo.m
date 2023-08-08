@@ -68,8 +68,8 @@ else % mouse/touchscreen
     dotInfo.trialtype = [1 2 2];
 end
 
-%dotInfo.dotColor = [255 255 255]; % white dots default
-dotInfo.dotColor = [0 0 0]; %black
+dotInfo.dotColor = [255 255 255]; % white dots default
+% dotInfo.dotColor = [0 0 0]; % black
 
 % dot size in pixels
 dotInfo.dotSize = 4;
