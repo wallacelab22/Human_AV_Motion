@@ -42,6 +42,7 @@ else
 end
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
+MetaMatrix = input('Meta Matrix? 0 = NO, 1 = YES : ');
 
 %% Auditory stimulus properties
 % dB SNR 
@@ -206,7 +207,11 @@ elseif task_nature == 2 % Method of constant stimuli
     
         % Create trial matrix
         rng('shuffle')
-        data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var);
+        if MetaMatrix == 1
+            [data_output] = at_generateMetaMatrix(block);
+        else
+            data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var);
+        end
     
         % Define duration in audInfo for makCAM function
         audInfo.durRaw = dur;
