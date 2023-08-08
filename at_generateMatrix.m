@@ -1,4 +1,4 @@
-function data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var)
+function data_output = at_generateMatrix(catchtrials, stimtrials, stimInfo, right_var, left_var, catch_var)
 % Adam J. Tiesman - 7/17/23
 % New, improved version of generated trial matrix.
 
@@ -15,12 +15,12 @@ catchs = [catch_var catch_var];
 
 % Stimulus [direction coherence]
 % sr = stimulus rightl; sl = stimulus left
-for i = 1:length(audInfo.cohSet)
+for i = 1:length(stimInfo.cohSet)
     right_var_name = strcat('sr', num2str(i));
-    eval([right_var_name, ' = [right_var audInfo.cohSet(i)];'])
+    eval([right_var_name, ' = [right_var stimInfo.cohSet(i)];'])
 
     left_var_name = strcat('sl', num2str(i));
-    eval([left_var_name, ' = [left_var audInfo.cohSet(i)];'])
+    eval([left_var_name, ' = [left_var stimInfo.cohSet(i)];'])
 end
 
 %% Create Matrices
@@ -31,10 +31,10 @@ catchmat = repmat(catchs, catchtrials, 1);
 % Duplicate all stimulus conditions by how much stimtrials is. If
 % stimtrials = 10, each stimulus condition (predefined above) will have 10
 % repetitions.
-right_matrix = cell(length(audInfo.cohSet), 1);
-left_matrix = cell(length(audInfo.cohSet), 1);
+right_matrix = cell(length(stimInfo.cohSet), 1);
+left_matrix = cell(length(stimInfo.cohSet), 1);
 
-for i = 1:length(audInfo.cohSet)
+for i = 1:length(stimInfo.cohSet)
     right_var_name = strcat('sr', num2str(i));
     left_var_name = strcat('sl', num2str(i));
 
