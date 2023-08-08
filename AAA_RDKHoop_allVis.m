@@ -53,7 +53,7 @@ if vel_stair ~= 1
 end
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-MetaMatrix = input('Meta Matrix? 0 = NO, 1 = YES : ');
+ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
 
 
 %% Directories created to navigate code folders throughout script
@@ -200,8 +200,8 @@ elseif task_nature == 2
     
         % Create trial matrix
         rng('shuffle')
-        if MetaMatrix == 1
-            [data_output] = at_generateMetaMatrix(block);
+        if ExampleMatrix == 1
+            [data_output] = at_generateExampleMatrix(block);
         else
             data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var);
         end
@@ -316,7 +316,7 @@ for ii = 1:length(data_output)
     rt = nan; %default rt in case no response is recorded
 
     % Create marker for EEG
-    [markers] = at_generateMarkers(data_output, ii, EEG_nature);
+    [markers] = at_generateMarkers(data_output, ii, EEG_nature, block);
 
     %% Dot Generation.
     % This function generates the dots that will be presented to

@@ -42,7 +42,7 @@ else
 end
 % Specify if you want data analysis
 data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-MetaMatrix = input('Meta Matrix? 0 = NO, 1 = YES : ');
+ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
 
 %% Auditory stimulus properties
 % dB SNR 
@@ -207,8 +207,8 @@ elseif task_nature == 2 % Method of constant stimuli
     
         % Create trial matrix
         rng('shuffle')
-        if MetaMatrix == 1
-            [data_output] = at_generateMetaMatrix(block);
+        if ExampleMatrix == 1
+            [data_output] = at_generateExampleMatrix(block);
         else
             data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var);
         end
@@ -360,7 +360,7 @@ for ii = 1:length(data_output)
     nrchannels = size(wavedata,1); % Number of rows = number of channels.
     
     % Create marker for EEG
-    [markers] = at_generateMarkers(data_output, ii, EEG_nature);
+    [markers] = at_generateMarkers(data_output, ii, EEG_nature, block);
 
     % Presents auditory stimulus and gets reaction time. Presents stimulus 
     % for duration specified in dur, which is the length of CAM (wavedata)
