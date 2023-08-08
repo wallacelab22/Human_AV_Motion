@@ -1,7 +1,7 @@
 function [data_output] = at_generateExampleMatrix(block)
 % Hard coded matrix for Meta visit. Showcases all possible combinations of
 % our stimulus
-if contains('Vis', block) || contains('Aud', block)
+if contains(block, 'Vis') || contains(block, 'Aud')
     data_output = [1 1.0 0 0 0 0;
                    2 1.0 0 0 0 0;
                    1 1.0 0 0 0 0;
@@ -32,7 +32,7 @@ if contains('Vis', block) || contains('Aud', block)
                    0 0.0 0 0 0 0;
                    0 0.0 0 0 0 0;
                    0 0.0 0 0 0 0;];
-elseif contains('AV', block)
+elseif contains(block, 'AV')
     data_output = [1 1.0 1 1.0 0 0 0 0;
                    2 1.0 2 1.0 0 0 0 0;
                    1 1.0 1 1.0 0 0 0 0;

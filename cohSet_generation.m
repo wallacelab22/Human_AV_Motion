@@ -1,7 +1,7 @@
 function [stimInfo] = cohSet_generation(stimInfo, block)
 %Generates the coherences to be used in the coherence set for the stimulus
 %staircase (either auditory or visual)
-if contains(block, 'Vis') || contains(block, 'Aud')
+if contains(block, 'Vis') || contains(block, 'Aud') || contains(block, 'AV')
     % Initialize cohSet variable
     stimInfo.cohSet = zeros(1, stimInfo.nlog_coh_steps);
     

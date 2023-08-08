@@ -89,7 +89,7 @@ inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 % currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 3; 
+dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 0; 
 
 % Define buffersize in order to make CAM (auditory stimulus)
 silence = 0.03; buffersize = (dur+silence)*Fs;
@@ -201,9 +201,9 @@ elseif task_nature == 2
         % Create trial matrix
         rng('shuffle')
         if ExampleMatrix == 1
-            [data_output] = at_generateExampleMatrix(block);
+            data_output = at_generateExampleMatrix(block);
         else
-            data_output = at_generateMatrix(catchtrials, stimtrials, audInfo, right_var, left_var, catch_var);
+            data_output = at_generateMatrix(catchtrials, stimtrials, visInfo, right_var, left_var, catch_var);
         end
     end
 else

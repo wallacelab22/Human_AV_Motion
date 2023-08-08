@@ -123,6 +123,12 @@ congruent_mstrials=18; incongruent_mstrials=2;
 maxdotsframe = 150; monWidth = 50.8; viewDist = 120; audInfo.speakerDistance = 29.4;
 audInfo.maxVel = audInfo.speakerDistance/dur;
 
+% Velocity of trial set to maxVel if not otherwise specified. This will
+% make auditory stimulus completely travel from one speaker to the other.
+if aud_vel == 0
+    audInfo.vel = audInfo.maxVel;
+end
+
 % General drawing color used for RDK, instructions, etc.
 cWhite0 = 255; fixation_color = [255 0 0];
 
@@ -218,10 +224,10 @@ elseif task_nature == 2
             warning('Problem finding staircase data for participant. Assigning general coherences for MCS.');
             cd(script_directory)
             % Generate the list of possible coherences by decreasing log values
-            stimInfo.cohStart = 0.5;
-            nlog_coh_steps = 7;
-            nlog_division = sqrt(2);
-            visInfo = cohSet_generation(stimInfo, nlog_coh_steps, nlog_division);
+            visInfo.cohStart = 0.5;
+            visInfo.nlog_coh_steps = 7;
+            visInfo.nlog_division = sqrt(2);
+            visInfo = cohSet_generation(visInfo, block);
             audInfo.cohSet = visInfo.cohSet;
         end
     
@@ -235,6 +241,14 @@ elseif task_nature == 2
     end
 else
     error('Could not generate coherences. Task nature determines how coherences are generated.')
+end
+
+%% Velocity generation for Auditory Stimulus
+if aud_vel ~= 0
+    audInfo.velStart = aud_vel;
+    audInfo.vel_steps = 1;
+    audInfo.vel_subtract = 0;
+    audInfo = velSet_generation(audInfo, block, dur);
 end
 
 if nbblocks > 0
@@ -271,6 +285,21 @@ if training_nature == 1
     instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout);
 else
     instructions_psyAV(curWindow, cWhite0);
+end
+
+%% Stimulus Matching Across Modalities
+% Generate and present a slider for participant to subjectively match
+% coherence across modalities
+if stim_matching_nature == 2
+    % Generate a slider for the participant to respond to
+    [visInfo, StopPixel_M] = at_generateSlider(visInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter);
+end
+% Match the computed auditory displacement for a given velocity given dur
+% to the size of the visual aperture.
+if aperture_nature == 1
+    [audInfo, visInfo] = at_generateApertureInfo(audInfo, visInfo, dur);
+else
+    visInfo.displaceSet = aperture_size;
 end
 
 %% Flip up fixation dot
