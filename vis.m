@@ -105,129 +105,123 @@ textColor = cWhite0;
 %% Flip up fixation dot
 [fix, s] = at_presentFix(screenRect, curWindow);
 
+givenCoh = 0.5;
 %% Experiment Loop
-% Loop through every trial.
+% Loop through every trial.6
 for ii = 1:length(data_output)
 
-    visInfo.dir = randi([1,2]);
-    audInfo.dir = visInfo.dir;
-    audInfo.coh = 0.3;
-    if ii ==  1
-        visInfo.coh = 0.5;
-    else
-        visInfo.coh = givenCoh;
-    end
-    visInfo.vel = 20;
-    audInfo.vel = visInfo.vel;
-    visInfo.displaceSet = 50;
-
-    % Necessary variable changing for RDK code. 1 = RIGHT, which is 0 
-    % degrees on unit circle, 2 = LEFT, which is 180 degrees on unit circle
-    visInfo = direction_conversion(visInfo);
-
-    %% Create info matrix for Visual Stim. 
-    % This dotInfo  output informs at_dotGenerate how to generate the RDK. 
-    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, ...
-        minNum, maxNum, meanNum, maxdotsframe, dur, visInfo.vel, visInfo.displaceSet);
-    
-    %% Keypress input initialize variables, define frames for presentation
-    while KbCheck; end
-    keycorrect = 0;
-    keyisdown = 0;
-    responded = 0; %DS mark as no response yet
-    resp = nan; %default response is nan
-    rt = nan; %default rt in case no response is recorded
-
-    % Create marker for EEG
-    [markers] = at_generateMarkers(data_output, ii, EEG_nature);
-
+    visInfo.dir = data_output(ii,3);
+    audInfo.dir = data_output(ii,1);
+    audInfo.coh = data_output(ii,2);
+    givenCoh = data_output(ii,4);
     while true
-        %% Dot Generation.
-        % This function generates the dots that will be presented to
-        % participant in accordance with their coherence, direction, and other dotInfo.
-        [center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show] = at_generateDot(visInfo, dotInfo, screenInfo, screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix);
-        
-        %% Dot Presentation
-        % This function uses psychtoolbox to present dots to participant.
-        [resp, rt, start_time] = at_presentDot(visInfo, dotInfo, center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show, curWindow, fix, responded, resp, rt, EEG_nature, outlet, markers);
+        visInfo.coh = givenCoh;
+        visInfo.vel = 20;
+        audInfo.vel = visInfo.vel;
+        visInfo.displaceSet = 50;
     
-        %% Erase last dots & go back to only plotting fixation
-        Screen('DrawingFinished',curWindow);
-        Screen('DrawDots', curWindow, [0; 0], 10, fixation_color, fix, 1);
-        Screen('Flip', curWindow, 0);
-        
-        %% ITI & response recording
-    %
-    %   [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
-        
-        %% Direction conversion
+        % Necessary variable changing for RDK code. 1 = RIGHT, which is 0 
+        % degrees on unit circle, 2 = LEFT, which is 180 degrees on unit circle
         visInfo = direction_conversion(visInfo);
     
-        %% Save data into data_output on a trial by trial basis
-        [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, visInfo, resp, rt, ii, vel_stair);
+        %% Create info matrix for Visual Stim. 
+        % This dotInfo  output informs at_dotGenerate how to generate the RDK. 
+        dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, ...
+            minNum, maxNum, meanNum, maxdotsframe, dur, visInfo.vel, visInfo.displaceSet);
+        
+        %% Keypress input initialize variables, define frames for presentation
+        while KbCheck; end
+        keycorrect = 0;
+        keyisdown = 0;
+        responded = 0; %DS mark as no response yet
+        resp = nan; %default response is nan
+        rt = nan; %default rt in case no response is recorded
     
-        WaitSecs(0.5)
+        % Create marker for EEG
+        [markers] = at_generateMarkers(data_output, ii, EEG_nature);
     
         while true
-            [keyisDown, secs, keyCode] = KbCheck;
-            pressedKeys = find(keyCode);
-            if ismember(pressedKeys, right_keypress)
-                LineX = LineX + pixelsPerPress;
-            elseif ismember(pressedKeys, left_keypress)
-                LineX = LineX - pixelsPerPress;
-            elseif ismember(pressedKeys, space_keypress)
-                StopPixel_M = ((LineX - xCenter) + halfLength)/divider; % for a rating of between 0 and 10. Tweak this as necessary
-                break
-            end
-            if LineX < (xCenter - halfLength)
-                LineX = xCenter - halfLength;
-            elseif LineX > (xCenter + halfLength)
-                LineX = xCenter + halfLength;
-            end
-            if LineY < 0
-                LineY = 0;
-            elseif LineY > (yCenter + 10)
-                LineY = yCenter + 10;
-            end
-        
-            centeredRect = CenterRectOnPointd(baseRect, LineX, LineY);
-        
-            currentRating = ((LineX - xCenter) + halfLength)/divider;
-            ratingText = num2str(currentRating); % to make this display whole numbers, use "round(currentRating)"
-            ratingText = sprintf(ratingText, '%');
-        
-            DrawFormattedText(curWindow, ratingText,'center', (yCenter-200), textColor, [],[],[],5); % display current rating 
-            DrawFormattedText(curWindow, question ,'center', (yCenter-100), textColor, [],[],[],5);
+            %% Dot Generation.
+            % This function generates the dots that will be presented to
+            % participant in accordance with their coherence, direction, and other dotInfo.
+            [center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show] = at_generateDot(visInfo, dotInfo, screenInfo, screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix);
             
-            Screen('DrawLine', curWindow,  lineColor, (xCenter+halfLength), (yCenter),(xCenter-halfLength), (yCenter), 1);
-            Screen('DrawLine', curWindow,  lineColor, (xCenter+halfLength), (yCenter+10), (xCenter+halfLength), (yCenter-10), 1);
-            Screen('DrawLine', curWindow,  lineColor, (xCenter-halfLength), (yCenter+10), (xCenter-halfLength), (yCenter-10), 1);
+            %% Dot Presentation
+            % This function uses psychtoolbox to present dots to participant.
+            [resp, rt, start_time] = at_presentDot(visInfo, dotInfo, center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show, curWindow, fix, responded, resp, rt, EEG_nature, outlet, markers);
+        
+            %% Erase last dots & go back to only plotting fixation
+            Screen('DrawingFinished',curWindow);
+            Screen('DrawDots', curWindow, [0; 0], 10, fixation_color, fix, 1);
+            Screen('Flip', curWindow, 0);
             
-            Screen('DrawText', curWindow, lowerText, (xCenter-halfLength), (yCenter+25),  textColor);
-            Screen('DrawText', curWindow, upperText , (xCenter+halfLength) , (yCenter+25), textColor);
-            Screen('FillRect', curWindow, rectColor, centeredRect);
-            vbl = Screen('Flip', curWindow, vbl + (waitframes - 0.5) *  slack);
-        end
-        Screen('DrawText', curWindow, 'Do you think you have matched the visual noisiness to the auditory noisiness?',300,300,cWhite0);
-        Screen('DrawText', curWindow, 'If you think you are complete with this trial, press 1',300,400,cWhite0);
-        Screen('DrawText', curWindow, 'If you want to see/hear your adjustments, press 2',300,500,cWhite0);
-        Screen('Flip',curWindow);
-        while true
+            %% ITI & response recording
+            [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
+            
+            %% 2 Direction conversion
+            visInfo = direction_conversion(visInfo);
+        
+            %% Save data into data_output on a trial by trial basis
+            [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, visInfo, resp, rt, ii, vel_stair);
+        
+            WaitSecs(0.5)
+        
+            while true
+                [keyisDown, secs, keyCode] = KbCheck;
+                pressedKeys = find(keyCode);
+                if ismember(pressedKeys, right_keypress)
+                    LineX = LineX + pixelsPerPress;
+                elseif ismember(pressedKeys, left_keypress)
+                    LineX = LineX - pixelsPerPress;
+                elseif ismember(pressedKeys, space_keypress)
+                    StopPixel_M = ((LineX - xCenter) + halfLength)/divider; % for a rating of between 0 and 10. Tweak this as necessary
+                    break
+                end
+                if LineX < (xCenter - halfLength)
+                    LineX = xCenter - halfLength;
+                elseif LineX > (xCenter + halfLength)
+                    LineX = xCenter + halfLength;
+                end
+                if LineY < 0
+                    LineY = 0;
+                elseif LineY > (yCenter + 10)
+                    LineY = yCenter + 10;
+                end
+            
+                centeredRect = CenterRectOnPointd(baseRect, LineX, LineY);
+            
+                currentRating = ((LineX - xCenter) + halfLength)/divider;
+                ratingText = num2str(currentRating); % to make this display whole numbers, use "round(currentRating)"
+                ratingText = sprintf(ratingText, '%');
+            
+                DrawFormattedText(curWindow, ratingText,'center', (yCenter-200), textColor, [],[],[],5); % display current rating 
+                DrawFormattedText(curWindow, question ,'center', (yCenter-100), textColor, [],[],[],5);
+                
+                Screen('DrawLine', curWindow,  lineColor, (xCenter+halfLength), (yCenter),(xCenter-halfLength), (yCenter), 1);
+                Screen('DrawLine', curWindow,  lineColor, (xCenter+halfLength), (yCenter+10), (xCenter+halfLength), (yCenter-10), 1);
+                Screen('DrawLine', curWindow,  lineColor, (xCenter-halfLength), (yCenter+10), (xCenter-halfLength), (yCenter-10), 1);
+                
+                Screen('DrawText', curWindow, lowerText, (xCenter-halfLength), (yCenter+25),  textColor);
+                Screen('DrawText', curWindow, upperText , (xCenter+halfLength) , (yCenter+25), textColor);
+                Screen('FillRect', curWindow, rectColor, centeredRect);
+                vbl = Screen('Flip', curWindow, vbl + (waitframes - 0.5) *  slack);
+            end
+            Screen('DrawText', curWindow, 'Do you think you have matched the visual noisiness to the auditory noisiness?',300,300,cWhite0);
+            Screen('DrawText', curWindow, 'If you think you are complete with this trial, press 1',300,400,cWhite0);
+            Screen('DrawText', curWindow, 'If you want to see/hear your adjustments, press 2',300,500,cWhite0);
+            Screen('Flip',curWindow);
             [keyisDown, secs, keyCode] = KbCheck;
             pressedKeys = find(keyCode);
             if ismember(pressedKeys, right_keypress)
                 break;
             elseif ismember(pressedKeys, left_keypress)
-                break;
+                continue;
             else
-                continue
+                WaitSecs(3)
             end
-        end
-        if ismember(pressedKeys, right_keypress)
-            break;
         end
     end
-    WaitSecs(1.5)
+    WaitSecs(0.5)
     
     givenCoh = StopPixel_M/100;
 
