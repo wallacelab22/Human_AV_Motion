@@ -110,7 +110,7 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % per condition for MCS, catchtrials defines total number of catch trials
 % for MCS.
 num_trials = 100; stimtrials = 12; catchtrials = 25;
-congruent_mstrials=18; incongruent_mstrials=2;
+congruent_mstrials = 30; incongruent_mstrials = 3;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The

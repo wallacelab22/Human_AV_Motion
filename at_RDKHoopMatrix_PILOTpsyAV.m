@@ -1,58 +1,60 @@
 function MAT=at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials)
 
+catchtrials = 25; congruent_mstrials = 30; incongruent_mstrials = 3;
+
 %% fill single columns
 % catch trials
 catchs=[0 0 0 0];
 
 % multisensory [auditory visual]
 % Auditory and Visual level 1
-al1vl1=[2 1 2 1]; % congreunt
-ar1vr1=[1 1 1 1];
+al1vl1=[2 0.5 2 0.5]; % congreunt
+ar1vr1=[1 0.5 1 0.5];
 
-al1vr1=[2 1 1 1]; % incongruent
-ar1vl1=[1 1 2 1];
+al1vr1=[2 0.5 1 0.5]; % incongruent
+ar1vl1=[1 0.5 2 0.5];
 
 % Auditory and Visual level 2
-al2vl2=[2 2 2 2]; % congreunt
-ar2vr2=[1 2 1 2];
+al2vl2=[2 0.3536 2 0.3536]; % congreunt
+ar2vr2=[1 0.3536 1 0.3536];
 
-al2vr2=[2 2 1 2]; % incongruent
-ar2vl2=[1 2 2 2];
+al2vr2=[2 0.3536 1 0.3536]; % incongruent
+ar2vl2=[1 0.3536 2 0.3536];
 
 % Auditory and Visual level 3
-al3vl3=[2 3 2 3]; % congreunt
-ar3vr3=[1 3 1 3];
+al3vl3=[2 0.25 2 0.25]; % congreunt
+ar3vr3=[1 0.25 1 0.25];
 
-al3vr3=[2 3 1 3]; % incongruent
-ar3vl3=[1 3 2 3];
+al3vr3=[2 0.25 1 0.25]; % incongruent
+ar3vl3=[1 0.25 2 0.25];
 
 % Auditory and Visual level 4
-al4vl4=[2 4 2 4]; % congreunt
-ar4vr4=[1 4 1 4];
+al4vl4=[2 0.1768 2 0.1768]; % congreunt
+ar4vr4=[1 0.1768 1 0.1768];
 
-al4vr4=[2 4 1 4]; % incongruent
-ar4vl4=[1 4 2 4];
+al4vr4=[2 0.1768 1 0.1768]; % incongruent
+ar4vl4=[1 0.1768 2 0.1768];
 
 % Auditory and Visual level 5
-al5vl5=[2 5 2 5]; % congreunt
-ar5vr5=[1 5 1 5];
+al5vl5=[2 0.125 2 0.125]; % congreunt
+ar5vr5=[1 0.125 1 0.125];
 
-al5vr5=[2 5 1 5]; % incongruent
-ar5vl5=[1 5 2 5];
+al5vr5=[2 0.125 1 0.125]; % incongruent
+ar5vl5=[1 0.125 2 0.125];
 
 % Auditory and Visual level 6
-al6vl6=[2 6 2 6]; % congreunt
-ar6vr6=[1 6 1 6];
+al6vl6=[2 0.0884 2 0.0884]; % congreunt
+ar6vr6=[1 0.0884 1 0.0884];
 
-al6vr6=[2 6 1 6]; % incongruent
-ar6vl6=[1 6 2 6];
+al6vr6=[2 0.0884 1 0.0884]; % incongruent
+ar6vl6=[1 0.0884 2 0.0884];
 
 % Auditory and Visual level 7
-al7vl7=[2 7 2 7]; % congreunt
-ar7vr7=[1 7 1 7];
+al7vl7=[2 0.0625 2 0.0625]; % congreunt
+ar7vr7=[1 0.0625 1 0.0625];
 
-al7vr7=[2 7 1 7]; % incongruent
-ar7vl7=[1 7 2 7];
+al7vr7=[2 0.0625 1 0.0625]; % incongruent
+ar7vl7=[1 0.0625 2 0.0625];
 
 %% create Matrices
 %catch trials

@@ -2,6 +2,10 @@ function [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, in
 % Adam J. Tiesman - 7/17/23
 % New, improved version of generated trial matrix.
 
+% Define Stimulus repetitions
+catchtrials=30; congruent_mstrials=18; incongruent_mstrials=2; audInfo.cohSet = [0.5 0.4 0.3 0.2 0.1 0.05]; right_var = 1; left_var = 2; catch_var = 0;
+
+
 %% Fill single columns
 % condition definitions 
 % variable names: 1. modlaity (a, v, av), 2. direction (l:left; u:up),
@@ -38,10 +42,10 @@ catchmat = repmat(catchs, catchtrials, 1);
 % Duplicate all stimulus conditions by how much stimtrials is. If
 % stimtrials = 10, each stimulus condition (predefined above) will have 10
 % repetitions.
-cong_right_matrix = cell(length(stimInfo.cohSet), 1);
-cong_left_matrix = cell(length(stimInfo.cohSet), 1);
+cong_right_matrix = cell(length(audInfo.cohSet), 1);
+cong_left_matrix = cell(length(audInfo.cohSet), 1);
 
-for i = 1:length(stimInfo.cohSet)
+for i = 1:length(audInfo.cohSet)
     right_var_name = strcat('sr_cong', num2str(i));
     left_var_name = strcat('sl_cong', num2str(i));
 
@@ -49,10 +53,10 @@ for i = 1:length(stimInfo.cohSet)
     cong_left_matrix{i} = repmat(eval(left_var_name), congruent_mstrials, 1);
 end
 
-incong_right_matrix = cell(length(stimInfo.cohSet), 1);
-incong_left_matrix = cell(length(stimInfo.cohSet), 1);
+incong_right_matrix = cell(length(audInfo.cohSet), 1);
+incong_left_matrix = cell(length(audInfo.cohSet), 1);
 
-for i = 1:length(stimInfo.cohSet)
+for i = 1:length(audInfo.cohSet)
     right_var_name = strcat('sr_incong', num2str(i));
     left_var_name = strcat('sl_incong', num2str(i));
 
@@ -73,7 +77,7 @@ end
 %% Define single columns
 % Add trial order and response recording columns to be filled as the task
 % progresses
-nbtrials = size(trialStruc(:,1));
+nbtrials = size(trialStruc, 1);
 
 resp = zeros(nbtrials(1), 1); % whether they responded left or right
 rt = zeros(nbtrials(1), 1); % reaction time
@@ -87,3 +91,5 @@ order = randperm(nbtrials(1));  %new trial order
 trialOrder = trialStruc(order, :);
 
 data_output = cat(2, trialOrder, resp, rt, keys, trial_status);
+
+end
