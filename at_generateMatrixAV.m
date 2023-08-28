@@ -1,10 +1,6 @@
-function data_output = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, audInfo, visInfo, right_var, left_var, catch_var)
+function [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, audInfo, visInfo, right_var, left_var, catch_var)
 % Adam J. Tiesman - 7/17/23
 % New, improved version of generated trial matrix.
-
-
-% Define Stimulus repetitions
-catchtrials=30; congruent_mstrials=18; incongruent_mstrials=2; audInfo.cohSet = [0.5 0.4 0.3 0.2 0.1 0.05]; right_var = 1; left_var = 2; catch_var = 0;
 
 %% Fill single columns
 % condition definitions 

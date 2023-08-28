@@ -99,7 +99,7 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % number of staircase trials, stimtrials defines number of stimulus trials
 % per condition for MCS, catchtrials defines total number of catch trials
 % for MCS.
-num_trials = 250; stimtrials = 12; catchtrials = 25;
+num_trials = 250; stimtrials = 15; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The

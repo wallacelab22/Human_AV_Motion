@@ -233,11 +233,7 @@ elseif task_nature == 2
     
         % Create trial matrix
         rng('shuffle')
-        if ExampleMatrix == 1
-            [data_output] = at_generateExampleMatrix(block);
-        else
-            data_output = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, audInfo, visInfo, right_var, left_var, catch_var);
-        end
+        [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, audInfo, visInfo, right_var, left_var, catch_var);
     end
 else
     error('Could not generate coherences. Task nature determines how coherences are generated.')
