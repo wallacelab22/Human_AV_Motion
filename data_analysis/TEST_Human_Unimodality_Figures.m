@@ -6,10 +6,10 @@ close all;
 % Version info
 Version = 'TEST_Human_Unimodal_v.2.0' ; % after code changes, change version
 task_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/';
-script_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Psychometric_Function_Plot/';
+script_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis/';
 Antonia_data = (input('Antonia data analysis? 0 = NO, 1 = YES '));
 if Antonia_data == 1
-    data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/Antonia_data/';
+    data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/antonia_data/';
 else
     data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data/';
 end
