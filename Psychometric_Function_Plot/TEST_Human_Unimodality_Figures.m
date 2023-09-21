@@ -72,6 +72,7 @@ compare_plot = input('Psychometric Function Comparison? 0 for NO, 1 for YES: ');
 coh_change = input('Coherence level to coherence correction? 0 for No, 1 for YES: ');
 crosscompare_plot = input('Compare Plots across Subj/Group? 0 for NO, 1 for YES: ');
 vel_stair = input('Velocity Staircase? 0 for NO, 1 for YES: ');
+MLE_calc = input('MLE Computations? 0 for NO, 1 for YES: ');
 fig_save = input('Save figures? 0 = NO, 1 = YES : ');
 
 % Specific if analyzing Antonia's data
@@ -144,7 +145,7 @@ if compare_plot == 1
     % Generate a figure comparing psychometric curves
     compare_figure = compare_plotter(compare_plot, coh_change, Antonia_data, ...
         data_file_directory, script_file_directory, task_file_directory, ...
-        subjnum_s, group_s, sex_s, age_s, identifier, save_name);
+        subjnum_s, group_s, sex_s, age_s, identifier, save_name, vel_stair);
     if fig_save == 1
         cd(figure_file_directory)
         saveas(gcf, strcat('CDF_Comparison_', identifier, '.jpg'))
@@ -162,6 +163,11 @@ end
 if crosscompare_plot == 1
     crosscompare_figure = crosscompare_plotter(compare_plot, coh_change, Antonia_data, ...
         data_file_directory, script_file_directory, task_file_directory);
+end
+
+%% MLE Calculations WOOHOO
+if MLE_calc == 1
+    [Results_MLE] = MLE_Calculations_A_V_AV(AUD_mdl, VIS_mdl, AV_mdl, AUD_yData, VIS_yData, AV_yData, AUD_xData, VIS_xData, AV_xData);
 end
 
 % if fig_save == 1

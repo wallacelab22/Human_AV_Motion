@@ -233,7 +233,8 @@ elseif task_nature == 2
     
         % Create trial matrix
         rng('shuffle')
-        [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, audInfo, visInfo, right_var, left_var, catch_var);
+        %[data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, audInfo, visInfo, right_var, left_var, catch_var);
+        [data_output] = at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
     end
 else
     error('Could not generate coherences. Task nature determines how coherences are generated.')

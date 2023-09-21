@@ -9,7 +9,11 @@ while continue_show
         WaitSecs(0.0002); %tiny wait
         if key %if there was a key
             resp = find(keycode,1,'last');
-            rt = GetSecs - start_time; %calculate rt from start time earlier
+            try
+                rt = GetSecs - start_time; %calculate rt from start time earlier
+            catch
+                rt = NaN;
+            end
             responded = 1; %note that there was a response
         end
     end

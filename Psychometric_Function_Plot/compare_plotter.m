@@ -1,6 +1,6 @@
 function [fig, stimcoh_list] = compare_plotter(compare_plot, coh_change, Antonia_data, ...
     data_file_directory, script_file_directory, task_file_directory, ...
-    subjnum_s, group_s, sex_s, age_s, identifier, save_name)
+    subjnum_s, group_s, sex_s, age_s, identifier, save_name, vel_stair)
 
 % This is code to plot psychometric functions of different blocks on top of
 % one another.
@@ -173,7 +173,7 @@ if compare_psyAud == 1
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
     [fig, p_values, ci, threshold, xData, yData, x, p, sz, aud_std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-        coherence_frequency, compare_plot, psyAud_filename);
+        coherence_frequency, compare_plot, psyAud_filename, vel_stair);
     if Antonia_data == 1
         scatter(xData, yData, sz, 'LineWidth', 3, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
         hold on
@@ -212,7 +212,7 @@ if compare_psyVis == 1
         coherence_counts, coherence_frequency] = frequency_plotter(data_output, right_vs_left);
     [fig, p_values, ci, threshold, xData, yData, x, p, sz, vis_std_gaussian] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-    coherence_frequency, compare_plot, psyVis_filename);
+    coherence_frequency, compare_plot, psyVis_filename, vel_stair);
     if Antonia_data == 1
         scatter(xData, yData, sz, 'LineWidth', 3, 'MarkerEdgeColor', 'b', 'HandleVisibility', 'off');
         hold on
@@ -227,9 +227,14 @@ end
 % AV PILOT
 if compare_PILOTpsyAV == 1
     cd(data_file_directory)
-    PILOTpsyAV_filename = sprintf('RDKHoop_PILOTpsyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
-    load(PILOTpsyAV_filename, 'MAT');
-    data_output = MAT;
+    try
+        PILOTpsyAV_filename = sprintf('RDKHoop_PILOTpsyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+        load(PILOTpsyAV_filename, 'MAT');
+        data_output = MAT;
+    catch
+        PILOTpsyAV_filename = sprintf('RDKHoop_psyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+        load(PILOTpsyAV_filename, 'data_output');
+    end
     cd(script_file_directory)
     if coh_change == 1
         data_output = coh_level_correction(data_output, script_file_directory, task_file_directory, PILOTpsyAV_filename);
@@ -301,24 +306,33 @@ if compare_PILOTpsyAV == 1
     coherence_lvls = coherence_lvls';
     [fig, p_values, ci, threshold, xData, yData, x, p, sz, av_std_gaussian] = normCDF_plotter(coherence_lvls, ...
         rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-        coherence_frequency, compare_plot, PILOTpsyAV_filename);
+        coherence_frequency, compare_plot, PILOTpsyAV_filename, vel_stair);
     scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm', 'HandleVisibility', 'off');
     hold on
     plot(x, p, 'LineWidth', 3, 'Color', 'm', 'DisplayName', 'AV');
 end
 
-if compare_PILOTpsyAV == 1
-    coherence_lvls = abs(coherence_lvls);
-    coherence_lvls = sort(coherence_lvls, 'descend');
-    coherence_lvls = unique(coherence_lvls, 'stable');
-    cd(data_file_directory)
-    PILOTpsyAV_filename = sprintf('RDKHoop_PILOTpsyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
-    load(PILOTpsyAV_filename, 'audcoh_list')
-    PILOTpsyAV_filename = sprintf('RDKHoop_PILOTpsyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
-    load(PILOTpsyAV_filename, 'viscoh_list')
-    stimcoh_list = [coherence_lvls; audcoh_list; viscoh_list];
-    disp(stimcoh_list)
-end
+% if compare_PILOTpsyAV == 1
+%     coherence_lvls = abs(coherence_lvls);
+%     coherence_lvls = sort(coherence_lvls, 'descend');
+%     coherence_lvls = unique(coherence_lvls, 'stable');
+%     cd(data_file_directory)
+%     try
+%         PILOTpsyAV_filename = sprintf('RDKHoop_PILOTpsyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+%         load(PILOTpsyAV_filename, 'audcoh_list')
+%         PILOTpsyAV_filename = sprintf('RDKHoop_PILOTpsyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+%         load(PILOTpsyAV_filename, 'viscoh_list')
+%         stimcoh_list = [coherence_lvls; audcoh_list; viscoh_list];
+%         disp(stimcoh_list)
+%     catch
+%         PILOTpsyAV_filename = sprintf('RDKHoop_psyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+%         load(PILOTpsyAV_filename, 'audcoh_list')
+%         PILOTpsyAV_filename = sprintf('RDKHoop_psyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
+%         load(PILOTpsyAV_filename, 'viscoh_list')
+%         stimcoh_list = [coherence_lvls; audcoh_list; viscoh_list];
+%         disp(stimcoh_list)
+%     end
+% end
 
 %% Set figure properties
 title(sprintf('Psych. Function Comparison: \n %s', identifier), 'Interpreter','none');
@@ -327,8 +341,8 @@ xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
 ylabel( '% Rightward Response', 'Interpreter', 'none');
 if Antonia_data == 1 && coh_change ~= 1
     xlim([-5 5])
-elseif compare_PILOTpsyAV == 1
-    xlim([-7 7])
+% elseif compare_PILOTpsyAV == 1
+%     xlim([-7 7])
 elseif Antonia_data == 1 && coh_change == 1
     xlim([-0.6 0.6])
     axis equal
