@@ -90,7 +90,7 @@ end
 % currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 0; 
+dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 2; 
 
 % Define buffersize in order to make CAM (auditory stimulus)
 silence = 0.03; buffersize = (dur+silence)*Fs;
@@ -99,7 +99,7 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % number of staircase trials, stimtrials defines number of stimulus trials
 % per condition for MCS, catchtrials defines total number of catch trials
 % for MCS.
-num_trials = 250; stimtrials = 15; catchtrials = 25;
+num_trials = 250; stimtrials = 12; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -200,7 +200,7 @@ elseif task_nature == 2 % Method of constant stimuli
             cd(script_directory)
             % Generate the list of possible coherences by decreasing log values
             audInfo.cohStart = 0.5;
-            audInfo.nlog_coh_steps = 7;
+            audInfo.nlog_coh_steps = 8;
             audInfo.nlog_division = sqrt(2);
             audInfo = cohSet_generation(audInfo, block);
         end
