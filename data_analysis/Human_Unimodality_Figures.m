@@ -1,4 +1,4 @@
-%% TEST Human Unimodality Figures %%%%%%%%%%
+%% Human Unimodality Figures %%%%%%%%%%
 % written 02/16/23 - Adam Tiesman
 clear;
 close all;

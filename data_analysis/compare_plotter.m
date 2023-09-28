@@ -341,8 +341,8 @@ xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
 ylabel( '% Rightward Response', 'Interpreter', 'none');
 if Antonia_data == 1 && coh_change ~= 1
     xlim([-5 5])
-% elseif compare_PILOTpsyAV == 1
-%     xlim([-7 7])
+elseif compare_PILOTpsyAV == 1
+    xlim([-1 1])
 elseif Antonia_data == 1 && coh_change == 1
     xlim([-0.6 0.6])
     axis equal
