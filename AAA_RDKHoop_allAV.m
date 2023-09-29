@@ -66,12 +66,8 @@ if vel_stair ~= 1
 end
 
 %% Directories created to navigate code folders throughout script
-script_directory = '/home/wallace/Human_AV_Motion/';
-data_directory = '/home/wallace/Human_AV_Motion/data/';
-analysis_directory = '/home/wallace/Human_AV_Motion/Psychometric_Function_Plot/';
-if EEG_nature == 1
-    lsl_directory = '/home/wallace/Human_AV_Motion/EEG/';
-end
+OS_nature = input('1 = Linux OS, 2 = Windows OS');
+[script_directory, data_directory, analysis_directory, lsl_directory] = define_directories(OS_nature, EEG_nature);
 cd(script_directory)
 
 %% General variables to smoothly run PTB
@@ -449,7 +445,6 @@ Screen('CloseAll')
 
 if data_analysis == 1
     % Provide specific variables 
-    chosen_threshold = 0.72;
     save_name = filename;
 
     % This function has functions that plot the currect data
