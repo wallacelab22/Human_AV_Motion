@@ -342,12 +342,12 @@ ylabel( '% Rightward Response', 'Interpreter', 'none');
 if Antonia_data == 1 && coh_change ~= 1
     xlim([-5 5])
 elseif compare_PILOTpsyAV == 1
-    xlim([-1 1])
+    xlim([-0.5 0.5])
 elseif Antonia_data == 1 && coh_change == 1
     xlim([-0.6 0.6])
     axis equal
 else
-    xlim([-1 1])
+    xlim([-0.5 0.5])
 end
 ylim([0 1])
 grid on

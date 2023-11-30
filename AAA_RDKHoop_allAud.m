@@ -55,8 +55,8 @@ if vel_stair ~= 1
 end
 
 %% Directories created to navigate code folders throughout script
-OS_nature = input('1 = Linux OS, 2 = Windows OS');
-[script_directory, data_directory, analysis_directory, lsl_directory] = define_directories(OS_nature, EEG_nature);
+OS_nature = input('1 = Linux OS, 2 = Windows OS : ');
+[script_directory, data_directory, analysis_directory] = define_directories(OS_nature, EEG_nature);
 cd(script_directory)
 
 %% General variables to smoothly run PTB

@@ -33,7 +33,7 @@ end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
 if aperture_nature ~= 1
-    % Original aperture size, in tens of visual degrees (i.e. 50 is 5 degrees)
+    % Original aperture size, in tens of visual degrees (e.g. 50 is 5 degrees)
     aperture_size = 50;
 end
 noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
@@ -66,8 +66,8 @@ if vel_stair ~= 1
 end
 
 %% Directories created to navigate code folders throughout script
-OS_nature = input('1 = Linux OS, 2 = Windows OS');
-[script_directory, data_directory, analysis_directory, lsl_directory] = define_directories(OS_nature, EEG_nature);
+OS_nature = input('1 = Linux OS, 2 = Windows OS : ');
+[script_directory, data_directory, analysis_directory] = define_directories(OS_nature, EEG_nature);
 cd(script_directory)
 
 %% General variables to smoothly run PTB

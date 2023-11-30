@@ -129,6 +129,9 @@ if fig_save == 1 && Antonia_data ~= 1
     cd(script_file_directory)
 end
 
+reactiontime_plot = reactiontime_plotter(right_vs_left, right_group, left_group, save_name);
+
+
 %% Create a stairstep graph for visualizing staircase
 if contains(save_name, 'stair') || contains(save_name, 'train')
     stairstep_plot = stairstep_plotter(data_output, save_name, vel_stair);
@@ -152,7 +155,9 @@ if compare_plot == 1
         cd(script_file_directory)
     end
 elseif compare_plot == 0
-    normCDF_plot = normCDF_plotter(coherence_lvls, rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, coherence_frequency, compare_plot, save_name, vel_stair);
+    [fig, p_values, ci, threshold, xData, yData, x, p, sz, std_gaussian] = normCDF_plotter(coherence_lvls, ...
+    rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
+    coherence_frequency, compare_plot, save_name, vel_stair);    
     if fig_save == 1
         cd(figure_file_directory)
         saveas(gcf, strcat('Norm_CDF_Function_', save_name, '.jpg'))

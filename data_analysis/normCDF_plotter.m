@@ -1,4 +1,4 @@
-function [fig, p_values, ci, threshold, xData, yData, x, p, sz, std_gaussian] = normCDF_plotter(coherence_lvls, ...
+function [fig, p_values, ci, threshold, xData, yData, x, p, sz, std_gaussian, mdl] = normCDF_plotter(coherence_lvls, ...
     rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
     coherence_frequency, compare_plot, save_name, vel_stair)
 %CREATEFIT(COH_LIST,PC_AUD)
@@ -44,6 +44,8 @@ normalcdf_fun = @(b, x) 0.5 * (1 + erf((x - b(1)) ./ (b(2) * sqrt(2))));
 if contains(save_name, 'stair') || contains(save_name, 'train')
     mdl = fitnlm(xData, yData, normalcdf_fun, parms, 'Weights', coherence_frequency(2,:));
     std_gaussian = mdl.Coefficients{1,2};
+else
+    mdl = fitnlm(xData, yData, normalcdf_fun, parms);
 end
 
 
