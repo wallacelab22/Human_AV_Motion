@@ -1,4 +1,4 @@
-function [stimInfo, staircase_index] = staircase_procedure(trial_status, stimInfo, staircase_index)
+function [stimInfo, staircase_index, vel_index] = staircase_procedure(trial_status, stimInfo, staircase_index, vel_stair, vel_index)
 %% Staircase Procedure
 % Staircase_procedure function checks last trial for accuracy. Then, using
 % preset probabilities, decides whether to LOWER coherence/change direction
@@ -13,13 +13,21 @@ function [stimInfo, staircase_index] = staircase_procedure(trial_status, stimInf
                 stimInfo.coh = (stimInfo.cohSet(staircase_index)); 
             end
         end
-
         if x_rand <= stimInfo.probs(2) %Prob of direction change, after Correct 
             %Change Direction of the stimulus
             if stimInfo.dir == 1 
                 stimInfo.dir = 2; 
             elseif stimInfo.dir == 2 
                 stimInfo.dir = 1;
+            end
+        end
+        if vel_stair == 1
+            p_rand = rand(1);
+            if p_rand <= stimInfo.probs(5)
+                if vel_index < length(stimInfo.velSet)
+                    vel_index = vel_index + 1;
+                    stimInfo.vel = (stimInfo.velSet(vel_index));
+                end
             end
         end
     elseif trial_status == 0
@@ -30,13 +38,21 @@ function [stimInfo, staircase_index] = staircase_procedure(trial_status, stimInf
                 stimInfo.coh = (stimInfo.cohSet(staircase_index)); 
             end
         end
-
         if y_rand <= stimInfo.probs(4) % Prob of direction change, after Incorrect
             % Change Direction of the stimulus
             if stimInfo.dir == 1 
                 stimInfo.dir = 2; 
             elseif stimInfo.dir == 2 
                 stimInfo.dir = 1;
+            end
+        end
+        if vel_stair == 1
+            q_rand = rand(1);
+            if q_rand <= stimInfo.probs(6)
+                if vel_index > 1
+                    vel_index = vel_index - 1;
+                    stimInfo.vel = (stimInfo.velSet(vel_index));
+                end
             end
         end
     end

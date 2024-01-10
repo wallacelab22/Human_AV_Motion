@@ -1,4 +1,4 @@
-function dotInfo = at_createDotInfo(inputtype, currviscoh, currvisdir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur);
+function dotInfo = at_createDotInfo(inputtype, currviscoh, currvisdir, typeInt, minNum, maxNum, meanNum, maxdotsframe, dur, currvisvel, currvisdisp)
 % CREATEDOTINFO creates the default dotInfo structure
 %
 % dotInfo = createDotInfo(inputtype)
@@ -32,8 +32,6 @@ function dotInfo = at_createDotInfo(inputtype, currviscoh, currvisdir, typeInt, 
 %                           after Flip - this allows incremental drawing of 
 %                           stimuli. Needs to be zero for dots to be erased.
 %   screenInfo.rseed        random # seed, can be empty set[] 
-
-Screen('Preference', 'SkipSyncTests', 0)
 % created June 2006 MKMK
 
 dotInfo.cohSet = currviscoh;
@@ -48,14 +46,14 @@ dotInfo.cohSet = currviscoh;
 % elseif currvisdir == 0
 %     dotInfo.dirSet = [180 0];
 % end
- dotInfo.dirSet =currvisdir;
+ dotInfo.dirSet = currvisdir;
 
 % For multi set of dots, all the following fields must be provided.
 % Choose either group of codes to use single set or multi set.
 
 dotInfo.numDotField = 1;
-dotInfo.apXYD = [0 50 50];  
-dotInfo.speed = 5.88;
+dotInfo.apXYD = [0 50 currvisdisp];
+dotInfo.speed = currvisvel; %5.88
 dotInfo.coh = dotInfo.cohSet(ceil(rand*length(dotInfo.cohSet)))*1000; 
 dotInfo.dir = dotInfo.dirSet(ceil(rand*length(dotInfo.dirSet)));
 dotInfo.maxDotTime = dur;
@@ -71,9 +69,10 @@ else % mouse/touchscreen
 end
 
 dotInfo.dotColor = [255 255 255]; % white dots default
+% dotInfo.dotColor = [0 0 0]; % black
 
 % dot size in pixels
-dotInfo.dotSize = 2;
+dotInfo.dotSize = 4;
 
 % fixation x,y coordinates
 dotInfo.fixXY = [0 -20];

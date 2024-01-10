@@ -1,4 +1,4 @@
-function screenInfo = openExperiment(monWidth, viewDist, curScreen)
+function [screenInfo, xCenter, yCenter] = openExperiment(monWidth, viewDist, curScreen)
 % OPENEXPERIMENT initialize screen settings for new experiment
 %
 % screenInfo = openExperiment(monWidth, viewDist, curScreen)
@@ -29,16 +29,20 @@ rng(rseed,'v5uniform'); % v5 random generator
 screenInfo = struct('rseed',rseed);
 white = WhiteIndex(curScreen);
 black = BlackIndex(curScreen);
+gray = GrayIndex(curScreen, 0.5);
 % Open screen, make stuff behave itself in OS X with multiple monitors
 %Screen('Preference', 'VisualDebugLevel',0);
 
 % Set the background color to the default background value - black
+%screenInfo.bckgnd = gray;
 screenInfo.bckgnd = black;
 %screenInfo.bckgnd = 0;
 
 [screenXpixels, screenYpixels] = Screen('WindowSize', curScreen);
 [xCenter, yCenter] = RectCenter([0 0 screenXpixels screenYpixels]);
-[screenInfo.curWindow, screenInfo.screenRect] = PsychImaging('OpenWindow',curScreen,black);
+%[screenInfo.curWindow, screenInfo.screenRect] = PsychImaging('OpenWindow', curScreen, gray);
+[screenInfo.curWindow, screenInfo.screenRect] = PsychImaging('OpenWindow', curScreen, black);
+
 
 % [screenInfo.curWindow, screenInfo.screenRect] = Screen('OpenWindow',curScreen,...
 %      screenInfo.bckgnd, [],32,2);
@@ -60,7 +64,7 @@ screenInfo.center = [screenInfo.screenRect(3), screenInfo.screenRect(4)]/2;
 % (pix/screen) * (screen/rad) * (rad/deg) = (pixels per degree)
 screenInfo.ppd = pi * screenInfo.screenRect(3) / atan(monWidth/viewDist/2) / 360;    
 
-%HideCursor;
+HideCursor;
 
 % If reward system is hooked up, rewardOn = 1, otherwise rewardOn = 0;
 screenInfo.rewardOn = 0;

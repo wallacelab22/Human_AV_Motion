@@ -1,5 +1,5 @@
 % function [CAM] = makeCAM(cLvl,speed, direction, dur, Fs)
-function [CAM] = makeCAM(cLvl, direction, dur, silence, Fs, ii)
+function [CAM] = makeCAM(cLvl, direction, dur, silence, Fs)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CAM =       array of voltages to present to speakers                 %
@@ -19,9 +19,9 @@ samples = round(dur.*Fs);
 silent = zeros((silence.*Fs),2);
 
 % Generate the 4 noise signals
-N1 = 0.5*(rand(samples,1)-.5);
-N2 = 0.5*(rand(samples,1)-.5);
-N3 = 0.5*(rand(samples,1)-.5);
+N1 = rand(samples,1)-.5;
+N2 = rand(samples,1)-.5;
+N3 = rand(samples,1)-.5;
 N4 = rand(samples,1)-.5;
 
 % Generate noise signals of 0, 100, and 50% correlation
@@ -64,9 +64,3 @@ CAM = makeramp(dur,Fs,CAM);
 % Scales the signal between -1 and 1
 CAM = normalize(CAM);
 CAM = cat(1, silent, CAM);
-
-if ii == 1
-    figure;
-    plot(CAM);
-    ylim([-1 1]);
-end
