@@ -1,4 +1,4 @@
-function [CAM] = makeCAM_noN3(cLvl, dur, silence, Fs, noise_reduction_scalar)
+function [CAM] = makeCAM_noN3(cLvl, direction, dur, silence, Fs, noise_reduction_scalar)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CAM =       array of voltages to present to speakers                 %
@@ -36,10 +36,11 @@ N4 = rand(samples,1)-.5;
 
 
 % Generate noise signals of 0, 100, and 50% correlation
-leftright_n0 = [N1 N2];
+n0 = [N1 N2];
+n50 = (0 + n0)./2;
 
 % Unused array of all noises together
-Y = [n0 n50 n100];
+% Y = [n0 n50 n100];
 
 % Generate ramp for increasing and decreasing N4 amplitute in speaker
 rampu = (1/samples:1/samples:1)';
@@ -63,11 +64,11 @@ end
 % Titrates the SNR
 % Noise for each speaker
 if cLvl <.5
-    noise = leftright_n0;
+    noise = n0;
     motion = motion.*cLvl.*2;
     CAM = noise + motion;
 else
-    noise = leftright_n0.*(1-cLvl).*2;
+    noise = n0.*(1-cLvl).*2;
     CAM = noise + motion;
 end
 

@@ -6,7 +6,7 @@ function [resp, rt, start_time] = at_presentDot(visInfo, dotInfo, center, dotSiz
 frames = 0;
 while continue_show
     %DS look for key down if no response yet
-    if ~responded %if no response
+    if responded == 0 %if no response
         [key,secs,keycode] = KbCheck; %look for a key
         WaitSecs(0.0002); %tiny wait
         if key %if there was a key
