@@ -5,6 +5,9 @@ close all
 
 %% A, V, and AV analysis %%%%%%%%%%%%
 
+data_analysis = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis';
+RACE_analysis = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis/RaceModel-master';
+
 % Input the matrix with number1 and number2 values
 nfiles_to_load = cell(3, 3);
 
@@ -121,16 +124,33 @@ for i = 1:length(coherenceLevels)
     visualCDFs = [visualCDFs; visualCDF];
     audioVisualCDFs = [audioVisualCDFs; audioVisualCDF];
     binCentersGlobal = [binCentersGlobal; edges(1:end-1) + diff(edges)/2];
+   
+    % Calculate Miller's Bound
+    millersBound = zeros(size(binCenters));
+    for j = 1:length(binCenters)
+        % Compute the bound at each RT value
+        combinedCDF = auditoryCDF(j) + visualCDF(j);
+        if combinedCDF > 1
+            millersBound(j) = combinedCDF - 1;
+        else
+            millersBound(j) = min(auditoryCDF(j), visualCDF(j));
+        end
+    end
+
+    cd(RACE_analysis)
+    [Fx,Fy,Fxy,Fmodel,t] = ormodel(auditoryRT, visualRT, audioVisualRT);
+    cd(data_analysis)
 
     % Plotting
     figure;
     plot(binCenters, auditoryCDF, 'r-', 'LineWidth', 2); hold on;
     plot(binCenters, visualCDF, 'b-', 'LineWidth', 2);
     plot(binCenters, audioVisualCDF, 'm-', 'LineWidth', 2);
+    plot(binCenters, millersBound, 'k--', 'DisplayName', 'Miller''s Bound');
     xlabel('Reaction Time (ms)');
     ylabel('Cumulative Probability');
     title(['Cumulative Distribution of Reaction Times - Coherence Level ', num2str(cohLevel)]);
-    legend('Auditory', 'Visual', 'Audio-Visual');
+    legend('Auditory', 'Visual', 'Audiovisual', 'Miller''s Bound');
     ylim([0 1])
     xlim([0 2])
     grid on;
