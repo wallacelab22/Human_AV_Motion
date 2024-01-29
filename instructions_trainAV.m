@@ -1,23 +1,23 @@
-function instructions_trainAud(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout)
+function instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout)
 
 % Instructions 2
 Screen('DrawText', curWindow, '...Welcome to this experiment...',500,300,cWhite0);
-Screen('DrawText', curWindow, 'This is a motion discrimination task.',200,400,cWhite0);
-Screen('DrawText', curWindow, 'Your task is to report the direction (LEFT or RIGHT) of the stimulus.',300,500,cWhite0);
-Screen('DrawText', curWindow, 'Press any key to continue...',200,650,cWhite0);
+Screen('DrawText', curWindow, 'This is a motion discrimination task.',300,400,cWhite0);
+Screen('DrawText', curWindow, 'Your task is to report the direction (LEFT or RIGHT) of a stimulus.',300,500,cWhite0);
+Screen('DrawText', curWindow, 'Press any key to continue...',300,650,cWhite0);
 Screen('Flip',curWindow);
 keytest_unbound;
 
 % Instructions 3
-Screen('DrawText', curWindow, 'On each trial we will present a burst of auditory noise.',300,300,cWhite0);
-Screen('DrawText', curWindow, 'Your task is to indicate whether there was motion on EACH TRIAL by',300,400,cWhite0);
+Screen('DrawText', curWindow, 'On each trial we will present a patch of visual dots, a burst of white noise, or both.',300,300,cWhite0);
+Screen('DrawText', curWindow, 'Your task is to indicate the direction of motion on EACH TRIAL by',300,400,cWhite0);
 Screen('DrawText', curWindow, 'pressing 0 on the box for leftward motion or 1 on the box for rightward motion',300,500,cWhite0);
 Screen('DrawText', curWindow, 'Press any key to continue...',300,650,cWhite0);
 Screen('Flip',curWindow);
 keytest_unbound;
 
 % Instructions 4
-Screen('DrawText', curWindow, 'During a trial, a red dot will appear on the center of',300,300,cWhite0);
+Screen('DrawText', curWindow, 'During each trial, a red dot will appear on the center of',300,300,cWhite0);
 Screen('DrawText', curWindow, 'the screen. Please FIXATE the red dot,',300,400,cWhite0);
 Screen('DrawText', curWindow, 'throughout the trial.',300,500,cWhite0);
 Screen('DrawText', curWindow, 'Press any key to continue...',300,650,cWhite0);
@@ -33,7 +33,6 @@ WaitSecs(3)
 PsychPortAudio('FillBuffer', pahandle, corr_soundout')
 PsychPortAudio('Start', pahandle)
 keytest_unbound
-
 
 % Instructions 6
 Screen('DrawText', curWindow, 'The CORRECT tone will be played again...',300,400,cWhite0);
@@ -70,3 +69,4 @@ Screen('DrawText', curWindow, '...WE WILL START NOW!...',500,500,cWhite0);
 Screen('DrawText', curWindow, 'WHEN YOU ARE READY: PRESS ANY KEY TO START THE EXPERIMENT.',300,650,cWhite0);
 Screen('Flip',curWindow);
 keytest_unbound;
+

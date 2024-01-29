@@ -30,7 +30,7 @@ if task_nature == 2
 else
     stim_matching_nature = 0;
 end
-interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Interleave, 1 = Just AV : ');
+interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Just AV, 1 = Interleave : ');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
 if aperture_nature ~= 1
@@ -238,10 +238,10 @@ elseif task_nature == 2
         % Create trial matrix
         rng('shuffle')
         if interleave_nature == 1
-            [data_output] = at_generateMatrixALL(catchtrials, congruent_mstrials, incongruent_mstrials, stimtrials, stimInfo, right_var, left_var, catch_var);
+            [data_output] = at_generateMatrixALL(catchtrials, congruent_mstrials, incongruent_mstrials, stimtrials, visInfo, right_var, left_var, catch_var);
         else
             % Antonia's old version of creating task structure is commented
-            [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, stimInfo, right_var, left_var, catch_var);
+            [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, visInfo, right_var, left_var, catch_var);
             %[data_output] = at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
         end
     end
@@ -441,7 +441,7 @@ for ii = 1:length(data_output)
     end
 
     %% Save data into data_output on a trial by trial basis
-    [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair);
+    [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair, interleave_nature);
 
     %% Present stimulus feedback if requested
     if training_nature == 1
