@@ -54,8 +54,9 @@ if vel_stair ~= 1
     visInfo.vel = block_dot_speed;
 end
 % Specify if you want data analysis
-data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
+%data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
+%ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
+data_analysis = 0; ExampleMatrix = 0; %not changing anytime soon
 
 %% Auditory stimulus properties
 % dB SNR 
