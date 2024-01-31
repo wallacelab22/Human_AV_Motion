@@ -242,8 +242,7 @@ monRefresh = 1/screenInfo.frameDur;
 
 %% Initialize Audio
 % Training sound properties
-correct_freq = 2000;
-incorrect_freq = 800;
+correct_freq = 1046.5; incorrect_freq = 783.99; % musical notes C, G
 % Generate tones for correct and incorrect responses
 [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
 % Open a pahandle
@@ -273,7 +272,7 @@ for ii = 1:length(data_output)
 
     %% Allows participant to self initiate each trial
     if selfinit_nature == 1
-         instructionsInitTrial(curWindow, cWhite0, fix);
+         instructions_InitTrial(curWindow, cWhite0, fix, data_output);
     end
 
     if task_nature == 1
