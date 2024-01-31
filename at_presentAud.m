@@ -17,7 +17,7 @@ while continue_show
             responded = 1; %note that there was a response
         end
     end
-    
+
     % Now do next drawing commands
     Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
     % After all computations, flip
