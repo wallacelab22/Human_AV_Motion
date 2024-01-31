@@ -1,4 +1,4 @@
-function [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, stimInfo, resp, rt, ii, vel_stair)
+function [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, stimInfo, resp, rt, ii, vel_stair, sliderResp)
 %% Save data to the initialized data_output matrix
 % Each row is a trial
 %
@@ -35,8 +35,9 @@ else
     trial_status = 0;
     data_output(ii, 6) = trial_status;
 end
+data_output(ii, 7) = sliderResp;
 if vel_stair == 1
-    data_output(ii, 7) = stimInfo.vel;
+    data_output(ii, 8) = stimInfo.vel;
 end
 
 end

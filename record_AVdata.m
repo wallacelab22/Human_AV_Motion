@@ -1,4 +1,4 @@
-function [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair, interleave_nature)
+function [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair, interleave_nature, sliderResp)
 %% Save data to the initialized data_output matrix
 % Each row is a trial
 %
@@ -50,9 +50,10 @@ else
         data_output(ii, 8) = trial_status;
     end
 end
+data_output(ii, 9) = sliderResp;
 if vel_stair == 1
-    data_output(ii, 9) = audInfo.vel;
-    data_output(ii,10) = visInfo.vel;
+    data_output(ii, 10) = audInfo.vel;
+    data_output(ii,11) = visInfo.vel;
 end
 
 end

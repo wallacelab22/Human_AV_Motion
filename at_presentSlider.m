@@ -1,12 +1,9 @@
-function [StopPixel_M] = at_generateSlider(prompt, lowerText, upperText, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter)
+function sliderResp = at_presentSlider(sliderPrompt, sliderLowerText, sliderUpperText, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter)
 
 slack = Screen('GetFlipInterval', curWindow);
 vbl = Screen('Flip', curWindow);
 
 % Parameters for your scale and text that you want
-question = 'USE THE SLIDER TO MATCH THE VISUAL NOISINESS TO THE AUDITORY NOISINESS.';
-lowerText = 'Most Noisy';
-upperText = 'Least Noisy';
 pixelsPerPress = 2;
 waitframes = 1;
 lineLength = 500; % in pixels
@@ -53,16 +50,19 @@ while true
     ratingText = sprintf(ratingText, '%');
 
     DrawFormattedText(curWindow, ratingText,'center', (yCenter-200), textColor, [],[],[],5); % display current rating 
-    DrawFormattedText(curWindow, question ,'center', (yCenter-100), textColor, [],[],[],5);
+    DrawFormattedText(curWindow, sliderPrompt ,'center', (yCenter-100), textColor, [],[],[],5);
     
     Screen('DrawLine', curWindow,  lineColor, (xCenter+halfLength), (yCenter),(xCenter-halfLength), (yCenter), 1);
     Screen('DrawLine', curWindow,  lineColor, (xCenter+halfLength), (yCenter+10), (xCenter+halfLength), (yCenter-10), 1);
     Screen('DrawLine', curWindow,  lineColor, (xCenter-halfLength), (yCenter+10), (xCenter-halfLength), (yCenter-10), 1);
     
-    Screen('DrawText', curWindow, lowerText, (xCenter-halfLength), (yCenter+25),  textColor);
-    Screen('DrawText', curWindow, upperText , (xCenter+halfLength) , (yCenter+25), textColor);
+    Screen('DrawText', curWindow, sliderLowerText, (xCenter-halfLength), (yCenter+25),  textColor);
+    Screen('DrawText', curWindow, sliderUpperText , (xCenter+halfLength) , (yCenter+25), textColor);
     Screen('FillRect', curWindow, rectColor, centeredRect);
     vbl = Screen('Flip', curWindow, vbl + (waitframes - 0.5) *  slack);
 end
+
+sliderResp = StopPixel_M;
+WaitSecs(1.5)
 
 end

@@ -37,6 +37,10 @@ if aperture_nature ~= 1
     % Original aperture size, in tens of visual degrees (e.g. 50 is 5 degrees)
     aperture_size = 50;
 end
+sliderResp_nature = input('Slider Response following trials? 0 = NO, 1 = YES : ');
+if sliderResp_nature == 1
+    typeSlide = input('Slider Type? 1 = Confidence, 2 = Strength of motion : ');
+end
 noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
 if EEG_nature == 1
@@ -339,8 +343,26 @@ for ii = 1:length(data_output)
     %% Direction conversion
     visInfo = direction_conversion(visInfo);
 
+    %% Present slider
+    if sliderResp_nature == 1
+        if typeSlide == 1 % confidence slider
+            sliderPrompt = 'How sure are you with your response?';
+            sliderLowerText = 'Least';
+            sliderUpperText = 'Most';
+        elseif typeSlide == 2 % strength of motion slider
+            sliderPrompt = 'How strongly did you perceive the motion?';
+            sliderLowerText = 'Strongly Left';
+            sliderUpperText = 'Strongly Right';
+        else
+            sliderPrompt = '';
+            sliderLowerText = '';
+            sliderUpperText = '';
+        end
+        sliderResp = at_presentSlider(sliderPrompt, sliderLowerText, sliderUpperText, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter);
+    end
+
     %% Save data into data_output on a trial by trial basis
-    [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, visInfo, resp, rt, ii, vel_stair);
+    [trial_status, data_output] = record_data(data_output, right_var, left_var, right_keypress, left_keypress, visInfo, resp, rt, ii, vel_stair, sliderResp);
 
     %% Present stimulus feedback if requested
     if training_nature == 1
