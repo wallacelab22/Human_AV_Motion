@@ -30,6 +30,7 @@ if task_nature == 2
 else
     stim_matching_nature = 0;
 end
+selfinit_nature = input('Participant-initiated trials? 0 = NO; 1 = YES : ');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
@@ -269,6 +270,11 @@ end
 %% Experiment Loop
 % Loop through every trial.
 for ii = 1:length(data_output)
+
+    %% Allows participant to self initiate each trial
+    if selfinit_nature == 1
+         instructionsInitTrial(curWindow, cWhite0, fix);
+    end
 
     if task_nature == 1
         if ii == 1 % the first trial in the staircase

@@ -31,6 +31,7 @@ else
     stim_matching_nature = 0;
 end
 interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Just AV, 1 = Interleave : ');
+selfinit_nature = input('Participant-initiated trials? 0 = NO; 1 = YES : ');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
 if aperture_nature ~= 1
@@ -313,6 +314,11 @@ end
 
 %% trial generation
 for ii = 1:length(data_output)
+
+    %% Allows participant to self initiate each trial
+    if selfinit_nature == 1
+         instructionsInitTrial(curWindow, cWhite0, fix);
+    end
 
     if task_nature == 1
         if ii == 1 % the first trial in the staircase
