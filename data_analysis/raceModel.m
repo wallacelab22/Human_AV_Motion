@@ -81,6 +81,10 @@ audioVisualData = loaded_data{1,3}.data_output; % Your audio-visual data matrix
 
 % Extract unique coherence levels
 coherenceLevels = unique(auditoryData(:, 2));% Assuming the same coherence levels for all conditions
+cohCheck = length(coherenceLevels);
+if cohCheck == 9
+    coherenceLevels = [coherenceLevels(1); coherenceLevels(3:end)]; 
+end
 AV_coherenceLevels = unique(audioVisualData(:,2));
 
 % Initialize variables to store CDFs
@@ -127,6 +131,8 @@ for i = 1:length(coherenceLevels)
     ylabel('Cumulative Probability');
     title(['Cumulative Distribution of Reaction Times - Coherence Level ', num2str(cohLevel)]);
     legend('Auditory', 'Visual', 'Audio-Visual');
+    ylim([0 1])
+    xlim([0 2])
     grid on;
 end
 
@@ -153,4 +159,6 @@ xlabel('Reaction Time (ms)');
 ylabel('Cumulative Probability');
 title('Cumulative Distribution of Reaction Times Across All Coherences');
 legend('Auditory', 'Visual', 'Audio-Visual');
+ylim([0 1])
+xlim([0 2])
 grid on;

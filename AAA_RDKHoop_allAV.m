@@ -30,6 +30,7 @@ if task_nature == 2
 else
     stim_matching_nature = 0;
 end
+interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Just AV, 1 = Interleave : ');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
 if aperture_nature ~= 1
@@ -96,17 +97,24 @@ end
 % currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 3; 
+dur = 0.5; Fs = 44100; triallength = 2; 
+if interleave_nature
+    nbblocks = 9;
+else
+    nbblocks = 3;
+end
 
 % Define buffersize in order to make CAM (auditory stimulus)
 silence = 0.03; buffersize = (dur+silence)*Fs;
 
 % All variables that define stimulus repetitions; num_trials defines total
 % number of staircase trials, stimtrials defines number of stimulus trials
-% per condition for MCS, catchtrials defines total number of catch trials
-% for MCS.
+% per condition for MCS for unisensory trials/blocks, catchtrials defines total number of catch trials
+% for MCS, congruent_mstrials defines number of stimulus trials per
+% congruent condition for AV MCS, incongruent_mstrials is same as above for
+% incongruent conditions.
 num_trials = 100; stimtrials = 12; catchtrials = 25;
-congruent_mstrials = 20; incongruent_mstrials = 2;
+congruent_mstrials = 20; incongruent_mstrials = 0;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -229,8 +237,13 @@ elseif task_nature == 2
     
         % Create trial matrix
         rng('shuffle')
-        %[data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, audInfo, visInfo, right_var, left_var, catch_var);
-        [data_output] = at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
+        if interleave_nature == 1
+            [data_output] = at_generateMatrixALL(catchtrials, congruent_mstrials, incongruent_mstrials, stimtrials, visInfo, right_var, left_var, catch_var);
+        else
+            % Antonia's old version of creating task structure is commented
+            [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, visInfo, right_var, left_var, catch_var);
+            %[data_output] = at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
+        end
     end
 else
     error('Could not generate coherences. Task nature determines how coherences are generated.')
@@ -346,14 +359,16 @@ for ii = 1:length(data_output)
         visInfo.coh = data_output(ii, 4);
     end
 
-    % Necessary variable changing for RDK code. 1 = RIGHT, which is 0 
-    % degrees on unit circle, 2 = LEFT, which is 180 degrees on unit circle
-    visInfo = direction_conversion(visInfo);
+        % Necessary variable changing for RDK code. 1 = RIGHT, which is 0 
+        % degrees on unit circle, 2 = LEFT, which is 180 degrees on unit circle
+    if ~isnan(visInfo.dir) && ~isnan(visInfo.coh)
+        visInfo = direction_conversion(visInfo);
 
-    %% Create info matrix for Visual Stim. 
-    % This dotInfo  output informs at_dotGenerate how to generate the RDK. 
-    dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, ...
-        minNum, maxNum, meanNum, maxdotsframe, dur, visInfo.vel, visInfo.displaceSet);
+        %% Create info matrix for Visual Stim. 
+        % This dotInfo  output informs at_dotGenerate how to generate the RDK. 
+        dotInfo = at_createDotInfo(inputtype, visInfo.coh, visInfo.dir, typeInt, ...
+            minNum, maxNum, meanNum, maxdotsframe, dur, visInfo.vel, visInfo.displaceSet);
+    end
 
     %% Keypress input initialize variables, define frames for presentation
     while KbCheck; end
@@ -372,34 +387,45 @@ for ii = 1:length(data_output)
     %% Dot Generation.
     % This function generates the dots that will be presented to
     % participant in accordance with their coherence, direction, and other dotInfo.
-    [center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show] = at_generateDot(visInfo, dotInfo, screenInfo, screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix);
+    if ~isnan(visInfo.dir) && ~isnan(visInfo.coh)
+        [center, dotSize, d_ppd, ndots, dxdy, ss, Ls, continue_show] = at_generateDot(visInfo, dotInfo, screenInfo, screenRect, monWidth, viewDist, maxdotsframe, dur, curWindow, fix);
+    end
 
     %% Generate auditory stimulus
     % Generates auditory stimulus
     frames = 0;
-    % makeCAM and makeCAM_PILOT create an array voltages to be presented
-    % via speakers that creates perceptual auditory motion from one speaker
-    % to another
-    CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
-    if audInfo.vel < audInfo.maxVel
-        % snipCAM snips the CAM file so the duration stays constant and the
-        % displacement is changed, dependent on the velocity of the trial
-        CAM = snipCAM(CAM, Fs, audInfo.snip_start, audInfo.snip_end);
+    if ~isnan(audInfo.dir) && ~isnan(audInfo.coh)
+        % makeCAM and makeCAM_PILOT create an array voltages to be presented
+        % via speakers that creates perceptual auditory motion from one speaker
+        % to another
+        CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
+        if audInfo.vel < audInfo.maxVel
+            % snipCAM snips the CAM file so the duration stays constant and the
+            % displacement is changed, dependent on the velocity of the trial
+            CAM = snipCAM(CAM, Fs, audInfo.snip_start, audInfo.snip_end);
+        end
+        if noise_jitter_nature == 1
+            jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
+            beforeCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar);
+            afterCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar);
+            wavedata = [beforeCAM, CAM, afterCAM];
+        else
+            wavedata = CAM;
+        end
+        nrchannels = size(wavedata,1); % Number of rows = number of channels.
     end
-    if noise_jitter_nature == 1
-        jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
-        beforeCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar);
-        afterCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar);
-        wavedata = [beforeCAM, CAM, afterCAM];
-    else
-        wavedata = CAM;
-    end
-    nrchannels = size(wavedata,1); % Number of rows = number of channels.
 
    %% AV Stimuli Presentation
     % This function uses psychtoolbox to present dots and auditory stimulus to participant.
-    [resp, rt, start_time] = at_presentAV(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, visInfo, dotInfo, center, dotSize, ...
-        d_ppd, ndots, dxdy, ss, Ls, EEG_nature, outlet, markers);
+    if ~isnan(visInfo.dir) && ~isnan(visInfo.coh) && ~isnan(audInfo.dir) && ~isnan(audInfo.coh)
+        [resp, rt, start_time] = at_presentAV(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, visInfo, dotInfo, center, dotSize, ...
+            d_ppd, ndots, dxdy, ss, Ls, EEG_nature, outlet, markers);
+    elseif isnan(visInfo.dir) && isnan(visInfo.coh) && ~isnan(audInfo.dir) && ~isnan(audInfo.coh)
+        [resp, rt, start_time] = at_presentAud(continue_show, responded, resp, rt, curWindow, fix, frames, pahandle, wavedata, EEG_nature, outlet, markers);
+    elseif ~isnan(visInfo.dir) && ~isnan(visInfo.coh) && isnan(audInfo.dir) && isnan(audInfo.coh)
+        [resp, rt, start_time] = at_presentDot(visInfo, dotInfo, center, dotSize, ...
+            d_ppd, ndots, dxdy, ss, Ls, continue_show, curWindow, fix, responded, resp, rt, EEG_nature, outlet, markers);
+    end
 
     %% Erase last dots & go back to only plotting fixation
     Screen('DrawingFinished',curWindow);
@@ -410,10 +436,12 @@ for ii = 1:length(data_output)
     [resp, rt] = iti_response_recording(typeInt, minNum, maxNum, meanNum, dur, start_time, keyisdown, responded, resp, rt);
     
     %% Direction conversion
-    visInfo = direction_conversion(visInfo);
+    if ~isnan(visInfo.dir) && ~isnan(visInfo.coh)
+        visInfo = direction_conversion(visInfo);
+    end
 
     %% Save data into data_output on a trial by trial basis
-    [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair);
+    [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair, interleave_nature);
 
     %% Present stimulus feedback if requested
     if training_nature == 1

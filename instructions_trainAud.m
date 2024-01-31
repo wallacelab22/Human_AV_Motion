@@ -11,7 +11,7 @@ keytest_unbound;
 % Instructions 3
 Screen('DrawText', curWindow, 'On each trial we will present a burst of auditory noise.',300,300,cWhite0);
 Screen('DrawText', curWindow, 'Your task is to indicate whether there was motion on EACH TRIAL by',300,400,cWhite0);
-Screen('DrawText', curWindow, 'pressing LEFTARROW for leftward motion or RIGHTARROW for rightward motion',300,500,cWhite0);
+Screen('DrawText', curWindow, 'pressing 0 on the box for leftward motion or 1 on the box for rightward motion',300,500,cWhite0);
 Screen('DrawText', curWindow, 'Press any key to continue...',300,650,cWhite0);
 Screen('Flip',curWindow);
 keytest_unbound;

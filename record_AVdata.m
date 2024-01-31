@@ -1,4 +1,4 @@
-function [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair)
+function [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair, interleave_nature)
 %% Save data to the initialized data_output matrix
 % Each row is a trial
 %
@@ -27,12 +27,22 @@ data_output(ii,7) = char(resp);
 % staircase_procedure). 0 = incorrect, 1 = correct, it checks if the 
 % stimulus direction is equal to the recorded response. If so, then
 % trial is correct.
-if data_output(ii, 3) == data_output(ii, 1) && data_output(ii, 3) == data_output(ii,5)
-    trial_status = 1;
-    data_output(ii, 8) = trial_status;
-else 
-    trial_status = 0;
-    data_output(ii, 8) = trial_status;
+if interleave_nature == 1
+    if data_output(ii, 1) == data_output(ii, 5) || data_output(ii, 3) == data_output(ii,5) && ~isnan(data_output(ii,5))
+        trial_status = 1;
+        data_output(ii, 8) = trial_status;
+    else 
+        trial_status = 0;
+        data_output(ii, 8) = trial_status;
+    end
+else
+    if data_output(ii, 3) == data_output(ii, 1) && data_output(ii, 3) == data_output(ii,5)
+        trial_status = 1;
+        data_output(ii, 8) = trial_status;
+    else 
+        trial_status = 0;
+        data_output(ii, 8) = trial_status;
+    end
 end
 if vel_stair == 1
     data_output(ii, 9) = audInfo.vel;
