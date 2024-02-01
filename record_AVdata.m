@@ -28,7 +28,10 @@ data_output(ii,7) = char(resp);
 % stimulus direction is equal to the recorded response. If so, then
 % trial is correct.
 if interleave_nature == 1
-    if (data_output(ii, 1) == data_output(ii, 5) && isnan(data_output(ii, 3))) || (data_output(ii, 3) == data_output(ii,5) && isnan(data_output(ii,1)))
+    if (data_output(ii, 1) == data_output(ii, 3)) && (data_output(ii, 3) == data_output(ii, 5)) && (data_output(ii, 5) ~= 0)
+        trial_status = 1;
+        data_output(ii, 8) = trial_status;
+    elseif (data_output(ii, 1) == data_output(ii, 5) && isnan(data_output(ii, 3))) || (data_output(ii, 3) == data_output(ii,5) && isnan(data_output(ii,1)))
         trial_status = 1;
         data_output(ii, 8) = trial_status;
     elseif (data_output(ii, 1) == data_output(ii, 3)) && (data_output(ii, 3) == 0)

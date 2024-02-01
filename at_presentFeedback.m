@@ -19,6 +19,4 @@ else
     PsychPortAudio('Start', pahandle)
 end
 
-WaitSecs(1)
-
 end

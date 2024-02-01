@@ -1,7 +1,7 @@
 function instructions_InitTrialAV(curWindow, cWhite0, fix, data_output)
 % Waits for participant keypress to move to next trial and displays counter
 
-correctCounter = sum(data_output(:,8));
+correctCounter = sum(data_output(:,8), 'omitnan');
 counterText = sprintf('Trials Correct: %d', correctCounter);
 
 Screen('DrawText', curWindow, 'Press any key to move to next trial...',300,250,cWhite0);

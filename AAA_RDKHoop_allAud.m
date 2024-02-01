@@ -35,6 +35,8 @@ training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 sliderResp_nature = input('Slider Response following trials? 0 = NO, 1 = YES : ');
 if sliderResp_nature == 1
     typeSlide = input('Slider Type? 1 = Confidence, 2 = Strength of motion : ');
+else
+    sliderResp = NaN;
 end
 noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
@@ -349,9 +351,9 @@ for ii = 1:length(data_output)
     % via speakers that creates perceptual auditory motion from one speaker
     % to another
     if noise_jitter_nature == 1
-        CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, 0, Fs, noise_reduction_scalar);
+        CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, 0, Fs, noise_reduction_scalar, noise_jitter_nature);
     else
-        CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar);
+        CAM = makeCAM_PILOT(audInfo.coh, audInfo.dir, audInfo.durRaw, silence, Fs, noise_reduction_scalar, noise_jitter_nature);
     end
     if audInfo.vel < audInfo.maxVel
         % snipCAM snips the CAM file so the duration stays constant and the
@@ -360,8 +362,8 @@ for ii = 1:length(data_output)
     end
     if noise_jitter_nature == 1
         jittertime = makeInterval(typeInt, minJitter, maxJitter, meanJitter);
-        beforeCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar);
-        afterCAM = makeCAM_PILOT(0, 0, jittertime, 0, Fs, noise_reduction_scalar);
+        beforeCAM = makeCAM_PILOT(0, 0, jittertime, silence, Fs, noise_reduction_scalar, noise_jitter_nature);
+        afterCAM = makeCAM_PILOT(0, 0, jittertime, 0, Fs, noise_reduction_scalar, noise_jitter_nature);
         wavedata = [beforeCAM; CAM; afterCAM];
     else
         wavedata = CAM;
