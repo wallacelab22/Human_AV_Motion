@@ -105,7 +105,7 @@ end
 % currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; Fs = 44100; triallength = 2; 
+dur = 0.7; Fs = 44100; triallength = 2; 
 if interleave_nature
     nbblocks = 9;
 else
@@ -121,8 +121,14 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % for MCS, congruent_mstrials defines number of stimulus trials per
 % congruent condition for AV MCS, incongruent_mstrials is same as above for
 % incongruent conditions.
-num_trials = 100; stimtrials = 12; catchtrials = 25;
-congruent_mstrials = 20; incongruent_mstrials = 0;
+
+% Previous conditions:
+% num_trials = 100; stimtrials = 12; catchtrials = 25;
+% congruent_mstrials = 20; incongruent_mstrials = 0;
+
+% New conditions:
+num_trials = 100; stimtrials = 10; catchtrials = 20;
+congruent_mstrials = 10; incongruent_mstrials = 0;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
