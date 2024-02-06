@@ -71,51 +71,53 @@ else
     sz = 36;
 end
 
-% Plot fit with data.
-if compare_plot == 1
-    fig = 0;
-elseif compare_plot == 0
-    fig = figure('Name', save_name);
-    
-    % Set color of figure based on block (A, V, or AV)
-    if contains(save_name, 'Aud')
-        scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
-        hold on
-        if vel_stair ~= 1
-            plot(x, p, 'LineWidth', 3, 'Color', 'r');
-        end
-    elseif contains(save_name, 'Vis')
-        scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
-        hold on
-        if vel_stair ~= 1
-            plot(x, p, 'LineWidth', 3, 'Color', 'b');
-        end
-    elseif contains(save_name, 'AV')
-        scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm');
-        hold on
-        plot(x, p, 'LineWidth', 3, 'Color',  'm')
-    end
-    
-    legend('Participant Responses (scaled by trial amount)', 'NormCDF', 'Location', 'NorthWest', 'Interpreter', 'none');
-    
-    % Label axes
-    title(sprintf('Psych. Function: \n %s',save_name), 'Interpreter','none');
-    xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
-    ylabel( '% Rightward Response', 'Interpreter', 'none');
-    if abs(min(left_coh_vals)) < abs(max(right_coh_vals))
-        xlim([-max(right_coh_vals) max(right_coh_vals)])
-    elseif abs(min(left_coh_vals)) > abs(max(right_coh_vals))
-        xlim([min(left_coh_vals) -min(left_coh_vals)])
-    else
-        xlim([min(left_coh_vals) max(right_coh_vals)])
-    end
-    ylim([0 1])
-    grid on
-    text(0,.2,"std of the slope: " + fit_par(2))
-    set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
-    % text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
-    
-    %text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
-    %text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
-end
+fig = 0;
+
+% % Plot fit with data.
+% if compare_plot == 1
+%     fig = 0;
+% elseif compare_plot == 0
+%     fig = figure('Name', save_name);
+%     
+%     % Set color of figure based on block (A, V, or AV)
+%     if contains(save_name, 'Aud')
+%         scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r');
+%         hold on
+%         if vel_stair ~= 1
+%             plot(x, p, 'LineWidth', 3, 'Color', 'r');
+%         end
+%     elseif contains(save_name, 'Vis')
+%         scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'b');
+%         hold on
+%         if vel_stair ~= 1
+%             plot(x, p, 'LineWidth', 3, 'Color', 'b');
+%         end
+%     elseif contains(save_name, 'AV')
+%         scatter(xData, yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'm');
+%         hold on
+%         plot(x, p, 'LineWidth', 3, 'Color',  'm')
+%     end
+%     
+%     legend('Participant Responses (scaled by trial amount)', 'NormCDF', 'Location', 'NorthWest', 'Interpreter', 'none');
+%     
+%     % Label axes
+%     title(sprintf('Psych. Function: \n %s',save_name), 'Interpreter','none');
+%     xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
+%     ylabel( '% Rightward Response', 'Interpreter', 'none');
+%     if abs(min(left_coh_vals)) < abs(max(right_coh_vals))
+%         xlim([-max(right_coh_vals) max(right_coh_vals)])
+%     elseif abs(min(left_coh_vals)) > abs(max(right_coh_vals))
+%         xlim([min(left_coh_vals) -min(left_coh_vals)])
+%     else
+%         xlim([min(left_coh_vals) max(right_coh_vals)])
+%     end
+%     ylim([0 1])
+%     grid on
+%     text(0,.2,"std of the slope: " + fit_par(2))
+%     set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+%     % text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
+%     
+%     %text(0,.2,"p value for CDF coeffs. (mean): " + p_values(1))
+%     %text(0,.1, "p value for CDF coeffs. (std): " + p_values(2))
+% end
 end
