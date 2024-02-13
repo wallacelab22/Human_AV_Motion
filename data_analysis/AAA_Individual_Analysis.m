@@ -1,7 +1,11 @@
-%% Interleaving Analysis
+%% Accuracy and Reaction Time
+% Analysis
 clear;
 close all;
 clc;
+
+%% INTERLEAVING DATA OR SEPARATE 
+interleave = 1;
 
 %% Load the data
 task_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/';
@@ -10,73 +14,147 @@ data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data/
 figure_file_directory = '/Users/a.tiesman/Documents/Research/Meeting_figures/';
 addpath('/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis/RSE-box-master/analysis')
 
-%% Load the experimental data
-subjnum = input('Enter the subject''s number: ');
-subjnum_s = num2str(subjnum);
-if length(subjnum_s) < 2
-    subjnum_s = strcat(['0' subjnum_s]);
-end
-group = input('Enter the test group: ');
-group_s = num2str(group);
-if length(group_s) < 2
-    group_s = strcat(['0' group_s]);
-end
-
-block_analysis = 'psyAV';
-block_savename = 'RDKHoop_psyAV';
-part_ID = sprintf('%s_%s', subjnum_s, group_s);
-
-search_pattern = sprintf('%s_%s_%s_%s_%s_*.mat', block_savename, subjnum_s, group_s);
-
-% List all files in the directory
-file_list = dir(fullfile(data_file_directory, '*.mat'));
-
-% Initialize a cell array to store matching file names
-matching_files = {};
-
-for j = 1:numel(file_list)
-    file_name = file_list(j).name;
-    if contains(file_name, search_pattern)
-        matching_files{end+1} = file_name;
+if interleave
+    %% Load the experimental data
+    subjnum = input('Enter the subject''s number: ');
+    subjnum_s = num2str(subjnum);
+    if length(subjnum_s) < 2
+        subjnum_s = strcat(['0' subjnum_s]);
     end
-end
+    group = input('Enter the test group: ');
+    group_s = num2str(group);
+    if length(group_s) < 2
+        group_s = strcat(['0' group_s]);
+    end
 
-% Check if any files were found
-if isempty(matching_files)
-    fprintf('No matching files found for subj=%s, group=%s.\n', subjnum_s, group_s);
-else
-    fprintf('Matching files found for subj=%s, group=%s:\n', subjnum_s, group_s);
+    block_analysis = 'psyAV';
+    block_savename = 'RDKHoop_psyAV';
+    part_ID = sprintf('%s_%s', subjnum_s, group_s);
     
-    file_to_load = fullfile(data_file_directory, matching_files{1});
-    fprintf('Loading file: %s\n', file_to_load);
-
-    for i = 1:3
-        dataALL{i} = load(file_to_load);
+    search_pattern = sprintf('%s_%s_%s_%s_%s_*.mat', block_savename, subjnum_s, group_s);
+    
+    % List all files in the directory
+    file_list = dir(fullfile(data_file_directory, '*.mat'));
+    
+    % Initialize a cell array to store matching file names
+    matching_files = {};
+    
+    for j = 1:numel(file_list)
+        file_name = file_list(j).name;
+        if contains(file_name, search_pattern)
+            matching_files{end+1} = file_name;
+        end
     end
-end 
+    
+    % Check if any files were found
+    if isempty(matching_files)
+        fprintf('No matching files found for subj=%s, group=%s.\n', subjnum_s, group_s);
+    else
+        fprintf('Matching files found for subj=%s, group=%s:\n', subjnum_s, group_s);
+        
+        file_to_load = fullfile(data_file_directory, matching_files{1});
+        fprintf('Loading file: %s\n', file_to_load);
+    
+        for i = 1:3
+            dataALL{i} = load(file_to_load);
+        end
+    end 
+    
+    data_output = dataALL{1}.data_output;
+    
+    A = dataALL{1}.data_output;
+    
+    %% Separate A, V, and AV trials
+    % Create logical indices for each condition
+    conditionAud = isnan(data_output(:, 3)) & isnan(data_output(:, 4));
+    conditionVis = isnan(data_output(:, 1)) & isnan(data_output(:, 2));
+    conditionAV = ~isnan(data_output(:, 1)) & ~isnan(data_output(:, 2)) & ...
+                 ~isnan(data_output(:, 3)) & ~isnan(data_output(:, 4));
+    
+    % Extract data into separate matrices based on conditions
+    dataAud = data_output(conditionAud, :);
+    dataVis = data_output(conditionVis, :);
+    dataAV = data_output(conditionAV, :);
+    
+    dataAud(:, [3, 4]) = [ ];
+    dataVis(:, [1, 2]) = [ ];
+    
+    dataALL{1}.dataRaw = dataAud;
+    dataALL{2}.dataRaw = dataVis;
+    dataALL{3}.dataRaw = dataAV;
+else
+    % Input the matrix with number1 and number2 values
+    nfiles_to_load = cell(3, 3);
+    
+    subjnum = input('Enter the subject''s number: ');
+    subjnum_s = num2str(subjnum);
+    if length(subjnum_s) < 2
+        subjnum_s = ['0' subjnum_s];
+    end
+    subjnum_s = {subjnum_s};
+    nfiles_to_load(1, :) = subjnum_s;
+    
+    group = input('Enter the test group: ');
+    group_s = num2str(group);
+    if length(group_s) < 2
+        group_s = ['0' group_s];
+    end
+    group_s = {group_s};
+    nfiles_to_load(2, :) = group_s;
+    
+    nfiles_to_load{3, 1} = 'psyAud';
+    nfiles_to_load{3, 2} = 'psyVis';
+    nfiles_to_load{3, 3} = 'psyAV';
 
-data_output = dataALL{1}.data_output;
+    part_ID = sprintf('%s_%s', subjnum_s{1}, group_s{1});
+   
+    % Initialize a cell array to store the loaded data
+    dataALL = cell(1, size(nfiles_to_load, 2));
 
-A = dataALL{1}.data_output;
+    for i = 1:size(nfiles_to_load, 2)
+    
+        % Create the search pattern
+        block = nfiles_to_load{3, i};
+        block_savename = strcat('RDKHoop_', block);
+        first_number = nfiles_to_load{1, i};
+        second_number = nfiles_to_load{2, i};
+        search_pattern = sprintf('%s_%s_%s_%s_%s_*.mat', block_savename, first_number, second_number);
+    
+        % List all files in the directory
+        file_list = dir(fullfile(data_file_directory, '*.mat'));
+    
+        % Initialize a cell array to store matching file names
+        matching_files = {};
+    
+        % Check if any files match the search pattern
+        for j = 1:numel(file_list)
+            file_name = file_list(j).name;
+            if contains(file_name, search_pattern)
+                matching_files{end+1} = file_name;
+            end
+        end
+    
+        % Check if any files were found
+        if isempty(matching_files)
+            fprintf('No matching files found for number1=%s, number2=%s.\n', first_number, second_number);
+        else
+            fprintf('Matching files found for number1=%s, number2=%s:\n', first_number, second_number);
+            
+            file_to_load = fullfile(data_file_directory, matching_files{1});
+            fprintf('Loading file: %s\n', file_to_load);
+      
+            dataALL{i} = load(file_to_load);
+        end 
+    end
+    dataALL{1}.dataRaw = dataALL{1}.data_output; %aud only
+    dataALL{2}.dataRaw = dataALL{2}.data_output; %vis only
+    dataALL{3}.dataRaw = dataALL{3}.data_output; %av
+    
+    dataAud = dataALL{1}.dataRaw;
+    dataVis = dataALL{2}.dataRaw;
+    dataAV = dataALL{3}.dataRaw;
 
-%% Separate A, V, and AV trials
-% Create logical indices for each condition
-conditionAud = isnan(data_output(:, 3)) & isnan(data_output(:, 4));
-conditionVis = isnan(data_output(:, 1)) & isnan(data_output(:, 2));
-conditionAV = ~isnan(data_output(:, 1)) & ~isnan(data_output(:, 2)) & ...
-             ~isnan(data_output(:, 3)) & ~isnan(data_output(:, 4));
-
-% Extract data into separate matrices based on conditions
-dataAud = data_output(conditionAud, :);
-dataVis = data_output(conditionVis, :);
-dataAV = data_output(conditionAV, :);
-
-dataAud(:, [3, 4]) = [ ];
-dataVis(:, [1, 2]) = [ ];
-
-dataALL{1}.dataRaw = dataAud;
-dataALL{2}.dataRaw = dataVis;
-dataALL{3}.dataRaw = dataAV;
+end
 
 for i = 1:size(dataALL, 2)
     if i == 1
@@ -144,7 +222,6 @@ for i = 1:size(dataALL, 2)
         left_group = findgroups(stimulus_direction{2,1}(:,2));
         
         rightward_prob = multisensory_rightward_prob_calc(stimulus_direction, right_group, left_group, right_var, left_var);
-        
         
         % Create vector of coherence levels
         right_coh_vals = stimulus_direction{1,1}(:,2);
@@ -215,10 +292,18 @@ dataAud(:, 2) = round(dataAud(:, 2), 3, "decimals");
 dataVis(:, 2) = round(dataVis(:, 2), 3, "decimals");
 dataAV(:, 2) = round(dataAV(:, 2), 3, "decimals");
 dataAV(:, 4) = round(dataAV(:, 4), 3, "decimals");
+if ~interleave && (group == 10 || group == 11)
+    % Find the indices of the elements that match the old value in column 2
+    indices = dataAV(:, 2) == 0.0630; %old coherence round
+    % Replace the elements at those indices with the new value in column 2
+    dataAV(indices, 2) = 0.0620; %new coherence round
+end
 rtAUD_missingdata = zeros(length(coherenceLevels),1);
 rtVIS_missingdata = zeros(length(coherenceLevels),1);
 rtAV_missingdata = zeros(length(coherenceLevels),1);
 violation = zeros(length(coherenceLevels), 1);
+gain = zeros(length(coherenceLevels), 1);
+slideResp = zeros(length(coherenceLevels), 3);
 
 % Loop over each coherence level
 for c = 1:length(coherenceLevels)
@@ -260,7 +345,14 @@ for c = 1:length(coherenceLevels)
         rtVisual = rtVisual(1:length(rtAudiovisual));
     end
     showplot = 1;
-    violation(c) = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coh);
+    [violation(c), gain(c)] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coh);
+
+    slideAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 7);
+    slideVisual = dataVis(dataVis(:, 2) == coherenceLevel, 7);
+    slideAudiovisual = dataAV(dataAV(:, 2) == coherenceLevel, 9);
+    slideResp(c, 1) = mean(slideAuditory);
+    slideResp(c, 2) = mean(slideVisual);
+    slideResp(c, 3) = mean(slideAudiovisual);
 
 end
 
@@ -268,12 +360,63 @@ end
 msize=8; lw=1.5;
 figure;
 plot(coherenceLevels,violation,'.-k','MarkerSize',msize,'LineWidth',lw);
+yline(0, '--g','LineWidth',lw);
 title(sprintf('Violation Across Coherences for %s', part_ID));
 legend('RACE Violation','Location','SouthEast');
 xlabel('Coherence'); ylabel('RACE Violation (ms)');
 axis([0 1  min(violation)-10 max(violation)+10]);
 box off;
 beautifyplot;
+
+figure;
+plot(coherenceLevels,gain,'.-k','MarkerSize',msize,'LineWidth',lw);
+yline(0, '--g','LineWidth',lw);
+title(sprintf('MS Gain Across Coherences for %s', part_ID));
+legend('MS Resp Enhancement','Location','SouthEast');
+xlabel('Coherence'); ylabel('MS Resp. Enhancement (ms)');
+axis([0 1  min(gain)-10 max(gain)+10]);
+box off;
+beautifyplot;
+
+%% Plot Slider Results against Coherence
+figure; 
+subplot(1,1,1),h1 = scatter(dataAud(:,2), dataAud(:,7),msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
+subplot(1,1,1),h2 = scatter(dataVis(:,2), dataVis(:,7),msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
+subplot(1,1,1),h3 = scatter(dataAV(:,2), dataAV(:,9),msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+title(sprintf('Slider Response vs. Coherence %s', part_ID));
+legend('A','V','AV','Location','SouthEast');
+xlabel('Coherence'); ylabel('Slider Position');
+axis([-0.1 0.6  0 100]);
+box off;
+beautifyplot;
+
+%% Plot Slider Results against Coherence
+%slideResp = slideResp(2:end, :);
+figure; 
+subplot(1,1,1),h1 = scatter(coherenceLevels, slideResp(:,1), msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
+subplot(1,1,1),h2 = scatter(coherenceLevels, slideResp(:,2), msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
+subplot(1,1,1),h3 = scatter(coherenceLevels, slideResp(:,3), msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+title(sprintf('Slider Response vs. Coherence %s', part_ID));
+legend('A','V','AV','Location','SouthEast');
+xlabel('Coherence'); ylabel('Slider Position');
+axis([-0.1 0.6  0 100]);
+box off;
+beautifyplot;
+
+cla()
+subplot(1,1,1),h1 = plot(coherenceLevels, slideResp(:,1), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'r'); hold on;
+subplot(1,1,1),h2 = plot(coherenceLevels, slideResp(:,2), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'b');
+subplot(1,1,1),h3 = plot(coherenceLevels, slideResp(:,3), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'm');
+% Plot line
+lsline 
+title(sprintf('Slider Response vs. Coherence %s', part_ID));
+legend('A','V','AV','Location','SouthEast');
+xlabel('Coherence'); ylabel('Slider Position');
+axis([-0.1 0.6  0 100]);
+box off;
+beautifyplot;
+
+
 
 %% All RXN TIME DATA
 % % Filter data for the current coherence level

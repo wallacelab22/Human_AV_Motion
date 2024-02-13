@@ -1,4 +1,4 @@
-function [violation] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coherenceLevel)
+function [violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coherenceLevel)
 
 %% Round RTs
 downSampledAudRTdata = round(rtAuditory);
