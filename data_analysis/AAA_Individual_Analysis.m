@@ -6,6 +6,9 @@ clc;
 
 %% INTERLEAVING DATA OR SEPARATE 
 interleave = 1;
+A_and_V = 0;
+
+msize=8; lw=1.5;
 
 %% Load the data
 task_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/';
@@ -55,8 +58,14 @@ if interleave
         file_to_load = fullfile(data_file_directory, matching_files{1});
         fprintf('Loading file: %s\n', file_to_load);
     
-        for i = 1:3
-            dataALL{i} = load(file_to_load);
+        if ~A_and_V
+            for i = 1:3
+                dataALL{i} = load(file_to_load);
+            end
+        else
+            for i = 1:2
+                dataALL{i} = load(file_to_load);
+            end
         end
     end 
     
@@ -68,23 +77,33 @@ if interleave
     % Create logical indices for each condition
     conditionAud = isnan(data_output(:, 3)) & isnan(data_output(:, 4));
     conditionVis = isnan(data_output(:, 1)) & isnan(data_output(:, 2));
-    conditionAV = ~isnan(data_output(:, 1)) & ~isnan(data_output(:, 2)) & ...
-                 ~isnan(data_output(:, 3)) & ~isnan(data_output(:, 4));
+    if ~A_and_V
+        conditionAV = ~isnan(data_output(:, 1)) & ~isnan(data_output(:, 2)) & ...
+                ~isnan(data_output(:, 3)) & ~isnan(data_output(:, 4));
+        dataAV = data_output(conditionAV, :);
+        dataALL{3}.dataRaw = dataAV;
+    end
     
     % Extract data into separate matrices based on conditions
     dataAud = data_output(conditionAud, :);
     dataVis = data_output(conditionVis, :);
-    dataAV = data_output(conditionAV, :);
     
     dataAud(:, [3, 4]) = [ ];
     dataVis(:, [1, 2]) = [ ];
     
     dataALL{1}.dataRaw = dataAud;
     dataALL{2}.dataRaw = dataVis;
-    dataALL{3}.dataRaw = dataAV;
 else
     % Input the matrix with number1 and number2 values
-    nfiles_to_load = cell(3, 3);
+    if ~A_and_V
+        nfiles_to_load = cell(3, 3);
+        nfiles_to_load{3, 3} = 'psyAV';
+    else
+        nfiles_to_load = cell(3,2);
+    end
+
+    nfiles_to_load{3, 1} = 'psyAud';
+    nfiles_to_load{3, 2} = 'psyVis';
     
     subjnum = input('Enter the subject''s number: ');
     subjnum_s = num2str(subjnum);
@@ -101,10 +120,6 @@ else
     end
     group_s = {group_s};
     nfiles_to_load(2, :) = group_s;
-    
-    nfiles_to_load{3, 1} = 'psyAud';
-    nfiles_to_load{3, 2} = 'psyVis';
-    nfiles_to_load{3, 3} = 'psyAV';
 
     part_ID = sprintf('%s_%s', subjnum_s{1}, group_s{1});
    
@@ -148,11 +163,14 @@ else
     end
     dataALL{1}.dataRaw = dataALL{1}.data_output; %aud only
     dataALL{2}.dataRaw = dataALL{2}.data_output; %vis only
-    dataALL{3}.dataRaw = dataALL{3}.data_output; %av
+    if ~A_and_V
+        dataALL{3}.dataRaw = dataALL{3}.data_output; %av
+        dataAV = dataALL{3}.dataRaw;
+    end
+
     
     dataAud = dataALL{1}.dataRaw;
     dataVis = dataALL{2}.dataRaw;
-    dataAV = dataALL{3}.dataRaw;
 
 end
 
@@ -270,119 +288,143 @@ ylim([0 1])
 grid on
 text(0,0.2,"aud cumulative gaussian std: " + dataALL{1}.std_gaussian)
 text(0,0.15,"vis cumulative gaussian std: " + dataALL{2}.std_gaussian)
-text(0,0.1,"av cumulative gaussian std: " + dataALL{3}.std_gaussian)
+if ~A_and_V
+    text(0,0.1,"av cumulative gaussian std: " + dataALL{3}.std_gaussian)
+end
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 
-
-[Results_MLE] = MLE_Calculations_A_V_AV(dataALL{1}.mdl, dataALL{2}.mdl, dataALL{3}.mdl, ...
-    dataALL{1}.yData, dataALL{2}.yData, dataALL{3}.yData, ...
-    dataALL{1}.xData, dataALL{2}.xData, dataALL{3}.xData);
-
-% Extract unique coherence levels
-coherenceLevels = unique(dataAud(:, 2));% Assuming the same coherence levels for all conditions
-cohCheck = length(coherenceLevels);
-if cohCheck == 9
-    coherenceLevels = [coherenceLevels(1); coherenceLevels(3:end)]; 
-end
-AV_coherenceLevels = unique(dataAV(:,2));
-AV_coherenceLevels = AV_coherenceLevels(2:end);
-AV_coherenceLevels = round(AV_coherenceLevels, 3, "decimals");
-coherenceLevels = round(coherenceLevels, 3, "decimals");
-dataAud(:, 2) = round(dataAud(:, 2), 3, "decimals");
-dataVis(:, 2) = round(dataVis(:, 2), 3, "decimals");
-dataAV(:, 2) = round(dataAV(:, 2), 3, "decimals");
-dataAV(:, 4) = round(dataAV(:, 4), 3, "decimals");
-if ~interleave && (group == 10 || group == 11)
-    % Find the indices of the elements that match the old value in column 2
-    indices = dataAV(:, 2) == 0.0630; %old coherence round
-    % Replace the elements at those indices with the new value in column 2
-    dataAV(indices, 2) = 0.0620; %new coherence round
-end
-rtAUD_missingdata = zeros(length(coherenceLevels),1);
-rtVIS_missingdata = zeros(length(coherenceLevels),1);
-rtAV_missingdata = zeros(length(coherenceLevels),1);
-violation = zeros(length(coherenceLevels), 1);
-gain = zeros(length(coherenceLevels), 1);
-slideResp = zeros(length(coherenceLevels), 3);
-
-% Loop over each coherence level
-for c = 1:length(coherenceLevels)
-    coherenceLevel = coherenceLevels(c);
-
-    % Filter data for the current coherence level
-    % Convert seconds to ms, sort RT in ascending order
-    rtAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 4);
-    rtAuditory = rtAuditory*1000;
-    rtAuditory = sort(rtAuditory, 'ascend');
-    rtAuditory = rtAuditory(~isnan(rtAuditory));
-    rtVisual = dataVis(dataVis(:, 2) == coherenceLevel, 4);
-    rtVisual = rtVisual*1000;
-    rtVisual = sort(rtVisual, 'ascend');
-    rtVisual = rtVisual(~isnan(rtVisual));
-    rtAudiovisual = dataAV(dataAV(:, 2) == coherenceLevel, 6);
-    rtAudiovisual = rtAudiovisual*1000;
-    rtAudiovisual = sort(rtAudiovisual, 'ascend');
-    rtAudiovisual = rtAudiovisual(~isnan(rtAudiovisual));
-    coh = num2str(coherenceLevel);
-    if length(rtAuditory) > length(rtVisual)
-        rtAUD_oldsize = length(rtAuditory);
-        rtAuditory = rtAuditory(1:length(rtVisual));
-        rtAUD_newsize = length(rtAuditory);
-        rtAUD_missingdata(c) = rtAUD_oldsize - rtAUD_newsize; 
-    elseif length(rtAuditory) < length(rtVisual)
-        rtVIS_oldsize = length(rtVisual);
-        rtVisual = rtVisual(1:length(rtAuditory));
-        rtVIS_newsize = length(rtVisual);
-        rtVIS_missingdata(c) = rtVIS_oldsize - rtVIS_newsize;
+if ~A_and_V
+    [Results_MLE] = MLE_Calculations_A_V_AV(dataALL{1}.mdl, dataALL{2}.mdl, dataALL{3}.mdl, ...
+        dataALL{1}.yData, dataALL{2}.yData, dataALL{3}.yData, ...
+        dataALL{1}.xData, dataALL{2}.xData, dataALL{3}.xData);
+    
+    % Extract unique coherence levels
+    coherenceLevels = unique(dataAud(:, 2));% Assuming the same coherence levels for all conditions
+    cohCheck = length(coherenceLevels);
+    if cohCheck == 9
+        coherenceLevels = [coherenceLevels(1); coherenceLevels(3:end)]; 
     end
-    if length(rtAuditory) < length(rtAudiovisual)
-        rtAV_oldsize = length(rtAudiovisual);
-        rtAudiovisual = rtAudiovisual(1:length(rtAuditory));
-        rtAV_newsize = length(rtAudiovisual);
-        rtAV_missingdata(c) = rtAV_oldsize - rtAV_newsize;
-    elseif length(rtAuditory) > length(rtAudiovisual)
-        rtAuditory = rtAuditory(1:length(rtAudiovisual));
-        rtVisual = rtVisual(1:length(rtAudiovisual));
+    AV_coherenceLevels = unique(dataAV(:,2));
+    AV_coherenceLevels = AV_coherenceLevels(2:end);
+    AV_coherenceLevels = round(AV_coherenceLevels, 3, "decimals");
+    coherenceLevels = round(coherenceLevels, 3, "decimals");
+    dataAud(:, 2) = round(dataAud(:, 2), 3, "decimals");
+    dataVis(:, 2) = round(dataVis(:, 2), 3, "decimals");
+    dataAV(:, 2) = round(dataAV(:, 2), 3, "decimals");
+    dataAV(:, 4) = round(dataAV(:, 4), 3, "decimals");
+    if ~interleave && (group == 10 || group == 11)
+        % Find the indices of the elements that match the old value in column 2
+        indices = dataAV(:, 2) == 0.0630; %old coherence round
+        % Replace the elements at those indices with the new value in column 2
+        dataAV(indices, 2) = 0.0620; %new coherence round
     end
-    showplot = 1;
-    [violation(c), gain(c)] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coh);
-
-    slideAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 7);
-    slideVisual = dataVis(dataVis(:, 2) == coherenceLevel, 7);
-    slideAudiovisual = dataAV(dataAV(:, 2) == coherenceLevel, 9);
-    slideResp(c, 1) = mean(slideAuditory);
-    slideResp(c, 2) = mean(slideVisual);
-    slideResp(c, 3) = mean(slideAudiovisual);
-
+    rtAUD_missingdata = zeros(length(coherenceLevels),1);
+    rtVIS_missingdata = zeros(length(coherenceLevels),1);
+    rtAV_missingdata = zeros(length(coherenceLevels),1);
+    violation = zeros(length(coherenceLevels), 1);
+    gain = zeros(length(coherenceLevels), 1);
+    slideResp = zeros(length(coherenceLevels), 3);
+    
+    % Loop over each coherence level
+    for c = 1:length(coherenceLevels)
+        coherenceLevel = coherenceLevels(c);
+    
+        % Filter data for the current coherence level
+        % Convert seconds to ms, sort RT in ascending order
+        rtAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 4);
+        rtAuditory = rtAuditory*1000;
+        rtAuditory = sort(rtAuditory, 'ascend');
+        rtAuditory = rtAuditory(~isnan(rtAuditory));
+        rtVisual = dataVis(dataVis(:, 2) == coherenceLevel, 4);
+        rtVisual = rtVisual*1000;
+        rtVisual = sort(rtVisual, 'ascend');
+        rtVisual = rtVisual(~isnan(rtVisual));
+        rtAudiovisual = dataAV(dataAV(:, 2) == coherenceLevel, 6);
+        rtAudiovisual = rtAudiovisual*1000;
+        rtAudiovisual = sort(rtAudiovisual, 'ascend');
+        rtAudiovisual = rtAudiovisual(~isnan(rtAudiovisual));
+        coh = num2str(coherenceLevel);
+        if length(rtAuditory) > length(rtVisual)
+            rtAUD_oldsize = length(rtAuditory);
+            rtAuditory = rtAuditory(1:length(rtVisual));
+            rtAUD_newsize = length(rtAuditory);
+            rtAUD_missingdata(c) = rtAUD_oldsize - rtAUD_newsize; 
+        elseif length(rtAuditory) < length(rtVisual)
+            rtVIS_oldsize = length(rtVisual);
+            rtVisual = rtVisual(1:length(rtAuditory));
+            rtVIS_newsize = length(rtVisual);
+            rtVIS_missingdata(c) = rtVIS_oldsize - rtVIS_newsize;
+        end
+        if length(rtAuditory) < length(rtAudiovisual)
+            rtAV_oldsize = length(rtAudiovisual);
+            rtAudiovisual = rtAudiovisual(1:length(rtAuditory));
+            rtAV_newsize = length(rtAudiovisual);
+            rtAV_missingdata(c) = rtAV_oldsize - rtAV_newsize;
+        elseif length(rtAuditory) > length(rtAudiovisual)
+            rtAuditory = rtAuditory(1:length(rtAudiovisual));
+            rtVisual = rtVisual(1:length(rtAudiovisual));
+        end
+        showplot = 1;
+        [violation(c), gain(c)] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coh);
+    
+        slideAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 7);
+        slideVisual = dataVis(dataVis(:, 2) == coherenceLevel, 7);
+        slideAudiovisual = dataAV(dataAV(:, 2) == coherenceLevel, 9);
+        slideResp(c, 1) = mean(slideAuditory);
+        slideResp(c, 2) = mean(slideVisual);
+        slideResp(c, 3) = mean(slideAudiovisual);
+    end
+    %% Plot the RMI_violations across coherence levels 
+    figure;
+    plot(coherenceLevels,violation,'.-k','MarkerSize',msize,'LineWidth',lw);
+    yline(0, '--g','LineWidth',lw);
+    title(sprintf('Violation Across Coherences for %s', part_ID));
+    legend('RACE Violation','Location','SouthEast');
+    xlabel('Coherence'); ylabel('RACE Violation (ms)');
+    axis([0 1  min(violation)-10 max(violation)+10]);
+    box off;
+    beautifyplot;
+    
+    figure;
+    plot(coherenceLevels,gain,'.-k','MarkerSize',msize,'LineWidth',lw);
+    yline(0, '--g','LineWidth',lw);
+    title(sprintf('MS Gain Across Coherences for %s', part_ID));
+    legend('MS Resp Enhancement','Location','SouthEast');
+    xlabel('Coherence'); ylabel('MS Resp. Enhancement (ms)');
+    axis([0 1  min(gain)-10 max(gain)+10]);
+    box off;
+    beautifyplot;
+else
+    % Extract unique coherence levels
+    coherenceLevels = unique(dataAud(:, 2));% Assuming the same coherence levels for all conditions
+    cohCheck = length(coherenceLevels);
+    if cohCheck == 9
+        coherenceLevels = [coherenceLevels(1); coherenceLevels(3:end)]; 
+    end
+    coherenceLevels = round(coherenceLevels, 3, "decimals");
+    dataAud(:, 2) = round(dataAud(:, 2), 3, "decimals");
+    dataVis(:, 2) = round(dataVis(:, 2), 3, "decimals");
+    slideResp = zeros(length(coherenceLevels), 2);
+    
+    % Loop over each coherence level
+    for c = 1:length(coherenceLevels)
+        coherenceLevel = coherenceLevels(c);
+    
+        % Filter data for the current coherence level
+        slideAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 7);
+        slideVisual = dataVis(dataVis(:, 2) == coherenceLevel, 7);
+        slideResp(c, 1) = mean(slideAuditory);
+        slideResp(c, 2) = mean(slideVisual);
+    end
 end
-
-%% Plot the RMI_violations across coherence levels 
-msize=8; lw=1.5;
-figure;
-plot(coherenceLevels,violation,'.-k','MarkerSize',msize,'LineWidth',lw);
-yline(0, '--g','LineWidth',lw);
-title(sprintf('Violation Across Coherences for %s', part_ID));
-legend('RACE Violation','Location','SouthEast');
-xlabel('Coherence'); ylabel('RACE Violation (ms)');
-axis([0 1  min(violation)-10 max(violation)+10]);
-box off;
-beautifyplot;
-
-figure;
-plot(coherenceLevels,gain,'.-k','MarkerSize',msize,'LineWidth',lw);
-yline(0, '--g','LineWidth',lw);
-title(sprintf('MS Gain Across Coherences for %s', part_ID));
-legend('MS Resp Enhancement','Location','SouthEast');
-xlabel('Coherence'); ylabel('MS Resp. Enhancement (ms)');
-axis([0 1  min(gain)-10 max(gain)+10]);
-box off;
-beautifyplot;
 
 %% Plot Slider Results against Coherence
 figure; 
 subplot(1,1,1),h1 = scatter(dataAud(:,2), dataAud(:,7),msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
 subplot(1,1,1),h2 = scatter(dataVis(:,2), dataVis(:,7),msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
-subplot(1,1,1),h3 = scatter(dataAV(:,2), dataAV(:,9),msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+if ~A_and_V
+    subplot(1,1,1),h3 = scatter(dataAV(:,2), dataAV(:,9),msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+end
 title(sprintf('Slider Response vs. Coherence %s', part_ID));
 legend('A','V','AV','Location','SouthEast');
 xlabel('Coherence'); ylabel('Slider Position');
@@ -395,9 +437,13 @@ beautifyplot;
 figure; 
 subplot(1,1,1),h1 = scatter(coherenceLevels, slideResp(:,1), msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
 subplot(1,1,1),h2 = scatter(coherenceLevels, slideResp(:,2), msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
-subplot(1,1,1),h3 = scatter(coherenceLevels, slideResp(:,3), msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+if ~A_and_V
+    subplot(1,1,1),h3 = scatter(coherenceLevels, slideResp(:,3), msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+    legend('A','V','AV','Location','SouthEast');
+else
+    legend('A','V','Location','SouthEast');
+end
 title(sprintf('Slider Response vs. Coherence %s', part_ID));
-legend('A','V','AV','Location','SouthEast');
 xlabel('Coherence'); ylabel('Slider Position');
 axis([-0.1 0.6  0 100]);
 box off;
@@ -406,46 +452,16 @@ beautifyplot;
 cla()
 subplot(1,1,1),h1 = plot(coherenceLevels, slideResp(:,1), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'r'); hold on;
 subplot(1,1,1),h2 = plot(coherenceLevels, slideResp(:,2), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'b');
-subplot(1,1,1),h3 = plot(coherenceLevels, slideResp(:,3), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'm');
+if ~A_and_V
+    subplot(1,1,1),h3 = plot(coherenceLevels, slideResp(:,3), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'm');
+    legend('A','V','AV','Location','SouthEast');
+else
+    legend('A','V','Location','SouthEast');
+end
 % Plot line
 lsline 
 title(sprintf('Slider Response vs. Coherence %s', part_ID));
-legend('A','V','AV','Location','SouthEast');
 xlabel('Coherence'); ylabel('Slider Position');
 axis([-0.1 0.6  0 100]);
 box off;
 beautifyplot;
-
-
-
-%% All RXN TIME DATA
-% % Filter data for the current coherence level
-% rtAuditory = dataAud(:, 4);
-% rtVisual = dataVis(:, 4);
-% rtAudiovisual = dataAV(:, 6);
-% 
-% rtAuditory = rtAuditory*1000;
-% rtAuditory = sort(rtAuditory, 'ascend');
-% rtAuditory = rtAuditory(~isnan(rtAuditory));
-% rtVisual = rtVisual*1000;
-% rtVisual = sort(rtVisual, 'ascend');
-% rtVisual = rtVisual(~isnan(rtVisual));
-% rtAudiovisual = rtAudiovisual*1000;
-% rtAudiovisual = sort(rtAudiovisual, 'ascend');
-% rtAudiovisual = rtAudiovisual(~isnan(rtAudiovisual));
-% coh = num2str(coherenceLevel);
-% if length(rtAuditory) > length(rtVisual)
-%     rtAuditory = rtAuditory(1:length(rtVisual));
-% elseif length(rtAuditory) < length(rtVisual)
-%     rtVisual = rtVisual(1:length(rtAuditory));
-% end
-% if length(rtAuditory) < length(rtAudiovisual)
-%     rtAudiovisual = rtAudiovisual(1:length(rtAuditory));
-% elseif length(rtAuditory) > length(rtAudiovisual)
-%     rtAuditory = rtAuditory(1:length(rtAudiovisual));
-%     rtVisual = rtVisual(1:length(rtAudiovisual));
-% end
-% showplot = 1;
-% 
-% showplot = 1;
-% violation = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, 'ALL');
