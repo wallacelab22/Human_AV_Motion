@@ -1,4 +1,5 @@
 %% HUMAN AUDIOVISUAL MOTION DISCRIMINATION TASK CODE %%%%%%%%%%
+%% THIS IS A TUTORIAL FOR PARTICIPANTS
 % Wallace Multisensory Lab - Vanderbilt University
 % written by Adam Tiesman - adam.j.tiesman@vanderbilt.edu
 % Initial commit on 2/27/23
@@ -10,72 +11,36 @@ clc;
 right_var = 1; left_var = 2; catch_var = 0;
 
 %% Specify parameters of the block
-disp('This is the main script for the AUDIOVISUAL motion discrimination task.')
-task_nature = input('Staircase = 1;  Method of constant stimuli (MCS) = 2 : ');
-if task_nature == 1
-    staircase_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
-    if staircase_nature == 2 || staircase_nature == 3
-        vel_stair = 1;
-    elseif staircase_nature == 1
-        vel_stair = 0;
-    end
-else 
-    % Set these parameters to 0 so staircase_procedure function knows not to
-    % manipulate velocity.
-    vel_stair = 0;
-end
-if task_nature == 2
-    disp('How do you want to match the visual and auditory stimuli?')
-    stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
-else
-    stim_matching_nature = 0;
-end
-interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Just AV, 1 = Interleave : ');
-selfinit_nature = input('Participant-initiated trials? 0 = NO; 1 = YES : ');
-training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
-aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
-if aperture_nature ~= 1
-    % Original aperture size, in tens of visual degrees (e.g. 50 is 5 degrees)
-    aperture_size = 50;
-end
-sliderResp_nature = input('Slider Response following trials? 0 = NO, 1 = YES : ');
+disp('This is the tutorial script for the AUDIOVISUAL motion discrimination task.')
+task_nature = 2;
+vel_stair = 0;
+stim_matching_nature = 1;
+interleave_nature = 1;
+selfinit_nature = 1;
+training_nature = 1;
+aperture_nature = 1;
+sliderResp_nature = 1;
 if sliderResp_nature == 1
     typeSlide = input('Slider Type? 1 = Confidence, 2 = Strength of motion : ');
 else
     sliderResp = NaN;
 end
-noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
-EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
-if EEG_nature == 1
-    addpath('/add/path/to/liblsl-Matlab-master/');
-    addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
-    [lib, info, outlet] = initialize_lsl;
-else
-    outlet = NaN;
-end
-if vel_stair ~= 1
-    % Specify the dot speed in the RDK, wil be an input to function
-    % at_createDotInfo
-    block_dot_speed = input('Dot Speed (in deg/sec): ');
-    visInfo.vel = block_dot_speed;
-end
-% Specify if you want data analysis
-%data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
-data_analysis = 0; ExampleMatrix = 0; %not changing anytime soon
+noise_jitter_nature = 0;
+EEG_nature = 0;
+outlet = NaN;
+block_dot_speed = 20;
+visInfo.vel = block_dot_speed;
+data_analysis = 0; ExampleMatrix = 1; % ExampleMatrix = 1 for tutorial
 
 %% Auditory stimulus properties
-% dB SNR 
-dB_noise_reduction = input('Enter dB noise reduction: '); % how much less sound intensity (dB) you want from the noise compared to the signal
+dB_noise_reduction = 6; % how much less sound intensity (dB) you want from the noise compared to the signal
 % Convert dB noise reduction to a scalar for CAM --> dB = 20log(CAM)
 noise_reduction_scalar = 10^(-(dB_noise_reduction)/20);
-if vel_stair ~= 1
-    % Auditory velocity
-    aud_vel = input('Enter auditory velocity (if 0, will use original 58.8 deg/sec): ');
-end
+aud_vel = 20;
+
 
 %% Directories created to navigate code folders throughout script
-OS_nature = input('1 = Linux OS, 2 = Windows OS : ');
+OS_nature = 1;
 [script_directory, data_directory, analysis_directory] = define_directories(OS_nature, EEG_nature);
 cd(script_directory)
 
@@ -106,11 +71,7 @@ end
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
 dur = 0.7; Fs = 44100; triallength = 2; 
-if interleave_nature
-    nbblocks = 9;
-else
-    nbblocks = 3;
-end
+nbblocks = 0;
 
 % Define buffersize in order to make CAM (auditory stimulus)
 silence = 0.03; buffersize = (dur+silence)*Fs;
