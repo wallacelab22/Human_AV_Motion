@@ -1,4 +1,4 @@
-function [audInfo, StopPixel_M] = at_generateSlider(audInfo, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter)
+function [StopPixel_M] = at_generateSlider(prompt, lowerText, upperText, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter)
 
 slack = Screen('GetFlipInterval', curWindow);
 vbl = Screen('Flip', curWindow);
@@ -64,12 +64,5 @@ while true
     Screen('FillRect', curWindow, rectColor, centeredRect);
     vbl = Screen('Flip', curWindow, vbl + (waitframes - 0.5) *  slack);
 end
-
-%% Close everything and display the rating. If you're doing this during a script, just put in a flip and save the rating somewhere. 
-
-disp('Rating: ') ;
-disp(StopPixel_M);
-sca;
-Screen('CloseAll');
 
 end

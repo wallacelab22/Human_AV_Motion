@@ -47,7 +47,7 @@ if length( u ) < length( data )
 end
 
 % Linear interpolation of cumulative probabilities
-%y = interp1( u, p, x );
+y = interp1( u, p, x );
 
 % Handling of values in X outside the range of DATA
 if flgExtrap

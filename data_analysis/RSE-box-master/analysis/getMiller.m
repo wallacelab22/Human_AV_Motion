@@ -30,10 +30,11 @@ data = sort( data, 1 );
 
 % X-values for interpolation
 x = unique( data(:) );
+x = x(~isnan(x));
 
 % Linear interpolation of DATA
-y1 = interpCDF( x, data(:,1), 1 );
-y2 = interpCDF( x, data(:,2), 1 );
+y1 = interpCDF( x, data(~isnan(data(:,1)),1), 1 );
+y2 = interpCDF( x, data(~isnan(data(:,2)),2), 1 );
 
 % Compute Miller bound
 p = getCP( n );

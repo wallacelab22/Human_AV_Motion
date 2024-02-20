@@ -1,4 +1,4 @@
-function violation = getViolation( data )
+function violation = getViolation(RT_A, RT_V, RT_AV)
 %GETVIOLATION   Computation of Miller's bound violation.
 % VIOLATION = GETVIOLATION(DATA) returns the amount of vioalation of
 % Miller's bound in a redundant signals experiment (Miller, 1982). To
@@ -23,21 +23,22 @@ function violation = getViolation( data )
 % See rseBox_license for details
 
 % Check input argument DATA
-if size( data, 2 ) > 3
-    warning('DATA has more than 3 columns, will use columns 1 to 3.')
-    data = data(:,1:3);
-end
+% if size( data, 2 ) > 3
+%     warning('DATA has more than 3 columns, will use columns 1 to 3.')
+%     data = data(:,1:3);
+% end
 
 % Sort sample points in DATA
-if size( data, 1) > 1
-    data = sort( data );
-end
+RT_A = sort(RT_A);
+RT_V = sort(RT_V);
+RT_AV = sort(RT_AV);
 
 % Get Miller's bound as baseline
-miller = getMiller( data(:,1:2) );
+UnisensoryRTs = [RT_A RT_V];
+miller = getMiller(UnisensoryRTs);
 
 % Differnce between redundant signals condition and Miller's bound
-violation = miller - data(:,3);
+violation = miller - RT_AV;
 
 % Consider only the area in excess of Miller's bound
 violation( violation<0 ) = 0;

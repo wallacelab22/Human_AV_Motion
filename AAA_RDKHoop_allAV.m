@@ -31,11 +31,16 @@ else
     stim_matching_nature = 0;
 end
 interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Just AV, 1 = Interleave : ');
+selfinit_nature = input('Participant-initiated trials? 0 = NO; 1 = YES : ');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
 if aperture_nature ~= 1
     % Original aperture size, in tens of visual degrees (e.g. 50 is 5 degrees)
     aperture_size = 50;
+end
+sliderResp_nature = input('Slider Response following trials? 0 = NO, 1 = YES : ');
+if sliderResp_nature == 1
+    typeSlide = input('Slider Type? 1 = Confidence, 2 = Strength of motion : ');
 end
 noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
@@ -53,8 +58,9 @@ if vel_stair ~= 1
     visInfo.vel = block_dot_speed;
 end
 % Specify if you want data analysis
-data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
+%data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
+%ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
+data_analysis = 0; ExampleMatrix = 0; %not changing anytime soon
 
 %% Auditory stimulus properties
 % dB SNR 
@@ -274,8 +280,7 @@ monRefresh = 1/screenInfo.frameDur;
 %% Initialize Audio
 if training_nature == 1
     % Training sound properties
-    correct_freq = 2000;
-    incorrect_freq = 800;
+    correct_freq = 1046.5; incorrect_freq = 783.99; % musical notes C, G
     % Generate tones for correct and incorrect responses
     [corr_soundout, incorr_soundout] = at_generateBeep(correct_freq, incorrect_freq, dur, silence, Fs);
 end
@@ -313,6 +318,11 @@ end
 
 %% trial generation
 for ii = 1:length(data_output)
+
+    %% Allows participant to self initiate each trial
+    if selfinit_nature == 1
+         instructions_InitTrialAV(curWindow, cWhite0, fix, data_output);
+    end
 
     if task_nature == 1
         if ii == 1 % the first trial in the staircase
@@ -440,9 +450,27 @@ for ii = 1:length(data_output)
         visInfo = direction_conversion(visInfo);
     end
 
-    %% Save data into data_output on a trial by trial basis
-    [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair, interleave_nature);
+    %% Present slider
+    if sliderResp_nature == 1
+        if typeSlide == 1 % confidence slider
+            sliderPrompt = 'How sure are you with your response?';
+            sliderLowerText = 'Least';
+            sliderUpperText = 'Most';
+        elseif typeSlide == 2 % strength of motion slider
+            sliderPrompt = 'How strongly did you perceive the motion?';
+            sliderLowerText = 'Strongly Left';
+            sliderUpperText = 'Strongly Right';
+        else
+            sliderPrompt = '';
+            sliderLowerText = '';
+            sliderUpperText = '';
+        end
+        sliderResp = at_presentSlider(sliderPrompt, sliderLowerText, sliderUpperText, right_keypress, left_keypress, space_keypress, curWindow, cWhite0, xCenter, yCenter);
+    end
 
+    %% Save data into data_output on a trial by trial basis
+    [trial_status, data_output] = record_AVdata(data_output, right_var, left_var, right_keypress, left_keypress, audInfo, visInfo, resp, rt, ii, vel_stair, interleave_nature, sliderResp);
+    
     %% Present stimulus feedback if requested
     if training_nature == 1
         at_presentFeedback(trial_status, pahandle, corr_soundout, incorr_soundout);
