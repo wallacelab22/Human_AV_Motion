@@ -4,7 +4,7 @@ slack = Screen('GetFlipInterval', curWindow);
 vbl = Screen('Flip', curWindow);
 
 % Parameters for your scale and text that you want
-pixelsPerPress = 2;
+pixelsPerPress = 5;
 waitframes = 1;
 lineLength = 500; % in pixels
 halfLength = lineLength/2;
