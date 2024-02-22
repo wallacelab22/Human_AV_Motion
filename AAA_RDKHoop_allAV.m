@@ -242,8 +242,8 @@ elseif task_nature == 2
             warning('Problem finding staircase data for participant. Assigning general coherences for MCS.');
             cd(script_directory)
             % Generate the list of possible coherences by decreasing log values
-            visInfo.cohStart = 0.5;
-            visInfo.nlog_coh_steps = 8;
+            visInfo.cohStart = 0.5/sqrt(2);
+            visInfo.nlog_coh_steps = 7;
             visInfo.nlog_division = sqrt(2);
             visInfo = cohSet_generation(visInfo, block);
             audInfo.cohSet = visInfo.cohSet;
@@ -301,9 +301,9 @@ end
 % (psyVis for all visual tasks, psyAud for all auditory only tasks, psyAV 
 % for all audiovisual tasks). trainAud and trainVis have separate instructions.
 if training_nature == 1
-    instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout);
+    instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout, sliderResp_nature);
 else
-    instructions_psyAV(curWindow, cWhite0);
+    instructions_psyAV(curWindow, cWhite0, sliderResp_nature);
 end
 
 if sliderResp_nature == 1

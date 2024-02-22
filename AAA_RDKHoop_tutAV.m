@@ -204,21 +204,14 @@ elseif task_nature == 2
             cd(script_directory)
             % Generate the list of possible coherences by decreasing log values
             visInfo.cohStart = 0.5;
-            visInfo.nlog_coh_steps = 8;
+            visInfo.nlog_coh_steps = 7;
             visInfo.nlog_division = sqrt(2);
             visInfo = cohSet_generation(visInfo, block);
             audInfo.cohSet = visInfo.cohSet;
         end
     
-        % Create trial matrix
-        rng('shuffle')
-        if interleave_nature == 1
-            [data_output] = at_generateMatrixALL(catchtrials, congruent_mstrials, incongruent_mstrials, stimtrials, visInfo, right_var, left_var, catch_var);
-        else
-            % Antonia's old version of creating task structure is commented
-            [data_output] = at_generateMatrixAV(catchtrials, congruent_mstrials, incongruent_mstrials, visInfo, right_var, left_var, catch_var);
-            %[data_output] = at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
-        end
+        % Create tutorial trial matrix
+        [data_output] = at_generateExampleMatrix(block);
     end
 else
     error('Could not generate coherences. Task nature determines how coherences are generated.')
@@ -262,9 +255,9 @@ end
 % (psyVis for all visual tasks, psyAud for all auditory only tasks, psyAV 
 % for all audiovisual tasks). trainAud and trainVis have separate instructions.
 if training_nature == 1
-    instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout);
+    instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout, sliderResp_nature);
 else
-    instructions_psyAV(curWindow, cWhite0);
+    instructions_psyAV(curWindow, cWhite0, sliderResp_nature);
 end
 
 if sliderResp_nature == 1
