@@ -70,6 +70,7 @@ if interleave
     end 
     
     data_output = dataALL{1}.data_output;
+    %data_output = data_output(1:391, :);
     
     A = dataALL{1}.data_output;
     
