@@ -379,6 +379,19 @@ for ii = 1:length(data_output)
         end
     end
 
+    if task_nature == 1 && staircase_nature == 1
+        num_reversals = 10;
+        % Find the direction of each trial (positive or negative)
+        directions = sign(diff(data_output(:,2)));
+        
+        % Find the indices of the reversal points
+        reversal_indices = find(diff(directions) ~= 0);
+    
+        if length(reversal_indices) >= num_reversals
+            break;
+        end
+    end
+
 end
 
 %% Goodbye
