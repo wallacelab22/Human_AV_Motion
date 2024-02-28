@@ -265,7 +265,7 @@ elseif task_nature == 2
                 data_output_PERF = data_output;
                 data_output_STIM_AUD = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo, audInfo, right_var, left_var, catch_var);
                 data_output_STIM_VIS = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, visInfo, visInfo, right_var, left_var, catch_var);
-                alltrials = [data_output_PERF; data_output_STIM_AUD; data_output_STIM_VIS];
+                all_trials = [data_output_PERF; data_output_STIM_AUD; data_output_STIM_VIS];
                 % Randomize trials
                 rng('shuffle');
                 nbtrials = size(all_trials, 1);

@@ -93,7 +93,7 @@ end
 % currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 2; 
+dur = 0.7; Fs = 44100; triallength = 2; nbblocks = 2; 
 
 % Define buffersize in order to make CAM (auditory stimulus)
 silence = 0.03; buffersize = (dur+silence)*Fs;
@@ -299,6 +299,7 @@ for ii = 1:length(data_output)
                 audInfo.durRaw = audInfo.durSet;
                 audInfo.snip_start = audInfo.snipSet(1);
                 audInfo.snip_end = audInfo.snipSet(2);
+                vel_index = 0;
             else
                 vel_index = 0;
                 audInfo.durRaw = dur;
@@ -419,7 +420,7 @@ for ii = 1:length(data_output)
     if task_nature == 1 && staircase_nature == 1
         num_reversals = 10;
         % Find the direction of each trial (positive or negative)
-        directions = sign(diff(data_output(:,2)));
+        directions = sign(diff(data_output(1:ii,2)));
         
         % Find the indices of the reversal points
         reversal_indices = find(diff(directions) ~= 0);

@@ -40,6 +40,8 @@ end
 sliderResp_nature = input('Slider Response following trials? 0 = NO, 1 = YES : ');
 if sliderResp_nature == 1
     typeSlide = input('Slider Type? 1 = Confidence, 2 = Strength of motion : ');
+else
+    sliderResp = NaN;
 end
 noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
 EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
@@ -90,7 +92,7 @@ inputtype = 1; typeInt = 1; minNum = 1.5; maxNum = 2.5; meanNum = 2;
 % currently unused in code), Fs is sampling rate, nbblocks is used to divide up num_trials 
 % into equal parts to give subject breaks if there are many trials. 
 % Set to 0 if num_trials is short and subject does not need break(s).
-dur = 0.5; Fs = 44100; triallength = 2; nbblocks = 2; 
+dur = 0.7; Fs = 44100; triallength = 2; nbblocks = 2; 
 
 % Define buffersize in order to make CAM (auditory stimulus)
 silence = 0.03; buffersize = (dur+silence)*Fs;
@@ -382,7 +384,7 @@ for ii = 1:length(data_output)
     if task_nature == 1 && staircase_nature == 1
         num_reversals = 10;
         % Find the direction of each trial (positive or negative)
-        directions = sign(diff(data_output(:,2)));
+        directions = sign(diff(data_output(1:ii,2)));
         
         % Find the indices of the reversal points
         reversal_indices = find(diff(directions) ~= 0);
