@@ -1,4 +1,4 @@
-function [stimInfo] = coherence_calc(data_output, extrapolateCoh)
+function [stimInfo] = coherence_calc(data_output, extrapolateCoh, stimInfo)
 % written 04/24/23 - Adam Tiesman
 % Finds the coherence in the staircase task that the participant asympototed
 % out to. It then extrapolates down lower_lim log values and up upper_lim log values

@@ -151,8 +151,8 @@ if task_nature == 1 % Staircase
     end
     
     % Generate the list of possible coherences by decreasing log values
-    audInfo.cohStart = 0.5;
-    audInfo.nlog_coh_steps = 4;
+    audInfo.cohStart = 1;
+    audInfo.nlog_coh_steps = 12;
     audInfo.nlog_division = sqrt(2);
     audInfo = cohSet_generation(audInfo, block);
     
@@ -418,9 +418,11 @@ for ii = 1:length(data_output)
     end
 
     if task_nature == 1 && staircase_nature == 1
-        num_reversals = 10;
+        num_reversals = 15;
         % Find the direction of each trial (positive or negative)
-        directions = sign(diff(data_output(1:ii,2)));
+        differences = diff(data_output(:,2));
+        nonzero_differences = differences(differences ~= 0);
+        directions = sign(nonzero_differences);        
         
         % Find the indices of the reversal points
         reversal_indices = find(diff(directions) ~= 0);

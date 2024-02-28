@@ -101,7 +101,7 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % number of staircase trials, stimtrials defines number of stimulus trials
 % per condition for MCS, catchtrials defines total number of catch trials
 % for MCS.
-num_trials = 100; stimtrials = 12; catchtrials = 25;
+num_trials = 250; stimtrials = 12; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -144,7 +144,7 @@ if task_nature == 1
     end
     
     % Generate the list of possible coherences by decreasing log values
-    visInfo.cohStart = 0.5;
+    visInfo.cohStart = 1;
     visInfo.nlog_coh_steps = 12;
     visInfo.nlog_division = sqrt(2);
     visInfo = cohSet_generation(visInfo, block);
@@ -382,9 +382,11 @@ for ii = 1:length(data_output)
     end
 
     if task_nature == 1 && staircase_nature == 1
-        num_reversals = 10;
+        num_reversals = 15;
         % Find the direction of each trial (positive or negative)
-        directions = sign(diff(data_output(1:ii,2)));
+        differences = diff(data_output(:,2));
+        nonzero_differences = differences(differences ~= 0);
+        directions = sign(nonzero_differences);        
         
         % Find the indices of the reversal points
         reversal_indices = find(diff(directions) ~= 0);
