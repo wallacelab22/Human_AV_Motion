@@ -262,10 +262,22 @@ elseif task_nature == 2
                 %[data_output] = at_RDKHoopMatrix_PILOTpsyAV(catchtrials, congruent_mstrials, incongruent_mstrials);
             end
             if stim_vs_perf_match_nature
+                audNoise = 0;
+                visNoise = 0;
+                totalNOISE_trials = 2*congruent_mstrials; 
                 data_output_PERF = data_output;
                 data_output_STIM_AUD = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo, audInfo, right_var, left_var, catch_var);
                 data_output_STIM_VIS = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, visInfo, visInfo, right_var, left_var, catch_var);
-                all_trials = [data_output_PERF; data_output_STIM_AUD; data_output_STIM_VIS];
+                data_output_NOISE_VIS = zeros(totalNOISE_trials, 8);
+                data_output_NOISE_VIS(1:congruent_mstrials,1) = right_var;
+                data_output_NOISE_VIS(congruent_mstrials+1:end,1) = left_var;
+                data_output_NOISE_VIS(:,2) = audInfo.cohSet(1);
+                data_output_NOISE_AUD = zeros(totalNOISE_trials, 8);
+                data_output_NOISE_AUD(1:congruent_mstrials,3) = right_var;
+                data_output_NOISE_AUD(congruent_mstrials+1:end,3) = left_var;
+                data_output_NOISE_AUD(:,4) = visInfo.cohSet(1);
+                
+                all_trials = [data_output_PERF; data_output_STIM_AUD; data_output_STIM_VIS; data_output_NOISE_AUD; data_output_NOISE_VIS];
                 % Randomize trials
                 rng('shuffle');
                 nbtrials = size(all_trials, 1);
