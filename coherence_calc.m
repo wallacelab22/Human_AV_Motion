@@ -1,4 +1,4 @@
-function [stimInfo] = coherence_calc(data_output, extrapolateCoh, stimInfo)
+function [stimInfo] = coherence_calc(data_output, extrapolateCoh, stimInfo, coh_step)
 % written 04/24/23 - Adam Tiesman
 % Finds the coherence in the staircase task that the participant asympototed
 % out to. It then extrapolates down lower_lim log values and up upper_lim log values
@@ -29,7 +29,6 @@ nlog_division = sqrt(2);
 upper_lim = 3;
 lower_lim = 3;
 num_reversals = 10;
-coh_step = 0;
 
 % Find the direction of each trial (positive or negative)
 directions = sign(diff(data_output(:,2)));

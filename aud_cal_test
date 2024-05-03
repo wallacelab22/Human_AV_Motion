@@ -1,0 +1,10 @@
+%% Calibration Auditory Test Script
+
+curWindow = 0; Fs = 44100; dur = 5; silence = 0.03; cLvl = 0; 
+
+[pahandle] = initialize_aud(curWindow, Fs);
+
+CAM = makeCAM_PILOT(cLvl, direction, dur, silence, Fs, 1, 0);
+
+PsychPortAudio('FillBuffer', pahandle, wavedata');
+PsychPortAudio('Start', pahandle, 1);
