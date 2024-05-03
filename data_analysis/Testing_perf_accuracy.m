@@ -3,14 +3,19 @@ close all;
 clc;
 
 %% Set variables
-SEVEN = 1;
 vel_stair = 0;
+save_fig = 0;
+estimated_AV = 1;
 
 %% Load the data
 task_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/';
 script_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis/';
 data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data/';
-figure_file_directory = '/Users/a.tiesman/Documents/Research/Meeting_figures/';
+figure_file_directory = '/Volumes/WallaceLab/AdamTiesman/individual_figures_IMRF';
+addpath('/Volumes/WallaceLab/AdamTiesman/individual_figures_IMRF')
+addpath('/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis/RSE-box-master');
+addpath('/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis/RSE-box-master/analysis');
+
 
 %% Load the experimental data
 subjnum = input('Enter the subject''s number: ');
@@ -18,36 +23,32 @@ subjnum_s = num2str(subjnum);
 if length(subjnum_s) < 2
     subjnum_s = strcat(['0' subjnum_s]);
 end
+group = input('Enter the subject''s group: ');
+group_s = num2str(group);
+if length(group_s) < 2
+    group_s = strcat(['0' group_s]);
+end
 sex = input('Enter the subject''s sex (1 = female; 2 = male): ');
-sex_s=num2str(sex);
+sex_s = num2str(sex);
 if length(sex_s) < 2
     sex_s = strcat(['0' sex_s]);
 end
 age = input('Enter the subject''s age: ');
-age_s=num2str(age);
+age_s = num2str(age);
 if length(age_s) < 2
     age_s = strcat(['0' age_s]);
 end
 
 cd(data_file_directory)
-if SEVEN
-    psyAV_filename = sprintf('RDKHoop_psyAV_%s_16_%s_%s.mat', subjnum_s, sex_s, age_s);
-else
-    psyAV_filename = sprintf('RDKHoop_psyAV_%s_15_%s_%s.mat', subjnum_s, sex_s, age_s);
-end
+psyAV_filename = sprintf('RDKHoop_psyAV_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
 load(psyAV_filename)
 cd(script_file_directory)
 
-PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s);
+[boxplot_accuracies, violation, gain, aud_coh, vis_coh, AV_accuracy_CDF_points] = PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s, figure_file_directory, save_fig);
 
 clear data_output
 cd(data_file_directory)
-
-if SEVEN
-    stairAud_filename = sprintf('RDKHoop_stairAud_%s_16_%s_%s.mat', subjnum_s, sex_s, age_s);
-else
-    stairAud_filename = sprintf('RDKHoop_stairAud_%s_15_%s_%s.mat', subjnum_s, sex_s, age_s);
-end
+stairAud_filename = sprintf('RDKHoop_stairAud_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
 load(stairAud_filename)
 save_name = 'stairAud';
 dataAud = data_output;
@@ -62,17 +63,13 @@ end
 dataAud = dataAud(1:stopRow-1, :);
 
 cd(script_file_directory)
-stairstep_plotter(dataAud, save_name, vel_stair);
+%stairstep_plotter(dataAud, save_name, vel_stair);
 cd(data_file_directory)
 
 clear save_name
 clear data_output
 
-if SEVEN
-    stairVis_filename = sprintf('RDKHoop_stairVis_%s_16_%s_%s.mat', subjnum_s, sex_s, age_s);
-else
-    stairVis_filename = sprintf('RDKHoop_stairVis_%s_15_%s_%s.mat', subjnum_s, sex_s, age_s);
-end
+stairVis_filename = sprintf('RDKHoop_stairVis_%s_%s_%s_%s.mat', subjnum_s, group_s, sex_s, age_s);
 load(stairVis_filename)
 save_name = 'stairVis';
 dataVis = data_output;
@@ -87,7 +84,7 @@ end
 dataVis = dataVis(1:stopRow-1, :);
 
 cd (script_file_directory)
-stairstep_plotter(dataVis, save_name, vel_stair);
+%stairstep_plotter(dataVis, save_name, vel_stair);
 cd(data_file_directory)
 
 clear save_name
@@ -109,14 +106,24 @@ vel_stair = 0;
 
 fig = figure('Name', sprintf('%d_%d CDF Comparison ', subjnum, 16));
 
-for i = 1:2
-    dataALL{i}.dataRaw(dataALL{i}.dataRaw(:, 1) == 0, 1) = 3; 
-    [right_vs_left, right_group, left_group] = direction_plotter(dataALL{i}.dataRaw);
-    rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
-    [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(dataALL{i}.dataRaw, right_vs_left);
-    [fig, p_values, ci, threshold, dataALL{i}.xData, dataALL{i}.yData, x, p, sz, dataALL{i}.std_gaussian, dataALL{i}.mdl] = normCDF_plotter(coherence_lvls, ...
-    rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
-    coherence_frequency, compare_plot, save_name, vel_stair);    
+if estimated_AV
+    plot_num = 3;
+else
+    plot_num = 2;
+end
+for i = 1:plot_num
+    if i == 1 || i == 2
+        dataALL{i}.dataRaw(dataALL{i}.dataRaw(:, 1) == 0, 1) = 3; 
+        [right_vs_left, right_group, left_group] = direction_plotter(dataALL{i}.dataRaw);
+        rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, right_var, left_var);
+        [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(dataALL{i}.dataRaw, right_vs_left);
+        [fig, p_values, ci, threshold, dataALL{i}.xData, dataALL{i}.yData, x, p, sz, dataALL{i}.std_gaussian, dataALL{i}.mdl] = normCDF_plotter(coherence_lvls, ...
+        rightward_prob, chosen_threshold, left_coh_vals, right_coh_vals, ...
+        coherence_frequency, compare_plot, save_name, vel_stair);    
+    elseif i == 3
+        [Results_MLE] = MLE_Calculations_A_V(dataALL{1}.mdl, dataALL{2}.mdl, dataALL{1}.yData, dataALL{2}.yData, dataALL{1}.xData, dataALL{2}.xData);
+        plotEstimatedAV(Results_MLE.AV_EstimatedSD, [dataALL{1}.mdl.Coefficients{1,1} dataALL{2}.mdl.Coefficients{1,1}], [Results_MLE.AUD_Westimate Results_MLE.VIS_Westimate], aud_coh, vis_coh, AV_accuracy_CDF_points)
+    end
     if i == 1
         scatter(dataALL{i}.xData, dataALL{i}.yData, sz, 'LineWidth', 2, 'MarkerEdgeColor', 'r', 'HandleVisibility', 'off');
         hold on
@@ -137,8 +144,23 @@ xlim([-1 1])
 axis equal
 ylim([0 1])
 grid on
-text(0,0.2,"aud cumulative gaussian std: " + dataALL{1}.std_gaussian)
-text(0,0.15,"vis cumulative gaussian std: " + dataALL{2}.std_gaussian)
+hold on
+text(0.3,0.2,"aud std (sensitivity): " + dataALL{1}.std_gaussian)
+text(0.3,0.1,"aud mu (PSE): " + dataALL{1}.mdl.Coefficients{1,1})
+text(0.3,0.15,"vis std (sensitivity): " + dataALL{2}.std_gaussian)
+text(0.3,0.05,"vis mu (PSE): " + dataALL{2}.mdl.Coefficients{1,1})
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 
-beautifyplot;
+%beautifyplot;
+%set(gcf, 'Units', 'normalized', 'OuterPosition', [0 0 1 1]);
+cdf = gcf;
+fig_type = 'cdf';
+filename = fullfile(figure_file_directory, [subjnum_s '_' group_s '_' fig_type '.jpg']);
+if save_fig
+    saveas(cdf, filename, 'jpeg');
+end
+
+
+
+%boxplot_accuracies
+

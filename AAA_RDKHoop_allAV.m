@@ -348,6 +348,8 @@ end
 %% trial generation
 for ii = 1:length(data_output)
 
+    cued_modality = data_output(ii, 9);
+
     %% Allows participant to self initiate each trial
     if selfinit_nature == 1
          instructions_InitTrialAV(curWindow, cWhite0, fix, data_output);

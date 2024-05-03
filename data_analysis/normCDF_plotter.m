@@ -43,7 +43,7 @@ fit_par = fminsearch(fun, parms, opts);
 normalcdf_fun = @(b, x) 0.5 * (1 + erf((x - b(1)) ./ (b(2) * sqrt(2))));
 if contains(save_name, 'stair') || contains(save_name, 'train')
     mdl = fitnlm(xData, yData, normalcdf_fun, parms, 'Weights', coherence_frequency(2,:));
-    std_gaussian = mdl.Coefficients{1,2};
+    std_gaussian = mdl.Coefficients{2,1};
 else
     mdl = fitnlm(xData, yData, normalcdf_fun, parms);
 end

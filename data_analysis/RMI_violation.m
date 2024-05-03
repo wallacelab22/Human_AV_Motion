@@ -1,4 +1,4 @@
-function [violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coherenceLevel)
+function [violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coherenceLevel, subjnum_s, group_s, figure_file_directory, save_fig)
 
 %% Round RTs
 downSampledAudRTdata = round(rtAuditory);
@@ -72,6 +72,14 @@ if showplot==1
     axis([minRT-100 maxRT+100  0 1]);
     box off;
     beautifyplot;
+
+    set(gcf, 'Units', 'normalized', 'OuterPosition', [0 0 1 1]);
+    rt = gcf;
+    fig_type = 'rt';
+    filename = fullfile(figure_file_directory, [subjnum_s '_' group_s '_' fig_type '.jpg']);
+    if save_fig
+        saveas(rt, filename, 'jpeg');
+    end
 
 end
 end
