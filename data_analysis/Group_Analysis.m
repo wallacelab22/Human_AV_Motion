@@ -201,9 +201,9 @@ Anoise_Ratio = table2array(dataAll(:,31));
 % beautifyplot;
 % 
 % figure; hold on;
-% scatter(AudCoh, AOAcc, 'k', 'filled', 'SizeData', 70);
-% ylabel('Aud Acc');
-% xlabel('Aud Coh');
+% scatter(AUD_SD, AUD_Mu, 'k', 'filled', 'SizeData', 70);
+% ylabel('Aud MU');
+% xlabel('Aud STD');
 % title('Scatter between Aud Coh and Acc');
 % beautifyplot;
 % 
@@ -242,14 +242,106 @@ EqualReliabilities = dataAll_raw(conditionEqual, :);
 VisCapture = dataAll_raw(conditionVis, :);
 AudCapture = dataAll_raw(conditionAud, :);
 
-figure; % Create a new figure window
-histogram(AudWeight, 50, 'FaceColor', 'r'); 
-title('Distribution of Auditory Weight');
+group1_Av_stim = EqualReliabilities(:, 16);
+group1_aV_stim = EqualReliabilities(:, 17);
+group2_Av_stim = AudCapture(:, 16);
+group2_aV_stim = AudCapture(:, 17);
+group3_Av_stim = VisCapture(:, 16);
+group3_aV_stim = VisCapture(:, 17);
+
+group1_AO = EqualReliabilities(:, 13);
+group2_AO = AudCapture(:, 13);
+group3_AO = VisCapture(:, 13);
+
+group1_VO = EqualReliabilities(:, 14);
+group2_VO = AudCapture(:, 14);
+group3_VO = VisCapture(:, 14);
+
+% Create a scatter plot with different shapes and colors for each group
+figure;
+hold on;
+scatter(group1_AO, group1_Av_stim, 500, 'o', 'filled', 'DisplayName', 'Equal Reliabilities');
+scatter(group2_AO, group2_Av_stim, 500, '^', 'filled', 'DisplayName', 'Auditory Capture');
+scatter(group3_AO, group3_Av_stim, 500, 's', 'filled', 'DisplayName', 'Visual Capture');
+
+% Set labels and legend
+xlabel('AO Accuracy');
+ylabel('AV Accuracy (Stim Matched A)');
+xlim([0.3 1]);
+ylim([0.3 1]);
+axis equal
+legend('show', 'Location', 'northwest');
+beautifyplot;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44)
+hold off;
+
+% Create a scatter plot with different shapes and colors for each group
+figure;
+hold on;
+scatter(group1_VO, group1_aV_stim, 500, 'o', 'filled', 'DisplayName', 'Equal Reliabilities');
+scatter(group2_VO, group2_aV_stim, 500, '^', 'filled', 'DisplayName', 'Auditory Capture');
+scatter(group3_VO, group3_aV_stim, 500, 's', 'filled', 'DisplayName', 'Visual Capture');
+
+% Set labels and legend
+xlabel('VO Accuracy');
+ylabel('AV Accuracy (Stim Matched V)');
+xlim([0.3 1]);
+ylim([0.3 1]);
+axis equal
+legend('show', 'Location', 'northwest');
+beautifyplot;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44)
+hold off;
+
+figure; hold on;
+scatter(Anoise_Ratio, MSGain, 'k', 'filled', 'SizeData', 70);
+ylabel('MS Gain');
+xlabel('Ratio Anoise');
+title('Scatter between Anoise Ratio and MS Gain');
+beautifyplot;
+
+
+
+% Assuming AudWeight and VisualWeight arrays are available
+VisualWeight = VisWeight;
+
+% Define properties for both histograms
+numBins = 50;
+binEdges = linspace(0, 1, numBins + 1);
+
+% Create a figure with a tiled layout for perfect alignment
+figure;
+tiledlayout(2, 1, 'TileSpacing', 'none', 'Padding', 'none');
+
+% Auditory weight histogram (top)
+nexttile;
+histogram(AudWeight, binEdges, 'FaceColor', 'r', 'DisplayName', 'Auditory Weights');
+ylabel('Frequency');
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24);
+grid on;
+xlim([0 1]);
+legend('show', 'Location', 'northwest');
+
+% Visual weight histogram (bottom, mirrored)
+nexttile;
+h = histogram(VisWeight, binEdges, 'FaceColor', 'b', 'DisplayName', 'Visual Weights');
+ylim = get(gca, 'YLim'); % Get the y-axis limits of the visual weight histogram
+set(gca, 'YDir', 'reverse', 'YLim', ylim); % Invert the y-axis
 xlabel('Weight');
 ylabel('Frequency');
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 grid on;
+xlim([0 1]);
+legend('show', 'Location', 'southwest');
+
+% Set uniform properties for both plots
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24);
 set(gca, 'XTickLabelRotation', 45);
+
+
+
+
 
 figure; % Create a new figure window
 histogram(AUD_SD, 100, 'FaceColor', 'r'); 
@@ -298,50 +390,50 @@ set(gca, 'XTickLabelRotation', 45);
 % AV_perf = EqualReliabilities(:, 15);
 % maxA_V = EqualReliabilities(:, 20);
 % group_type = 'Equal Reliabilities';
-% acc_boxplotter(AV_perf, maxA_V, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % AV_perf = AudCapture(:, 15);
 % maxA_V = AudCapture(:, 20);
 % group_type = 'Auditory Capture';
-% acc_boxplotter(AV_perf, maxA_V, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % AV_perf = VisCapture(:, 15);
 % maxA_V = VisCapture(:, 20);
 % group_type = 'Visual Capture';
-% acc_boxplotter(AV_perf, maxA_V, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % 
 % AO_acc = EqualReliabilities(:, 13);
 % A_Vnoise = EqualReliabilities(:, 18);
 % group_type = 'Equal Reliabilities';
-% acc_boxplotter(AO_acc, A_Vnoise, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % AO_acc = AudCapture(:, 13);
 % A_Vnoise = AudCapture(:, 18);
 % group_type = 'Auditory Capture';
-% acc_boxplotter(AO_acc, A_Vnoise, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % AO_acc = VisCapture(:, 13);
 % A_Vnoise = VisCapture(:, 18);
 % group_type = 'Visual Capture';
-% acc_boxplotter(AO_acc, A_Vnoise, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % %% VO accuracy vs V_Anoise
 % 
 % VO_acc = EqualReliabilities(:, 14);
 % V_Anoise = EqualReliabilities(:, 19);
 % group_type = 'Equal Reliabilities';
-% acc_boxplotter(VO_acc, V_Anoise, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % VO_acc = AudCapture(:, 14);
 % V_Anoise = AudCapture(:, 19);
 % group_type = 'Auditory Capture';
-% acc_boxplotter(VO_acc, V_Anoise, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % VO_acc = VisCapture(:, 14);
 % V_Anoise = VisCapture(:, 19);
 % group_type = 'Visual Capture';
-% acc_boxplotter(VO_acc, V_Anoise, group_type);
+% acc_boxplotter(maxA_V, AV_perf, group_type);
 % 
 % 
 % 
@@ -369,7 +461,7 @@ AV_perf = weights0_2(:, 15);
 maxA_V = weights0_2(:, 20);
 MS_Gain = weights0_2(:, 21);
 group_type = '0 - 0.2 Aud Weight';
-acc_boxplotter(AV_perf, maxA_V, group_type);
+acc_boxplotter(maxA_V, AV_perf, group_type);
 figure; % Create a new figure window
 histogram(MS_Gain, 25, 'FaceColor', 'm'); 
 title('Distribution of MsGain');
@@ -386,7 +478,7 @@ AV_perf = weights2_4(:, 15);
 maxA_V = weights2_4(:, 20);
 MS_Gain = weights2_4(:, 21);
 group_type = '0.2 - 0.4 Aud Weight';
-acc_boxplotter(AV_perf, maxA_V, group_type);
+acc_boxplotter(maxA_V, AV_perf, group_type);
 figure; % Create a new figure window
 histogram(MS_Gain, 25, 'FaceColor', 'm'); 
 title('Distribution of MsGain');
@@ -402,7 +494,7 @@ AV_perf = weights4_6(:, 15);
 maxA_V = weights4_6(:, 20);
 MS_Gain = weights4_6(:, 21);
 group_type = '0.4 - 0.6 Aud Weight';
-acc_boxplotter(AV_perf, maxA_V, group_type);
+acc_boxplotter(maxA_V, AV_perf, group_type);
 figure; % Create a new figure window
 histogram(MS_Gain, 25, 'FaceColor', 'm'); 
 title('Distribution of MsGain');
@@ -418,7 +510,7 @@ AV_perf = weights6_8(:, 15);
 maxA_V = weights6_8(:, 20);
 MS_Gain = weights6_8(:, 21);
 group_type = '0.6 - 0.8 Aud Weight';
-acc_boxplotter(AV_perf, maxA_V, group_type);
+acc_boxplotter(maxA_V, AV_perf, group_type);
 figure; % Create a new figure window
 histogram(MS_Gain, 25, 'FaceColor', 'm'); 
 title('Distribution of MsGain');
@@ -434,7 +526,7 @@ AV_perf = weights8_10(:, 15);
 maxA_V = weights8_10(:, 20);
 MS_Gain = weights8_10(:, 21);
 group_type = '0.8 - 1 Aud Weight';
-acc_boxplotter(AV_perf, maxA_V, group_type);
+acc_boxplotter(maxA_V, AV_perf, group_type);
 figure; % Create a new figure window
 histogram(MS_Gain, 25, 'FaceColor', 'm'); 
 title('Distribution of MsGain');
@@ -446,3 +538,87 @@ set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 grid on;
 set(gca, 'XTickLabelRotation', 45);
 
+MRE_RT = table2array(dataAll(:,27));
+%group_type = 'All Aud Weights';
+%acc_boxplotter(AV_perf, maxA_V, group_type);
+figure; % Create a new figure window
+histogram(MRE_RT, 50, 'FaceColor', 'm'); 
+title('Distribution of RT MRE');
+xlabel('MRE (ms)');
+%xlim([-0.5 0.5]);
+ylim([0 12]);
+ylabel('Frequency');
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+grid on;
+set(gca, 'XTickLabelRotation', 45);
+
+% Define logical conditions for participants that have GAIN and/or MRE
+condition_Gain = dataAll_raw(:,21) > 0;
+condition_noGain = dataAll_raw(:,21) <= 0;
+condition_RT = dataAll_raw(:,27) > 0;
+condition_noRT = dataAll_raw(:,27) <= 0;
+condition_Gain_and_RT = condition_Gain & condition_RT;
+condition_noGain_nor_RT = condition_noGain & condition_noRT;
+
+% Create separate arrays based on conditions
+group_Gain = dataAll_raw(condition_Gain, :);
+group_noGain = dataAll_raw(condition_noGain, :);
+group_RT = dataAll_raw(condition_RT, :);
+group_noRT = dataAll_raw(condition_noRT, :);
+group_Gain_and_RT = dataAll_raw(condition_Gain_and_RT, :);
+
+AV_perf = group_Gain(:, 15);
+maxA_V = group_Gain(:, 20);
+group_type = 'Gain Group';
+acc_boxplotter(maxA_V, AV_perf, group_type);
+AudWeight = group_Gain(:, 28);
+figure; % Create a new figure window
+histogram(AudWeight, 25, 'FaceColor', 'm'); 
+title('Distribution of Auditory Weights');
+xlabel('Aud Weight');
+xlim([0 1]);
+ylim([0 12]);
+ylabel('Frequency');
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+grid on;
+set(gca, 'XTickLabelRotation', 45);
+
+AV_perf = group_noGain(:, 15);
+maxA_V = group_noGain(:, 20);
+group_type = 'NO Gain Group';
+acc_boxplotter(maxA_V, AV_perf, group_type);
+AudWeight = group_noGain(:, 28);
+figure; % Create a new figure window
+histogram(AudWeight, 25, 'FaceColor', 'm'); 
+title('Distribution of Auditory Weights');
+xlabel('Aud Weight');
+xlim([0 1]);
+ylim([0 12]);
+ylabel('Frequency');
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+grid on;
+set(gca, 'XTickLabelRotation', 45);
+
+SD_Ratio = table2array(dataAll(:,24));
+figure; % Create a new figure window
+histogram(SD_Ratio, 50, 'FaceColor', 'g'); 
+title('Distribution of SD Ratio');
+xlabel('Ratio (Aud SD / Vis SD)');
+xlim([0 4]);
+ylim([0 12]);
+ylabel('Frequency');
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+grid on;
+set(gca, 'XTickLabelRotation', 45);
+
+Mu_Ratio = table2array(dataAll(:,25));
+figure; % Create a new figure window
+histogram(Mu_Ratio, 200, 'FaceColor', 'g'); 
+title('Distribution of Mu Ratio');
+xlabel('Ratio (Aud Mu / Vis Mu)');
+xlim([0 4]);
+ylim([0 20]);
+ylabel('Frequency');
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+grid on;
+set(gca, 'XTickLabelRotation', 45);

@@ -1,4 +1,4 @@
-function [accuracies, violation, gain, coherence1, coherence2, AV_accuracy_CDF_points] = PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s, figure_file_directory, save_fig)
+function [accuracies, violation, RT_gain, coherence1, coherence2, AV_accuracy_CDF_points] = PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s, figure_file_directory, save_fig, figures)
 % Assume 'data_output' is your matrix with trial information
 % Column 1: Auditory direction (1=left, 2=right)
 % Column 2: Auditory coherence (0-1)
@@ -79,27 +79,29 @@ end
 coherence1 = round(coherence1, 3, "decimals");
 coherence2 = round(coherence2, 3, "decimals");
 
-% Plot the accuracies
-bar(1:7, accuracies)
-xlabel('Trial Type')
-ylabel('Accuracy')
-xticks(1:7)
-ylim([0 1])
-xticklabels({'Auditory Only', 'Visual Only', 'AV Performance Matched', 'AV Auditory Matched', 'AV Visual Matched', 'Auditory with Visual Noise', 'Visual with Auditory Noise'})
-title(sprintf('Accuracy by Trial Type for %s %s', subjnum_s, group_s))
-%legend(['Auditory Coherence = ', num2str(coherence1)], ['Visual Coherence = ', num2str(coherence2)], 'Location', 'best')
-text(1, 0.97, ['Auditory Coherence = ', num2str(coherence1)], 'FontSize', 14)
-text(1, 0.92, ['Visual Coherence = ', num2str(coherence2)], 'FontSize', 14)
+if figures
+    % Plot the accuracies
+    bar(1:7, accuracies)
+    xlabel('Trial Type')
+    ylabel('Accuracy')
+    xticks(1:7)
+    ylim([0 1])
+    xticklabels({'Auditory Only', 'Visual Only', 'AV Performance Matched', 'AV Auditory Matched', 'AV Visual Matched', 'Auditory with Visual Noise', 'Visual with Auditory Noise'})
+    title(sprintf('Accuracy by Trial Type for %s %s', subjnum_s, group_s))
+    %legend(['Auditory Coherence = ', num2str(coherence1)], ['Visual Coherence = ', num2str(coherence2)], 'Location', 'best')
+    text(1, 0.97, ['Auditory Coherence = ', num2str(coherence1)], 'FontSize', 14)
+    text(1, 0.92, ['Visual Coherence = ', num2str(coherence2)], 'FontSize', 14)
+    
+    
+    beautifyplot;
 
-
-beautifyplot;
-
-set(gcf, 'Units', 'normalized', 'OuterPosition', [0 0 1 1]);
-acc = gcf;
-fig_type = 'acc';
-filename = fullfile(figure_file_directory, [subjnum_s '_' group_s '_' fig_type '.jpg']);
-if save_fig
-    saveas(acc, filename, 'jpeg');
+    set(gcf, 'Units', 'normalized', 'OuterPosition', [0 0 1 1]);
+    acc = gcf;
+    fig_type = 'acc';
+    filename = fullfile(figure_file_directory, [subjnum_s '_' group_s '_' fig_type '.jpg']);
+    if save_fig
+        saveas(acc, filename, 'jpeg');
+    end
 end
 
 % Filter data for the current coherence level
@@ -139,9 +141,8 @@ elseif length(rtAuditory) > length(rtAudiovisual)
     rtAuditory = rtAuditory(1:length(rtAudiovisual));
     rtVisual = rtVisual(1:length(rtAudiovisual));
 end
-showplot = 1;
 part_ID = sprintf('%s, %s', subjnum_s, group_s);
-[violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coh, subjnum_s, group_s, figure_file_directory, save_fig);
+[violation, RT_gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, figures, part_ID, coh, subjnum_s, group_s, figure_file_directory, save_fig);
 
 coherence1 = str2double(coherence1);
 coherence2 = str2double(coherence2);

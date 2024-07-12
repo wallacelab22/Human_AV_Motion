@@ -1,4 +1,4 @@
-function [violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coherenceLevel, subjnum_s, group_s, figure_file_directory, save_fig)
+function [violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, figures, part_ID, coherenceLevel, subjnum_s, group_s, figure_file_directory, save_fig)
 
 %% Round RTs
 downSampledAudRTdata = round(rtAuditory);
@@ -33,7 +33,7 @@ gain = round(gain);
 [grice, P_Grice] = getGrice(UnisensoryRTs); % Grice bound
 
 %% Plot CDFs + race CDF
-if showplot==1
+if figures==1
      msize = 8;
      lw = 1.5;
 

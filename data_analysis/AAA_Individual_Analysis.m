@@ -293,6 +293,7 @@ if ~A_and_V
     text(0,0.1,"av cumulative gaussian std: " + dataALL{3}.std_gaussian)
 end
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+beautifyplot;
 
 if ~A_and_V
     [Results_MLE] = MLE_Calculations_A_V_AV(dataALL{1}.mdl, dataALL{2}.mdl, dataALL{3}.mdl, ...
@@ -366,7 +367,7 @@ if ~A_and_V
             rtVisual = rtVisual(1:length(rtAudiovisual));
         end
         showplot = 1;
-        [violation(c), gain(c)] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coh);
+        % [violation(c), gain(c)] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, showplot, part_ID, coh);
     
         slideAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 7);
         slideVisual = dataVis(dataVis(:, 2) == coherenceLevel, 7);
@@ -375,94 +376,134 @@ if ~A_and_V
         slideResp(c, 2) = mean(slideVisual);
         slideResp(c, 3) = mean(slideAudiovisual);
     end
-    %% Plot the RMI_violations across coherence levels 
-    figure;
-    plot(coherenceLevels,violation,'.-k','MarkerSize',msize,'LineWidth',lw);
-    yline(0, '--g','LineWidth',lw);
-    title(sprintf('Violation Across Coherences for %s', part_ID));
-    legend('RACE Violation','Location','SouthEast');
-    xlabel('Coherence'); ylabel('RACE Violation (ms)');
-    axis([0 1  min(violation)-10 max(violation)+10]);
-    box off;
-    beautifyplot;
-    
-    figure;
-    plot(coherenceLevels,gain,'.-k','MarkerSize',msize,'LineWidth',lw);
-    yline(0, '--g','LineWidth',lw);
-    title(sprintf('MS Gain Across Coherences for %s', part_ID));
-    legend('MS Resp Enhancement','Location','SouthEast');
-    xlabel('Coherence'); ylabel('MS Resp. Enhancement (ms)');
-    axis([0 1  min(gain)-10 max(gain)+10]);
-    box off;
-    beautifyplot;
-else
-    % Extract unique coherence levels
-    coherenceLevels = unique(dataAud(:, 2));% Assuming the same coherence levels for all conditions
-    cohCheck = length(coherenceLevels);
-    if cohCheck == 9
-        coherenceLevels = [coherenceLevels(1); coherenceLevels(3:end)]; 
+end
+%     %% Plot the RMI_violations across coherence levels 
+%     figure;
+%     plot(coherenceLevels,violation,'.-k','MarkerSize',msize,'LineWidth',lw);
+%     yline(0, '--g','LineWidth',lw);
+%     title(sprintf('Violation Across Coherences for %s', part_ID));
+%     legend('RACE Violation','Location','SouthEast');
+%     xlabel('Coherence'); ylabel('RACE Violation (ms)');
+%     axis([0 1  min(violation)-10 max(violation)+10]);
+%     box off;
+%     beautifyplot;
+%     
+%     figure;
+%     plot(coherenceLevels,gain,'.-k','MarkerSize',msize,'LineWidth',lw);
+%     yline(0, '--g','LineWidth',lw);
+%     title(sprintf('MS Gain Across Coherences for %s', part_ID));
+%     legend('MS Resp Enhancement','Location','SouthEast');
+%     xlabel('Coherence'); ylabel('MS Resp. Enhancement (ms)');
+%     axis([0 1  min(gain)-10 max(gain)+10]);
+%     box off;
+%     beautifyplot;
+% else
+%     % Extract unique coherence levels
+%     coherenceLevels = unique(dataAud(:, 2));% Assuming the same coherence levels for all conditions
+%     cohCheck = length(coherenceLevels);
+%     if cohCheck == 9
+%         coherenceLevels = [coherenceLevels(1); coherenceLevels(3:end)]; 
+%     end
+%     coherenceLevels = round(coherenceLevels, 3, "decimals");
+%     dataAud(:, 2) = round(dataAud(:, 2), 3, "decimals");
+%     dataVis(:, 2) = round(dataVis(:, 2), 3, "decimals");
+%     slideResp = zeros(length(coherenceLevels), 2);
+%     
+%     % Loop over each coherence level
+%     for c = 1:length(coherenceLevels)
+%         coherenceLevel = coherenceLevels(c);
+%     
+%         % Filter data for the current coherence level
+%         slideAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 7);
+%         slideVisual = dataVis(dataVis(:, 2) == coherenceLevel, 7);
+%         slideResp(c, 1) = mean(slideAuditory);
+%         slideResp(c, 2) = mean(slideVisual);
+%     end
+% end
+% 
+% %% Plot Slider Results against Coherence
+% figure; 
+% subplot(1,1,1),h1 = scatter(dataAud(:,2), dataAud(:,7),msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
+% subplot(1,1,1),h2 = scatter(dataVis(:,2), dataVis(:,7),msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
+% if ~A_and_V
+%     subplot(1,1,1),h3 = scatter(dataAV(:,2), dataAV(:,9),msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+% end
+% title(sprintf('Slider Response vs. Coherence %s', part_ID));
+% legend('A','V','AV','Location','SouthEast');
+% xlabel('Coherence'); ylabel('Slider Position');
+% axis([-0.1 0.6  0 100]);
+% box off;
+% beautifyplot;
+% 
+% %% Plot Slider Results against Coherence
+% %slideResp = slideResp(2:end, :);
+% figure; 
+% subplot(1,1,1),h1 = scatter(coherenceLevels, slideResp(:,1), msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
+% subplot(1,1,1),h2 = scatter(coherenceLevels, slideResp(:,2), msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
+% if ~A_and_V
+%     subplot(1,1,1),h3 = scatter(coherenceLevels, slideResp(:,3), msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
+%     legend('A','V','AV','Location','SouthEast');
+% else
+%     legend('A','V','Location','SouthEast');
+% end
+% title(sprintf('Slider Response vs. Coherence %s', part_ID));
+% xlabel('Coherence'); ylabel('Slider Position');
+% axis([-0.1 0.6  0 100]);
+% box off;
+% beautifyplot;
+% 
+% cla()
+% subplot(1,1,1),h1 = plot(coherenceLevels, slideResp(:,1), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'r'); hold on;
+% subplot(1,1,1),h2 = plot(coherenceLevels, slideResp(:,2), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'b');
+% if ~A_and_V
+%     subplot(1,1,1),h3 = plot(coherenceLevels, slideResp(:,3), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'm');
+%     legend('A','V','AV','Location','SouthEast');
+% else
+%     legend('A','V','Location','SouthEast');
+% end
+% % Plot line
+% lsline 
+% title(sprintf('Slider Response vs. Coherence %s', part_ID));
+% xlabel('Coherence'); ylabel('Slider Position');
+% axis([-0.1 0.6  0 100]);
+% box off;
+% beautifyplot;
+
+dataOutput = data_output;
+coherenceLevels = unique(dataOutput(:, 2));% Assuming the same coherence levels for all conditions
+coherenceLevels = round(coherenceLevels, 3, "decimals");
+dataOutput(:, 2) = round(dataOutput(:, 2), 3, "decimals");
+dataOutput(:, 4) = round(dataOutput(:, 4), 3, "decimals");
+coherenceLevels = unique(data_output(:, 2));% Assuming the same coherence levels for all conditions
+
+if group == 23 | group == 25
+    auditory_cue = 1; visual_cue = 2; audiovisual_cue = 3; no_cue = 0;
+    cued_accuracies = zeros(length(coherenceLevels), 4);
+    for cohLevel = 1:length(coherenceLevels)
+        idx = dataOutput(:,2) == coherenceLevels(cohLevel) & dataOutput(:,4) == coherenceLevels(cohLevel);
+        data_output = dataOutput(idx, :);
+        for cueType = 1:4
+            switch cueType
+                case 1
+                    idx = data_output(:,9) == auditory_cue;
+                    correctResponses = data_output(idx, 1) == data_output(idx, 5);
+                    dataAud_cue(cohLevel) = data_output(idx, :);
+                case 2
+                    idx = data_output(:,9) == visual_cue;
+                    correctResponses = data_output(idx, 3) == data_output(idx, 5);
+                    dataVis_cue(cohLevel) = data_output(idx, :);
+                case 3
+                    idx = data_output(:,9) == audiovisual_cue;
+                    correctResponses = data_output(idx, 1) == data_output(idx, 3) & data_output(idx, 3) == data_output(idx, 5);
+                    dataAV_cue(cohLevel) = data_output(idx, :);
+                case 4
+                    idx = data_output(:,9) == no_cue & ~isnan(data_output(:,4)) & ~isnan(data_output(:,2));
+                    correctResponses = data_output(idx, 1) == data_output(idx, 3) & data_output(idx, 3) == data_output(idx, 5);
+                    dataNO_cue(cohLevel) = data_output(idx, :);
+            end
+            
+            cued_accuracies(cueType) = sum(correctResponses) / length(correctResponses);
+        end
     end
-    coherenceLevels = round(coherenceLevels, 3, "decimals");
-    dataAud(:, 2) = round(dataAud(:, 2), 3, "decimals");
-    dataVis(:, 2) = round(dataVis(:, 2), 3, "decimals");
-    slideResp = zeros(length(coherenceLevels), 2);
-    
-    % Loop over each coherence level
-    for c = 1:length(coherenceLevels)
-        coherenceLevel = coherenceLevels(c);
-    
-        % Filter data for the current coherence level
-        slideAuditory = dataAud(dataAud(:, 2) == coherenceLevel, 7);
-        slideVisual = dataVis(dataVis(:, 2) == coherenceLevel, 7);
-        slideResp(c, 1) = mean(slideAuditory);
-        slideResp(c, 2) = mean(slideVisual);
-    end
 end
 
-%% Plot Slider Results against Coherence
-figure; 
-subplot(1,1,1),h1 = scatter(dataAud(:,2), dataAud(:,7),msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
-subplot(1,1,1),h2 = scatter(dataVis(:,2), dataVis(:,7),msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
-if ~A_and_V
-    subplot(1,1,1),h3 = scatter(dataAV(:,2), dataAV(:,9),msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
-end
-title(sprintf('Slider Response vs. Coherence %s', part_ID));
-legend('A','V','AV','Location','SouthEast');
-xlabel('Coherence'); ylabel('Slider Position');
-axis([-0.1 0.6  0 100]);
-box off;
-beautifyplot;
-
-%% Plot Slider Results against Coherence
-%slideResp = slideResp(2:end, :);
-figure; 
-subplot(1,1,1),h1 = scatter(coherenceLevels, slideResp(:,1), msize, 'MarkerEdgeColor', 'r', 'LineWidth', lw); hold on;
-subplot(1,1,1),h2 = scatter(coherenceLevels, slideResp(:,2), msize, 'MarkerEdgeColor', 'b', 'LineWidth', lw);
-if ~A_and_V
-    subplot(1,1,1),h3 = scatter(coherenceLevels, slideResp(:,3), msize, 'MarkerEdgeColor', 'm', 'LineWidth', lw);
-    legend('A','V','AV','Location','SouthEast');
-else
-    legend('A','V','Location','SouthEast');
-end
-title(sprintf('Slider Response vs. Coherence %s', part_ID));
-xlabel('Coherence'); ylabel('Slider Position');
-axis([-0.1 0.6  0 100]);
-box off;
-beautifyplot;
-
-cla()
-subplot(1,1,1),h1 = plot(coherenceLevels, slideResp(:,1), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'r'); hold on;
-subplot(1,1,1),h2 = plot(coherenceLevels, slideResp(:,2), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'b');
-if ~A_and_V
-    subplot(1,1,1),h3 = plot(coherenceLevels, slideResp(:,3), 'o','MarkerSize',msize,'LineWidth',lw, 'Color', 'm');
-    legend('A','V','AV','Location','SouthEast');
-else
-    legend('A','V','Location','SouthEast');
-end
-% Plot line
-lsline 
-title(sprintf('Slider Response vs. Coherence %s', part_ID));
-xlabel('Coherence'); ylabel('Slider Position');
-axis([-0.1 0.6  0 100]);
-box off;
-beautifyplot;

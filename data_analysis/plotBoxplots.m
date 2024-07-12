@@ -1,5 +1,5 @@
 % Data for Mu
-AUD_SD = [0.53
+AUD_Mu = [0.53
 0.68
 0.63
 0.75
@@ -47,7 +47,7 @@ AUD_SD = [0.53
 0.77
 0.56
 0.52];
-VIS_SD = [0.75
+VIS_Mu = [0.75
 0.5625
 0.60
 0.70
@@ -101,9 +101,8 @@ sd_data = [AUD_Mu, VIS_Mu];
 
 % Create box plots for SD data
 figure;
-h = boxplot(sd_data, 'Labels', {'AUD SD', 'VIS SD'});
-title('Box Plots for Auditory and Visual SD');
-ylabel('SD Values');
+h = boxplot(sd_data, 'Labels', {'AV Accuracy', 'AV After Catch Trial'});
+ylabel('Proportion Correct');
 
 % Color the boxes
 set(h, {'linew'}, {2});
@@ -127,4 +126,3 @@ hold off;
 grid on;
 set(gca, 'XTickLabelRotation', 45);
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
-
