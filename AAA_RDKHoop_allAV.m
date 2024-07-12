@@ -275,14 +275,37 @@ elseif task_nature == 2
                     data_output_STIM_AUD = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo, audInfo, right_var, left_var, catch_var);
                     data_output_STIM_VIS = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, visInfo, visInfo, right_var, left_var, catch_var);
                 end
-                data_output_NOISE_VIS = zeros(totalNOISE_trials, 8);
-                data_output_NOISE_VIS(1:congruent_mstrials,1) = right_var;
-                data_output_NOISE_VIS(congruent_mstrials+1:end,1) = left_var;
-                data_output_NOISE_VIS(:,2) = audInfo.cohSet(1);
-                data_output_NOISE_AUD = zeros(totalNOISE_trials, 8);
-                data_output_NOISE_AUD(1:congruent_mstrials,3) = right_var;
-                data_output_NOISE_AUD(congruent_mstrials+1:end,3) = left_var;
-                data_output_NOISE_AUD(:,4) = visInfo.cohSet(1);
+
+                %data_output_NOISE_VIS = zeros(totalNOISE_trials, 8);
+                %data_output_NOISE_VIS(1:congruent_mstrials,1) = right_var;
+                %data_output_NOISE_VIS(congruent_mstrials+1:end,1) = left_var;
+                %data_output_NOISE_VIS(:,2) = audInfo.cohSet(1);
+                %data_output_NOISE_AUD = zeros(totalNOISE_trials, 8);
+                %data_output_NOISE_AUD(1:congruent_mstrials,3) = right_var;
+                %data_output_NOISE_AUD(congruent_mstrials+1:end,3) = left_var;
+                %data_output_NOISE_AUD(:,4) = visInfo.cohSet(1);
+
+                % Generate the list of possible coherences by decreasing log values
+                stimInfo.cohStart = 1;
+                stimInfo.nlog_coh_steps = 12;
+                stimInfo.nlog_division = sqrt(2);
+                stimInfo = cohSet_generation(stimInfo, block);
+                audIndex = find(stimInfo.cohSet == audInfo.cohSet);
+                visIndex = find(stimInfo.cohSet == visInfo.cohSet);
+
+                audInfo_2above.cohSet = stimInfo.cohSet(audIndex-2);
+                audInfo_1above.cohSet = stimInfo.cohSet(audIndex-1);
+                audInfo_1below.cohSet = stimInfo.cohSet(audIndex+1);
+                audInfo_2below.cohSet = stimInfo.cohSet(audIndex+2);
+                visInfo_2above.cohSet = stimInfo.cohSet(visIndex-2);
+                visInfo_1above.cohSet = stimInfo.cohSet(visIndex-1);
+                visInfo_1below.cohSet = stimInfo.cohSet(visIndex+1);
+                visInfo_2below.cohSet = stimInfo.cohSet(visIndex+2);
+
+                [data_output_2above] = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo_2above, visInfo_2above, right_var, left_var, catch_var);
+                [data_output_1above] = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo_1above, visInfo_1above, right_var, left_var, catch_var);
+                [data_output_1below] = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo_1below, visInfo_1below, right_var, left_var, catch_var);
+                [data_output_2below] = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo_2below, visInfo_2below, right_var, left_var, catch_var);
 
                 if cued_nature
                     x = length(data_output_NOISE_VIS);
@@ -338,7 +361,7 @@ elseif task_nature == 2
                 end
 
                 if cued_nature
-                    all_trials = [data_output_PERF; data_output_NOISE_AUD; data_output_NOISE_VIS];
+                    all_trials = [data_output_PERF; data_output_2above; data_output_1above; data_output_1below; data_output_2below; data_output_NOISE_AUD; data_output_NOISE_VIS];
                 else
                     all_trials = [data_output_PERF; data_output_STIM_AUD; data_output_STIM_VIS; data_output_NOISE_AUD; data_output_NOISE_VIS];
                 end
