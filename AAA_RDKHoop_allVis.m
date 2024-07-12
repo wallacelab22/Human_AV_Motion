@@ -424,3 +424,10 @@ end
 
 cd(data_directory)
 save(filename)
+
+group_s = str2double(group_s);
+group_s_new = group_s + 1;
+group_s_new = num2str(group_s_new);
+underscore = '_';
+new_filename = strcat(block, underscore, subjnum_s, underscore, group_s_new, underscore, sex_s, underscore, age_s);
+save(new_filename)

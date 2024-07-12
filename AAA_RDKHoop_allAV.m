@@ -31,7 +31,10 @@ else
     stim_matching_nature = 0;
 end
 interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Just AV, 1 = Interleave : ');
-selfinit_nature = input('Participant-initiated trials? 0 = NO; 1 = YES : ');
+selfinit_nature = input('Participant-initiated trials? 0 = NO, 1 = YES : ');
+if selfinit_nature
+    cued_nature = input('Cued or Uncued task? 0 = UNCUED, 1 = CUED : ');
+end
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
 aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
 if aperture_nature ~= 1
@@ -61,7 +64,7 @@ if vel_stair ~= 1
 end
 % Specify if you want data analysis
 %data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
+%ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
 data_analysis = 0; ExampleMatrix = 0; %not changing anytime soon
 
 %% Auditory stimulus properties
@@ -268,8 +271,10 @@ elseif task_nature == 2
                 visNoise = 0;
                 totalNOISE_trials = 2*congruent_mstrials; 
                 data_output_PERF = data_output;
-                data_output_STIM_AUD = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo, audInfo, right_var, left_var, catch_var);
-                data_output_STIM_VIS = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, visInfo, visInfo, right_var, left_var, catch_var);
+                if ~cued_nature
+                    data_output_STIM_AUD = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, audInfo, audInfo, right_var, left_var, catch_var);
+                    data_output_STIM_VIS = at_generateMatrixALL(0, congruent_mstrials, incongruent_mstrials, 0, visInfo, visInfo, right_var, left_var, catch_var);
+                end
                 data_output_NOISE_VIS = zeros(totalNOISE_trials, 8);
                 data_output_NOISE_VIS(1:congruent_mstrials,1) = right_var;
                 data_output_NOISE_VIS(congruent_mstrials+1:end,1) = left_var;
@@ -278,8 +283,66 @@ elseif task_nature == 2
                 data_output_NOISE_AUD(1:congruent_mstrials,3) = right_var;
                 data_output_NOISE_AUD(congruent_mstrials+1:end,3) = left_var;
                 data_output_NOISE_AUD(:,4) = visInfo.cohSet(1);
-                
-                all_trials = [data_output_PERF; data_output_STIM_AUD; data_output_STIM_VIS; data_output_NOISE_AUD; data_output_NOISE_VIS];
+
+                if cued_nature
+                    x = length(data_output_NOISE_VIS);
+                    num_each = floor(x/4);
+                    remainder = mod(x,4);
+        
+                    nums = repmat(0:3, 1, num_each);
+                    if remainder > 0 
+                        nums = [nums, 0:remainder-1];
+                    end
+                    nums = nums(randperm(length(nums)));
+                    data_output_NOISE_VIS = [data_output_NOISE_VIS, nums'];
+
+                    x = length(data_output_NOISE_AUD);
+                    num_each = floor(x/4);
+                    remainder = mod(x,4);
+        
+                    nums = repmat(0:3, 1, num_each);
+                    if remainder > 0 
+                        nums = [nums, 0:remainder-1];
+                    end
+                    nums = nums(randperm(length(nums)));
+                    data_output_NOISE_AUD = [data_output_NOISE_AUD, nums'];
+
+                    x = length(data_output_PERF);
+                    num_each = floor(x/4);
+                    remainder = mod(x,4);
+                    
+                    % Find rows with NaNs in columns 1-4
+                    nan_rows = any(isnan(data_output_PERF(:, 1:4)), 2);
+                    valid_rows = ~nan_rows;
+                    
+                    % Assign 0 to column 9 for rows with NaNs in columns 1-4
+                    data_output_PERF(nan_rows, 9) = 0;
+                    
+                    % Number of valid rows
+                    num_valid = sum(valid_rows);
+                    
+                    % Ensure there are an equal number of 0-3 for the valid rows
+                    num_each_valid = floor(num_valid/4);
+                    remainder_valid = mod(num_valid,4);
+                    
+                    % Generate the nums array for valid rows
+                    nums_valid = repmat(0:3, 1, num_each_valid);
+                    if remainder_valid > 0
+                        nums_valid = [nums_valid, 0:remainder_valid-1];
+                    end
+                    nums_valid = nums_valid(randperm(length(nums_valid)));
+                    
+                    % Assign the shuffled nums_valid to column 9 for valid rows
+                    data_output_PERF(valid_rows, 9) = nums_valid';
+                    
+                end
+
+                if cued_nature
+                    all_trials = [data_output_PERF; data_output_NOISE_AUD; data_output_NOISE_VIS];
+                else
+                    all_trials = [data_output_PERF; data_output_STIM_AUD; data_output_STIM_VIS; data_output_NOISE_AUD; data_output_NOISE_VIS];
+                end
+
                 % Randomize trials
                 rng('shuffle');
                 nbtrials = size(all_trials, 1);
@@ -331,8 +394,10 @@ end
 % Opens psychtoolbox instructions for participant for the specific task 
 % (psyVis for all visual tasks, psyAud for all auditory only tasks, psyAV 
 % for all audiovisual tasks). trainAud and trainVis have separate instructions.
-if training_nature == 1
+if training_nature == 1 && cued_nature == 0
     instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout, sliderResp_nature);
+elseif training_nature == 0 && cued_nature == 1
+    instructions_psyAV_cued(curWindow, cWhite0, sliderResp_nature);
 else
     instructions_psyAV(curWindow, cWhite0, sliderResp_nature);
 end
@@ -362,9 +427,17 @@ end
 %% trial generation
 for ii = 1:length(data_output)
 
+    if cued_nature
+        cued_modality = data_output(ii, 9);
+    end
+
     %% Allows participant to self initiate each trial
-    if selfinit_nature == 1
-         instructions_InitTrialAV(curWindow, cWhite0, fix, data_output);
+    if selfinit_nature
+        if cued_nature
+            instructions_CueAV(curWindow, cWhite0, fix, data_output, 0, cued_modality, xCenter);
+        else
+            instructions_InitTrialAV(curWindow, cWhite0, fix, data_output);
+        end
     end
 
     if task_nature == 1

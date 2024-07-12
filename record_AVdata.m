@@ -71,7 +71,7 @@ else
         data_output(ii, 8) = trial_status;
     end
 end
-data_output(ii, 9) = sliderResp;
+%data_output(ii, 9) = sliderResp;
 if vel_stair == 1
     data_output(ii, 10) = audInfo.vel;
     data_output(ii,11) = visInfo.vel;
