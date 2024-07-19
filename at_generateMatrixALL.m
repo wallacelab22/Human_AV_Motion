@@ -1,6 +1,7 @@
-function [data_output] = at_generateMatrixALL(catchtrials, congruent_mstrials, incongruent_mstrials, stimtrials, audInfo, visInfo, right_var, left_var, catch_var)
+function [data_output] = at_generateMatrixALL(catchtrials, congruent_mstrials, incongruent_mstrials, stimtrials, audInfo, visInfo, right_var, left_var, catch_var, cued_nature)
 % Adam J. Tiesman - 1/24/24
-% Revised version of the trial matrix generation script. Interleaves trials
+% Revised version of the trial matrix generation script. Interleaves
+% trials. Added code 7/18/24 that adds a cued variable to data_output
 
 % Catch trials
 catchs = [catch_var, catch_var, catch_var, catch_var];
@@ -38,6 +39,45 @@ for i = 1:length(audInfo.cohSet)
     V_l_trials((i-1)*stimtrials+1:i*stimtrials, :) = [repmat([NaN, NaN, left_var, cohVis], stimtrials, 1)];
 end
 
+% Add the cued nature to each trial
+if cued_nature
+    auditory_cue = 1; visual_cue = 2; audiovisual_cue = 3; no_cue = 0;
+    cues = [auditory_cue, visual_cue, audiovisual_cue, no_cue];
+    catchmat(:, 5) = no_cue;
+    AV_l_cong_loop_length = length(AV_l_cong_trials)/length(cues);
+    for i = 1:AV_l_cong_loop_length
+        AV_l_cong_trials(4*i-3,5) = auditory_cue;
+        AV_l_cong_trials(4*i-2,5) = visual_cue;
+        AV_l_cong_trials(4*i-1,5) = audiovisual_cue;
+        AV_l_cong_trials(4*i,5) = no_cue;
+    end
+    AV_r_cong_loop_length = length(AV_r_cong_trials)/length(cues);
+    for i = 1:AV_r_cong_loop_length
+        AV_r_cong_trials(4*i-3,5) = auditory_cue;
+        AV_r_cong_trials(4*i-2,5) = visual_cue;
+        AV_r_cong_trials(4*i-1,5) = audiovisual_cue;
+        AV_r_cong_trials(4*i,5) = no_cue;
+    end
+    AV_lA_incong_loop_length = length(AV_lA_incong_trials)/length(cues);
+    for i = 1:AV_lA_incong_loop_length
+        AV_lA_incong_trials(4*i-3,5) = auditory_cue;
+        AV_lA_incong_trials(4*i-2,5) = visual_cue;
+        AV_lA_incong_trials(4*i-1,5) = audiovisual_cue;
+        AV_lA_incong_trials(4*i,5) = no_cue;
+    end
+    AV_rA_incong_loop_length = length(AV_rA_incong_trials)/length(cues);
+    for i = 1:AV_rA_incong_loop_length
+        AV_rA_incong_trials(4*i-3,5) = auditory_cue;
+        AV_rA_incong_trials(4*i-2,5) = visual_cue;
+        AV_rA_incong_trials(4*i-1,5) = audiovisual_cue;
+        AV_rA_incong_trials(4*i,5) = no_cue;
+    end
+    A_l_trials(:, 5) = no_cue;
+    A_r_trials(:, 5) = no_cue;
+    V_l_trials(:, 5) = no_cue;
+    V_r_trials(:, 5) = no_cue;
+end
+
 % Combine all trial types
 all_trials = [catchmat; AV_l_cong_trials; AV_r_cong_trials; AV_rA_incong_trials; AV_lA_incong_trials; A_r_trials; A_l_trials; V_r_trials; V_l_trials];
 
@@ -54,4 +94,8 @@ keys = zeros(nbtrials, 1); % Keypress value
 trial_status = zeros(nbtrials, 1); % Trial correctness
 
 % Create final output matrix
-data_output = [trialOrder, resp, rt, keys, trial_status];
+if cued_nature
+    data_output = [trialOrder(:,1:4), resp, rt, keys, trial_status, trialOrder(:,5)];
+else
+    data_output = [trialOrder, resp, rt, keys, trial_status];
+end

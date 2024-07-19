@@ -8,6 +8,8 @@ Screen('DrawText', curWindow, 'press any key to continue.',200,600,cWhite0);
 Screen('Flip',curWindow);
 keytest_unbound;
 
+Screen('TextSize', curWindow, 32);
+
 Screen('DrawDots', curWindow, [0; 0], 10, [255 0 0], fix, 1);
 Screen('Flip', curWindow,0);
 WaitSecs(2)

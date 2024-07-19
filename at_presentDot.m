@@ -10,9 +10,13 @@ while continue_show
         [key,secs,keycode] = KbCheck; %look for a key
         WaitSecs(0.0002); %tiny wait
         if key %if there was a key
-            resp = find(keycode,1,'last');
-            rt = GetSecs - start_time; %calculate rt from start time earlier
-            responded = 1; %note that there was a response
+            try
+                resp = find(keycode,1,'last');
+                rt = GetSecs - start_time; %calculate rt from start time earlier
+                responded = 1; %note that there was a response
+            catch
+                continue;
+            end
         end
     end
     
