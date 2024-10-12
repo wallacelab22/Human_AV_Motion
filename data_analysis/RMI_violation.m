@@ -1,4 +1,4 @@
-function [violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, figures, part_ID, coherenceLevel, subjnum_s, group_s, figure_file_directory, save_fig)
+function [violation, gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, figures, part_ID, coh)
 
 %% Round RTs
 downSampledAudRTdata = round(rtAuditory);
@@ -48,7 +48,7 @@ if figures==1
 
     subplot(1,2,1),text(minRT, 0.9,['MRE = ' num2str(gain) ' ms']);
 
-    title(sprintf('MS Resp. Enchancement %s - Coh: %s', part_ID, coherenceLevel));
+    title(sprintf('MS Resp. Enchancement %s, %d', part_ID, coh));
     legend([h1 h2 h3],'A','V','AV','Location','SouthEast');
     xlabel('Response time (ms)'); ylabel('Cumulative probability');
     axis([minRT-100 maxRT+100  0 1]);
@@ -66,7 +66,7 @@ if figures==1
 
     subplot(1,2,2),text(minRT, 0.9,['Violation = ' num2str(violation) ' ms']);
 
-    title(sprintf('RMI Violation %s - Coh: %s', part_ID, coherenceLevel));
+    title(sprintf('RMI Violation %s', part_ID));
     legend([h1 h2 h3 h4],'A','V','AV','Race','Location','SouthEast');
     xlabel('Response time (ms)'); ylabel('Cumulative probability');
     axis([minRT-100 maxRT+100  0 1]);
@@ -76,10 +76,10 @@ if figures==1
     set(gcf, 'Units', 'normalized', 'OuterPosition', [0 0 1 1]);
     rt = gcf;
     fig_type = 'rt';
-    filename = fullfile(figure_file_directory, [subjnum_s '_' group_s '_' fig_type '.jpg']);
-    if save_fig
-        saveas(rt, filename, 'jpeg');
-    end
+%     filename = fullfile(figure_file_directory, [subjnum_s '_' group_s '_' fig_type '.jpg']);
+%     if save_fig
+%         saveas(rt, filename, 'jpeg');
+%     end
 
 end
 end

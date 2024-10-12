@@ -343,49 +343,49 @@ set(gca, 'XTickLabelRotation', 45);
 
 
 
-figure; % Create a new figure window
-histogram(AUD_SD, 100, 'FaceColor', 'r'); 
-title('Distribution of Auditory SD');
-xlabel('SD');
-xlim([0 1]);
-ylim([0 10]);
-ylabel('Frequency');
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
-grid on;
-set(gca, 'XTickLabelRotation', 45);
-
-figure; % Create a new figure window
-histogram(AUD_Mu, 25, 'FaceColor', 'r'); 
-title('Distribution of Auditory Mu');
-xlabel('Mu');
-xlim([-0.5 0.5]);
-ylim([0 12]);
-ylabel('Frequency');
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
-grid on;
-set(gca, 'XTickLabelRotation', 45);
-
-figure; % Create a new figure window
-histogram(VIS_SD, 100, 'FaceColor', 'b'); 
-title('Distribution of Visual SD');
-xlabel('SD');
-xlim([0 1]);
-ylim([0 10]);
-ylabel('Frequency');
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
-grid on;
-set(gca, 'XTickLabelRotation', 45);
-
-figure; % Create a new figure window
-histogram(VIS_Mu, 50, 'FaceColor', 'b'); 
-title('Distribution of Visual Mu');
-xlabel('Mu');
-xlim([-0.5 0.5]);
-ylim([0 12]);
-ylabel('Frequency');
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
-grid on;
-set(gca, 'XTickLabelRotation', 45);
+% figure; % Create a new figure window
+% histogram(AUD_SD, 100, 'FaceColor', 'r'); 
+% title('Distribution of Auditory SD');
+% xlabel('SD');
+% xlim([0 1]);
+% ylim([0 10]);
+% ylabel('Frequency');
+% set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+% grid on;
+% set(gca, 'XTickLabelRotation', 45);
+% 
+% figure; % Create a new figure window
+% histogram(AUD_Mu, 25, 'FaceColor', 'r'); 
+% title('Distribution of Auditory Mu');
+% xlabel('Mu');
+% xlim([-0.5 0.5]);
+% ylim([0 12]);
+% ylabel('Frequency');
+% set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+% grid on;
+% set(gca, 'XTickLabelRotation', 45);
+% 
+% figure; % Create a new figure window
+% histogram(VIS_SD, 100, 'FaceColor', 'b'); 
+% title('Distribution of Visual SD');
+% xlabel('SD');
+% xlim([0 1]);
+% ylim([0 10]);
+% ylabel('Frequency');
+% set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+% grid on;
+% set(gca, 'XTickLabelRotation', 45);
+% 
+% figure; % Create a new figure window
+% histogram(VIS_Mu, 50, 'FaceColor', 'b'); 
+% title('Distribution of Visual Mu');
+% xlabel('Mu');
+% xlim([-0.5 0.5]);
+% ylim([0 12]);
+% ylabel('Frequency');
+% set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
+% grid on;
+% set(gca, 'XTickLabelRotation', 45);
 
 % AV_perf = EqualReliabilities(:, 15);
 % maxA_V = EqualReliabilities(:, 20);
@@ -622,3 +622,6 @@ ylabel('Frequency');
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 grid on;
 set(gca, 'XTickLabelRotation', 45);
+
+skew = skewness(AudWeight);
+kur = kurtosis(AudWeight);

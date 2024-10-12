@@ -65,9 +65,9 @@ function plotEstimatedAV(estimated_sigma, mus, weights)
     ylim([0, 1]);
     grid on;
 
-%     % Plot reference lines for PSE at the mean
-%     plot([0, 0], [0, 0.5], 'k:', 'LineWidth', 2);
-%     plot([-1, 0], [0.5, 0.5], 'k:', 'LineWidth', 2);
+    % Plot reference lines for PSE at the mean
+    plot([0, 0], [0, 0.5], 'k:', 'LineWidth', 2);
+    plot([-1, 0], [0.5, 0.5], 'k:', 'LineWidth', 2);
 
     % Add a legend
     legend('Behavioral Data', 'PSE', 'Location', 'best');
