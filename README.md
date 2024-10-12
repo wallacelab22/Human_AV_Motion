@@ -1,21 +1,21 @@
 # Human_AV_Motion
-This is the task and behavioral plotting code for an audiovisual motion discrimination paradigm. 
-This is designed to be used alongside an EEG machine for neural recordings.
+This is the paradigm and behavioral analysis code for an audiovisual motion discrimination 2-AFC task. 
+Psychtoolbox and EEG library (liblsl) needed to run this.
 
 **Stimulus information:**
 
 _Auditory_ : broadband white noise
  
-    Velocity - 58.8 degrees/sec
+    Velocity - 20 degrees/sec
   
-    Displacement - 29.4 degrees of visual angle
+    Displacement - 14 degrees of visual angle
   
-    Duration - 500 ms
+    Duration - 700 ms
   
-_Visual_ : random dot kinemategram
+_Visual_ : random dot kinemategrams
   
-    Velocity - 58.8 degrees/sec
+    Velocity - 20 degrees/sec
   
-    Displacement - 9.53 degrees of visual angle
+    Displacement - 14 degrees of visual angle
   
-    Duration - 500 ms
+    Duration - 700 ms
