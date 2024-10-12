@@ -30,5 +30,3 @@ Results_MLE.VIS_Westimate= (1/Results_MLE.VIS_Variance)/((1/Results_MLE.VIS_Vari
 Results_MLE.AV_EstimatedVariance=(Results_MLE.AUD_Variance*Results_MLE.VIS_Variance)/(Results_MLE.AUD_Variance+Results_MLE.VIS_Variance);
 
 Results_MLE.AV_EstimatedSD=sqrt(Results_MLE.AV_EstimatedVariance);
-
-Results_MLE

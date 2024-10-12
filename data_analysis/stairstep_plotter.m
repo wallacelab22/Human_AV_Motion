@@ -32,7 +32,7 @@ if vel_stair == 1
     ylabel('Velocity')
 else
     title(sprintf('Staircase Coherences by Trial Number: \n %s',save_name), 'Interpreter','none');
-    ylabel('Coherence level');
+    ylabel('Coherence');
 end
 xlabel('Trial number');
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)

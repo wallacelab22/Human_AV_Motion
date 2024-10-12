@@ -49,7 +49,9 @@ while true
     ratingText = num2str(currentRating); % to make this display whole numbers, use "round(currentRating)"
     ratingText = sprintf(ratingText, '%');
 
-    DrawFormattedText(curWindow, ratingText,'center', (yCenter-200), textColor, [],[],[],5); % display current rating 
+    % comment ratingText out if you don't want participant to see number
+    % associated with slider
+    %DrawFormattedText(curWindow, ratingText,'center', (yCenter-200), textColor, [],[],[],5); % display current rating 
     DrawFormattedText(curWindow, sliderPrompt ,'center', (yCenter-100), textColor, [],[],[],5);
     
     Screen('DrawLine', curWindow,  lineColor, (xCenter+halfLength), (yCenter),(xCenter-halfLength), (yCenter), 1);

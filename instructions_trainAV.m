@@ -1,4 +1,4 @@
-function instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout)
+function instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout, sliderResp_nature)
 
 % Instructions 2
 Screen('DrawText', curWindow, '...Welcome to this experiment...',500,300,cWhite0);
@@ -62,11 +62,12 @@ PsychPortAudio('FillBuffer', pahandle, incorr_soundout')
 PsychPortAudio('Start', pahandle)
 keytest_unbound
 
-% Instructions 9
-Screen('DrawText', curWindow, 'If the motion stimulus is ambiguous, make a decision as best as you can.',300,300,cWhite0);
-Screen('DrawText', curWindow, 'Please try to respond as QUICKLY as possible on EACH TRIAL',300,400,cWhite0);
-Screen('DrawText', curWindow, '...WE WILL START NOW!...',500,500,cWhite0);
-Screen('DrawText', curWindow, 'WHEN YOU ARE READY: PRESS ANY KEY TO START THE EXPERIMENT.',300,650,cWhite0);
-Screen('Flip',curWindow);
-keytest_unbound;
-
+if ~sliderResp_nature
+    % Instructions 9
+    Screen('DrawText', curWindow, 'If the motion stimulus is ambiguous, make a decision as best as you can.',300,300,cWhite0);
+    Screen('DrawText', curWindow, 'Please try to respond as QUICKLY as possible on EACH TRIAL',300,400,cWhite0);
+    Screen('DrawText', curWindow, '...WE WILL START NOW!...',500,500,cWhite0);
+    Screen('DrawText', curWindow, 'WHEN YOU ARE READY: PRESS ANY KEY TO START THE EXPERIMENT.',300,650,cWhite0);
+    Screen('Flip',curWindow);
+    keytest_unbound;
+end

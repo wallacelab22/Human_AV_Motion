@@ -1,0 +1,128 @@
+% Data for Mu
+AUD_Mu = [0.53
+0.68
+0.63
+0.75
+0.75
+0.66
+0.66
+0.75
+0.88
+0.91
+0.83
+0.83
+0.88
+0.59
+0.54
+0.72
+0.61
+0.96
+0.85
+0.72
+0.63
+0.83
+0.94
+0.69
+0.53
+0.66
+0.60
+0.71
+0.57
+0.56
+0.54
+0.77
+0.78
+0.50
+0.73
+0.63
+0.73
+0.76
+0.39
+0.48
+0.60
+0.55
+0.48
+0.67
+0.71
+0.77
+0.56
+0.52];
+VIS_Mu = [0.75
+0.5625
+0.60
+0.70
+1.00
+0.73
+0.75
+0.67
+1.00
+1.00
+0.73
+0.91
+1.00
+0.70
+0.54
+0.63
+0.38
+1.00
+0.80
+1.00
+0.67
+0.57
+0.86
+0.40
+0.54
+0.50
+0.83
+0.75
+0.43
+0.63
+0.63
+1.00
+0.82
+0.60
+0.40
+0.86
+0.75
+0.71
+0.57
+0.50
+0.44
+0.30
+0.50
+0.71
+0.67
+0.67
+1.00
+0.64];
+
+% Combine into a single matrix
+sd_data = [AUD_Mu, VIS_Mu];
+
+% Create box plots for SD data
+figure;
+h = boxplot(sd_data, 'Labels', {'AV Accuracy', 'AV After Catch Trial'});
+ylabel('Proportion Correct');
+
+% Color the boxes
+set(h, {'linew'}, {2});
+colors = {'b', 'r'}; % Red for AUD, Blue for VIS
+h = findobj(gca, 'Tag', 'Box');
+for j = 1:length(h)
+   patch(get(h(j), 'XData'), get(h(j), 'YData'), colors{j}, 'FaceAlpha', 0.5);
+end
+
+% Add individual data points for SD
+hold on;
+scatter(ones(size(AUD_SD)), AUD_SD, 'r', 'filled', 'SizeData', 70);
+scatter(2 * ones(size(VIS_SD)), VIS_SD, 'b', 'filled', 'SizeData', 70);
+
+% Connect corresponding column values with a line for SD
+for i = 1:length(AUD_SD)
+    plot([1, 2], [AUD_SD(i), VIS_SD(i)], 'k-', 'LineWidth', 1.5); % Thicker black line
+end
+
+hold off;
+grid on;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)

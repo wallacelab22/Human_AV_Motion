@@ -42,8 +42,18 @@ fit_par = fminsearch(fun, parms, opts);
 % New model to account for weights of PCs
 normalcdf_fun = @(b, x) 0.5 * (1 + erf((x - b(1)) ./ (b(2) * sqrt(2))));
 if contains(save_name, 'stair') || contains(save_name, 'train')
-    mdl = fitnlm(xData, yData, normalcdf_fun, parms, 'Weights', coherence_frequency(2,:));
-    std_gaussian = mdl.Coefficients{1,2};
+    % Find the indices of columns in the first row of coherence_frequency that are 0
+    columnsToRemove = coherence_frequency(1,:) == 0;
+    
+    % Remove the corresponding columns from coherence_frequency
+    coherence_frequency(:, columnsToRemove) = [];
+    
+    % Remove the corresponding rows from xData and yData
+    xData(columnsToRemove) = [];
+    yData(columnsToRemove) = [];
+    
+    mdl = fitnlm(xData, yData, normalcdf_fun, parms, 'Weights', coherence_frequency(2,:)');
+    std_gaussian = mdl.Coefficients{2,1};
 else
     mdl = fitnlm(xData, yData, normalcdf_fun, parms);
 end

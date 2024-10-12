@@ -1,4 +1,4 @@
-function interval = makeInterval(typeInt,minNum,maxNum,meanNum)
+function interval = makeInterval(typeInt, minNum, maxNum, meanNum)
 % MAKEINTERVAL
 %
 % interval = makeInterval(typeInt,minNum,maxNum,meanNum)

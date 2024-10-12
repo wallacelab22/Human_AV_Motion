@@ -1,4 +1,4 @@
-function [stimInfo] = coherence_calc(data_output)
+function [stimInfo] = coherence_calc(data_output, extrapolateCoh)
 % written 04/24/23 - Adam Tiesman
 % Finds the coherence in the staircase task that the participant asympototed
 % out to. It then extrapolates down lower_lim log values and up upper_lim log values
@@ -29,7 +29,7 @@ nlog_division = sqrt(2);
 upper_lim = 3;
 lower_lim = 3;
 num_reversals = 10;
-coh_step = 1;
+coh_step = 0;
 
 % Find the direction of each trial (positive or negative)
 directions = sign(diff(data_output(:,2)));
@@ -57,29 +57,31 @@ closest_coh = coherence_levels(idx);
 threshold = coherence_levels(idx - coh_step);
 stimInfo.cohSet = [threshold];
 
-% Extrapolate up upper_lim amount of times from the given threshold
-for ii = 1:upper_lim
-    if ii == 1
-        nlog_value = threshold*nlog_division;
-        stimInfo.cohSet = [stimInfo.cohSet nlog_value];
-    else
-        nlog_value = nlog_value*nlog_division;
-        stimInfo.cohSet = [stimInfo.cohSet nlog_value];
+if extrapolateCoh
+    % Extrapolate up upper_lim amount of times from the given threshold
+    for ii = 1:upper_lim
+        if ii == 1
+            nlog_value = threshold*nlog_division;
+            stimInfo.cohSet = [stimInfo.cohSet nlog_value];
+        else
+            nlog_value = nlog_value*nlog_division;
+            stimInfo.cohSet = [stimInfo.cohSet nlog_value];
+        end
     end
-end
-   
-% Extrapolate down lower_lim amount of times from the given threshold
-for i = 1:lower_lim
-    if i == 1
-        nlog_value = threshold/nlog_division;
-        stimInfo.cohSet=[stimInfo.cohSet nlog_value];
-    else
-        nlog_value = nlog_value/nlog_division;
-        stimInfo.cohSet = [stimInfo.cohSet nlog_value];
+       
+    % Extrapolate down lower_lim amount of times from the given threshold
+    for i = 1:lower_lim
+        if i == 1
+            nlog_value = threshold/nlog_division;
+            stimInfo.cohSet=[stimInfo.cohSet nlog_value];
+        else
+            nlog_value = nlog_value/nlog_division;
+            stimInfo.cohSet = [stimInfo.cohSet nlog_value];
+        end
     end
+    
+    % Generate coherence set in descending order to be fed to the AV task code
+    stimInfo.cohSet = sort(stimInfo.cohSet, 'descend');
 end
-
-% Generate coherence set in descending order to be fed to the AV task code
-stimInfo.cohSet = sort(stimInfo.cohSet, 'descend');
 
 end

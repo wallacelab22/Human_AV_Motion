@@ -3,9 +3,9 @@ function beautifyplot
 
 set(gca, 'xcolor', 'k');
 set(gca, 'ycolor', 'k');
-set(gca, 'LineWidth', 1.5);
+set(gca, 'LineWidth', 2);
 set(gca, 'FontName','Helvetica')
-set(gca, 'FontSize', 14);
+set(gca, 'FontSize', 18);
 set(gca, 'TickDir', 'in');
 box off;
 set(gca ,'Layer', 'Top')

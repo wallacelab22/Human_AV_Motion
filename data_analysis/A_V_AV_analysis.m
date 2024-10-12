@@ -1,23 +1,23 @@
 %% A, V, and AV analysis %%%%%%%%%%%%
 
-% Input the matrix with number1 and number2 values
-nfiles_to_load = cell(3, 3);
-
-subjnum = input('Enter the subject''s number: ');
-subjnum_s = num2str(subjnum);
-if length(subjnum_s) < 2
-    subjnum_s = ['0' subjnum_s];
-end
-subjnum_s = {subjnum_s};
-nfiles_to_load(1, :) = subjnum_s;
-
-group = input('Enter the test group: ');
-group_s = num2str(group);
-if length(group_s) < 2
-    group_s = ['0' group_s];
-end
-group_s = {group_s};
-nfiles_to_load(2, :) = group_s;
+% % Input the matrix with number1 and number2 values
+% nfiles_to_load = cell(3, 3);
+% 
+% subjnum = input('Enter the subject''s number: ');
+% subjnum_s = num2str(subjnum);
+% if length(subjnum_s) < 2
+%     subjnum_s = ['0' subjnum_s];
+% end
+% subjnum_s = {subjnum_s};
+% nfiles_to_load(1, :) = subjnum_s;
+% 
+% group = input('Enter the test group: ');
+% group_s = num2str(group);
+% if length(group_s) < 2
+%     group_s = ['0' group_s];
+% end
+% group_s = {group_s};
+% nfiles_to_load(2, :) = group_s;
 
 nfiles_to_load{3, 1} = 'psyAud';
 nfiles_to_load{3, 2} = 'psyVis';
@@ -32,40 +32,63 @@ figure_file_directory = '/Users/a.tiesman/Documents/Research/Meeting_figures/';
 % Initialize a cell array to store the loaded data
 loaded_data = cell(1, size(nfiles_to_load, 2));
 
+cd(data_file_directory)
+load('RDKHoop_psyAV_09_21_02_21.mat')
+cd(script_file_directory)
+
+for trialType = 1:3
+    switch trialType
+        case 1 % Auditory only, coherence 1
+            idx = ~isnan(data_output(:,2)) & isnan(data_output(:,4));
+            dataAud = data_output(idx, :);
+            dataAud(:, 3:4) = [];
+            loaded_data{1}.data_output = dataAud;
+        case 2 % Visual only, coherence 2
+            idx = ~isnan(data_output(:,4)) & isnan(data_output(:,2));
+            dataVis = data_output(idx, :);
+            dataVis(:, 1:2) = [];
+            loaded_data{2}.data_output = dataVis;
+        case 3 % Audiovisual, coherence 1 for auditory, coherence 2 for visual
+            idx = ~isnan(data_output(:,2)) & ~isnan(data_output(:,4));
+            dataAV = data_output(idx, :);
+            loaded_data{3}.data_output = dataAV;
+    end
+end
+
 for i = 1:size(nfiles_to_load, 2)
 
-    % Create the search pattern
-    block = nfiles_to_load{3, i};
-    block_savename = strcat('RDKHoop_', block);
-    first_number = nfiles_to_load{1, i};
-    second_number = nfiles_to_load{2, i};
-    search_pattern = sprintf('%s_%s_%s_%s_%s_*.mat', block_savename, first_number, second_number);
-
-    % List all files in the directory
-    file_list = dir(fullfile(data_file_directory, '*.mat'));
-
-    % Initialize a cell array to store matching file names
-    matching_files = {};
-
-    % Check if any files match the search pattern
-    for j = 1:numel(file_list)
-        file_name = file_list(j).name;
-        if contains(file_name, search_pattern)
-            matching_files{end+1} = file_name;
-        end
-    end
-
-    % Check if any files were found
-    if isempty(matching_files)
-        fprintf('No matching files found for number1=%s, number2=%s.\n', first_number, second_number);
-    else
-        fprintf('Matching files found for number1=%s, number2=%s:\n', first_number, second_number);
-        
-        file_to_load = fullfile(data_file_directory, matching_files{1});
-        fprintf('Loading file: %s\n', file_to_load);
-  
-        loaded_data{i} = load(file_to_load);
-    end 
+%     % Create the search pattern
+%     block = nfiles_to_load{3, i};
+%     block_savename = strcat('RDKHoop_', block);
+%     first_number = nfiles_to_load{1, i};
+%     second_number = nfiles_to_load{2, i};
+%     search_pattern = sprintf('%s_%s_%s_%s_%s_*.mat', block_savename, first_number, second_number);
+% 
+%     % List all files in the directory
+%     file_list = dir(fullfile(data_file_directory, '*.mat'));
+% 
+%     % Initialize a cell array to store matching file names
+%     matching_files = {};
+% 
+%     % Check if any files match the search pattern
+%     for j = 1:numel(file_list)
+%         file_name = file_list(j).name;
+%         if contains(file_name, search_pattern)
+%             matching_files{end+1} = file_name;
+%         end
+%     end
+% 
+%     % Check if any files were found
+%     if isempty(matching_files)
+%         fprintf('No matching files found for number1=%s, number2=%s.\n', first_number, second_number);
+%     else
+%         fprintf('Matching files found for number1=%s, number2=%s:\n', first_number, second_number);
+%         
+%         file_to_load = fullfile(data_file_directory, matching_files{1});
+%         fprintf('Loading file: %s\n', file_to_load);
+%   
+%         loaded_data{i} = load(file_to_load);
+%     end 
     if i == 1
         right_var = 1;
         left_var = 2;
@@ -76,7 +99,8 @@ for i = 1:size(nfiles_to_load, 2)
 
         fig = figure('Name', sprintf('%d_%d CDF Comparison ', subjnum, group));
     end
-    save_name = matching_files{1};
+    %save_name = matching_files{1};
+    save_name = 'RDKHoop_psyAV_09_21_02_21.mat';
     if contains(block, 'AV')
       % Replace all the 0s to 3s for catch trials for splitapply
         loaded_data{i}.data_output(loaded_data{i}.data_output(:, 1) == 0, 1) = 3;
@@ -178,9 +202,9 @@ xlim([-1 1])
 axis equal
 ylim([0 1])
 grid on
-text(0,0.2,"aud cumulative gaussian std: " + loaded_data{1}.std_gaussian)
-text(0,0.15,"vis cumulative gaussian std: " + loaded_data{2}.std_gaussian)
-text(0,0.1,"av cumulative gaussian std: " + loaded_data{3}.std_gaussian)
+text(0,0.2,"aud std: " + loaded_data{1}.std_gaussian)
+text(0,0.15,"vis std: " + loaded_data{2}.std_gaussian)
+text(0,0.1,"av std: " + loaded_data{3}.std_gaussian)
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 
 
