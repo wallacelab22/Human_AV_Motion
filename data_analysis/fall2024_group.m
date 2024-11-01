@@ -30,27 +30,153 @@ AUD_R2 = table2array(dataAll(:, 28));
 VIS_R2 = table2array(dataAll(:, 29));
 AV_R2 = table2array(dataAll(:, 30));
 
+MS_Gain = table2array(dataAll(:, 35));
+Worst_Unisensory_Weight = table2array(dataAll(:, 36));
+Matching_cueAV_Std = table2array(dataAll(:, 37));
+Nonmatching_cueAV_Std = table2array(dataAll(:, 38));
+Matching_cueAud_Std = table2array(dataAll(:, 39));
+Nonmatching_cueAud_Std = table2array(dataAll(:, 40));
+Matching_cueVis_Std = table2array(dataAll(:, 41));
+Nonmatching_cueVis_Std = table2array(dataAll(:, 42));
+
+% --- Plot 0a: AV Cue match vs nonmatch ---
+% Scatter Plot
+scatter_size = 500;  % Define marker size for scatter plot
+
+% Split the Aud_Weight data into three groups based on the conditions
+aud_gt_06 = Aud_Weight > 0.6;  % Aud_Weight > 0.6 (red)
+aud_bw_04_06 = Aud_Weight >= 0.4 & Aud_Weight <= 0.6;  % Aud_Weight between 0.4 and 0.6 (green)
+aud_lt_04 = Aud_Weight < 0.4;  % Aud_Weight < 0.4 (blue)
+
+figure;
+hold on;
+scatter(Matching_cueAV_Std(aud_gt_06), Nonmatching_cueAV_Std(aud_gt_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#e0f3f8', 'DisplayName', 'Auditory Bias');
+scatter(Matching_cueAV_Std(aud_bw_04_06), Nonmatching_cueAV_Std(aud_bw_04_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#91bfdb', 'DisplayName', 'Equal Reliabilities');
+scatter(Matching_cueAV_Std(aud_lt_04), Nonmatching_cueAV_Std(aud_lt_04), scatter_size, '^', 'filled', 'MarkerFaceColor', '#4575b4', 'DisplayName', 'Visual Bias');
+plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
+axis equal;
+xlim([0 1]);
+ylim([0 1]);
+xlabel('Same Direction Report n-1 Std. Dev.', 'FontSize', 38);
+ylabel('Diff Direction Report n-1 Std. Dev.', 'FontSize', 38);
+title('AV Cue Std. Dev.', 'FontSize', 38);
+
+% Create the legend and adjust marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
+
+beautifyplot;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
+unmatlabifyplot;
+hold off;
+
+% --- Plot 0b: Aud Cue match vs nonmatch ---
+% Scatter Plot
+figure;
+hold on;
+scatter(Matching_cueAud_Std(aud_gt_06), Nonmatching_cueAud_Std(aud_gt_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#e0f3f8', 'DisplayName', 'Auditory Bias');
+scatter(Matching_cueAud_Std(aud_bw_04_06), Nonmatching_cueAud_Std(aud_bw_04_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#91bfdb', 'DisplayName', 'Equal Reliabilities');
+scatter(Matching_cueAud_Std(aud_lt_04), Nonmatching_cueAud_Std(aud_lt_04), scatter_size, '^', 'filled', 'MarkerFaceColor', '#4575b4', 'DisplayName', 'Visual Bias');
+plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
+axis equal;
+xlim([0 1]);
+ylim([0 1]);
+xlabel('Same Direction Report n-1 Std. Dev.', 'FontSize', 38);
+ylabel('Diff Direction Report n-1 Std. Dev.', 'FontSize', 38);
+title('Aud Cue Std. Dev.', 'FontSize', 38);
+
+% Create the legend and adjust marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
+
+beautifyplot;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
+hold off;
+
+% --- Plot 0c: Vis Cue match vs nonmatch ---
+% Scatter Plot
+figure;
+hold on;
+scatter(Matching_cueVis_Std(aud_gt_06), Nonmatching_cueVis_Std(aud_gt_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#e0f3f8', 'DisplayName', 'Auditory Bias');
+scatter(Matching_cueVis_Std(aud_bw_04_06), Nonmatching_cueVis_Std(aud_bw_04_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#91bfdb', 'DisplayName', 'Equal Reliabilities');
+scatter(Matching_cueVis_Std(aud_lt_04), Nonmatching_cueVis_Std(aud_lt_04), scatter_size, '^', 'filled', 'MarkerFaceColor', '#4575b4', 'DisplayName', 'Visual Bias');
+plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
+axis equal;
+xlim([0 1]);
+ylim([0 1]);
+xlabel('Same Direction Report n-1 Std. Dev.', 'FontSize', 38);
+ylabel('Diff Direction Report n-1 Std. Dev.', 'FontSize', 38);
+title('Vis Cue Std. Dev.', 'FontSize', 38);
+
+% Create the legend and adjust marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
+
+beautifyplot;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
+hold off;
 
 % --- Plot 1: AV Cue vs Best Unisensory Sensitivity ---
 % Scatter Plot
 figure;
 hold on;
 scatter_size = 500;  % Define marker size for scatter plot
-scatter(Best_AO_VO_Std, AV_AV_Std, scatter_size, 's', 'filled', 'MarkerFaceColor', 'g', 'DisplayName', 'AV Cue');
+
+scatter(Best_AO_VO_Std, AV_AV_Std, scatter_size, 's', 'filled', 'MarkerFaceColor', '#009304', 'DisplayName', 'AV Cue');
 plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
 axis equal;
 xlim([0 1]);
 ylim([0 1]);
-xlabel('Best Unisensory Sensitivity');
-ylabel('AV Cue Sensitivity');
+xlabel('Best Unisensory Std. Dev.');
+ylabel('AV Cue Std. Dev.');
 
-% Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
+
+% Create the legend and adjust its properties
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);  % Set legend font size
+h.ItemTokenSize = [25, 25];  % Match the size of the markers in the legend to the scatter plot
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
 hold off;
 
 % Histogram (x - y)
@@ -93,25 +219,45 @@ end
 hold off;
 
 % --- Plot 2: Aud Cue vs AO ---
+
+% Split the Aud_Weight data into three groups based on the conditions
+aud_gt_06 = Aud_Weight > 0.6;  % Aud_Weight > 0.6 (red)
+aud_bw_04_06 = Aud_Weight >= 0.4 & Aud_Weight <= 0.6;  % Aud_Weight between 0.4 and 0.6 (green)
+aud_lt_04 = Aud_Weight < 0.4;  % Aud_Weight < 0.4 (blue)
+
 % Scatter Plot
 figure;
 hold on;
-scatter(AO_Std, AV_Aud_Std, scatter_size, 'o', 'filled', 'MarkerFaceColor', 'r', 'DisplayName', 'Aud Cue');
+scatter(AO_Std(aud_gt_06), AV_Aud_Std(aud_gt_06), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#fee090', 'DisplayName', 'Auditory Bias');
+scatter(AO_Std(aud_bw_04_06), AV_Aud_Std(aud_bw_04_06), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#fc8d59', 'DisplayName', 'Equal Reliabilities');
+scatter(AO_Std(aud_lt_04), AV_Aud_Std(aud_lt_04), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#d73027', 'DisplayName', 'Visual Bias');
 plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
 axis equal;
 xlim([0 1]);
 ylim([0 1]);
-xlabel('Aud Only Sensitivity');
-ylabel('AV Aud Cue Sensitivity');
+xlabel('Aud Only Std. Dev.', 'FontSize', 38);
+ylabel('AV Aud Cue Std. Dev.', 'FontSize', 38);
 
-% Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
+
+% Create the legend and adjust its properties
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);  % Set legend font size
+h.ItemTokenSize = [25, 25];  % Match the size of the markers in the legend to the scatter plot
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20); 
+
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
+
 hold off;
+
 
 % Histogram (x - y)
 delta = AO_Std - AV_Aud_Std;
@@ -156,21 +302,33 @@ hold off;
 % Scatter Plot
 figure;
 hold on;
-scatter(VO_Std, AV_Vis_Std, scatter_size, '^', 'filled', 'MarkerFaceColor', 'b', 'DisplayName', 'Vis Cue');
+scatter(VO_Std(aud_gt_06), AV_Vis_Std(aud_gt_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#e0f3f8', 'DisplayName', 'Auditory Bias');
+scatter(VO_Std(aud_bw_04_06), AV_Vis_Std(aud_bw_04_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#91bfdb', 'DisplayName', 'Equal Reliabilities');
+scatter(VO_Std(aud_lt_04), AV_Vis_Std(aud_lt_04), scatter_size, '^', 'filled', 'MarkerFaceColor', '#4575b4', 'DisplayName', 'Visual Bias');
 plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
 axis equal;
 xlim([0 1]);
 ylim([0 1]);
-xlabel('Vis Only Sensitivity');
-ylabel('AV Vis Cue Sensitivity');
+xlabel('Vis Only Std. Dev.', 'FontSize', 38);
+ylabel('AV Vis Cue Std. Dev.', 'FontSize', 38);
 
 % Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
 hold off;
 
 % Histogram (x - y)
@@ -217,21 +375,33 @@ hold off;
 figure;
 hold on;
 scatter_size = 500;  % Define marker size for scatter plot
-scatter(AV_Aud_Std, AV_AV_Std, scatter_size, '^', 'filled', 'MarkerFaceColor', '#A2142F', 'DisplayName', 'AV Cue');
+scatter(AV_Aud_Std(aud_gt_06), AV_AV_Std(aud_gt_06), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#fee090', 'DisplayName', 'Auditory Bias');
+scatter(AV_Aud_Std(aud_bw_04_06), AV_AV_Std(aud_bw_04_06), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#fc8d59', 'DisplayName', 'Equal Reliabilities');
+scatter(AV_Aud_Std(aud_lt_04), AV_AV_Std(aud_lt_04), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#d73027', 'DisplayName', 'Visual Bias');
 plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
 axis equal;
 xlim([0 1]);
 ylim([0 1]);
-xlabel('Aud Cue Sigma');
-ylabel('AV Cue Sigma');
+xlabel('Aud Cue Std. Dev.');
+ylabel('AV Cue Std. Dev.');
 
 % Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
 hold off;
 
 % Histogram (x - y)
@@ -277,21 +447,33 @@ hold off;
 figure;
 hold on;
 scatter_size = 500;  % Define marker size for scatter plot
-scatter(AV_Vis_Std, AV_AV_Std, scatter_size, '^', 'filled', 'MarkerFaceColor', '#4DBEEE', 'DisplayName', 'AV Cue');
+scatter(AV_Vis_Std(aud_gt_06), AV_AV_Std(aud_gt_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#e0f3f8', 'DisplayName', 'Auditory Bias');
+scatter(AV_Vis_Std(aud_bw_04_06), AV_AV_Std(aud_bw_04_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#91bfdb', 'DisplayName', 'Equal Reliabilities');
+scatter(AV_Vis_Std(aud_lt_04), AV_AV_Std(aud_lt_04), scatter_size, '^', 'filled', 'MarkerFaceColor', '#4575b4', 'DisplayName', 'Visual Bias');
 plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
 axis equal;
 xlim([0 1]);
 ylim([0 1]);
-xlabel('Vis Cue Sigma');
-ylabel('AV Cue Sigma');
+xlabel('Vis Cue Std. Dev.');
+ylabel('AV Cue Std. Dev.');
 
 % Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
 hold off;
 
 % Histogram (x - y)
@@ -336,21 +518,33 @@ hold off;
 % Scatter Plot
 figure;
 hold on;
-scatter(AO_Std, Incong_AV_Aud_Std, scatter_size, 'o', 'filled', 'MarkerFaceColor', 'r', 'DisplayName', 'Aud Cue');
+scatter(AO_Std(aud_gt_06), Incong_AV_Aud_Std(aud_gt_06), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#fee090', 'DisplayName', 'Auditory Bias');
+scatter(AO_Std(aud_bw_04_06), Incong_AV_Aud_Std(aud_bw_04_06), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#fc8d59', 'DisplayName', 'Equal Reliabilities');
+scatter(AO_Std(aud_lt_04), Incong_AV_Aud_Std(aud_lt_04), scatter_size, 'o', 'filled', 'MarkerFaceColor', '#d73027', 'DisplayName', 'Visual Bias');
 plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
 axis equal;
 xlim([0 1]);
 ylim([0 1]);
-xlabel('Aud Only Sensitivity');
-ylabel('Incong AV Aud Cue Sensitivity');
+xlabel('Aud Only Std. Dev.');
+ylabel('Incong AV Aud Cue Std. Dev.');
 
 % Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
 hold off;
 
 % Histogram (x - y)
@@ -398,21 +592,32 @@ hold off;
 % Scatter Plot
 figure;
 hold on;
-scatter(VO_Std, Incong_AV_Vis_Std, scatter_size, '^', 'filled', 'MarkerFaceColor', 'b', 'DisplayName', 'Vis Cue');
-plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
+scatter(VO_Std(aud_gt_06), Incong_AV_Vis_Std(aud_gt_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#e0f3f8', 'DisplayName', 'Auditory Bias');
+scatter(VO_Std(aud_bw_04_06), Incong_AV_Vis_Std(aud_bw_04_06), scatter_size, '^', 'filled', 'MarkerFaceColor', '#91bfdb', 'DisplayName', 'Equal Reliabilities');
+scatter(VO_Std(aud_lt_04), Incong_AV_Vis_Std(aud_lt_04), scatter_size, '^', 'filled', 'MarkerFaceColor', '#4575b4', 'DisplayName', 'Visual Bias');plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
 axis equal;
 xlim([0 1]);
 ylim([0 1]);
-xlabel('Vis Only Sensitivity');
-ylabel('Incong AV Vis Cue Sensitivity');
+xlabel('Vis Only Std. Dev.');
+ylabel('Incong AV Vis Cue Std. Dev.');
 
 % Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+set(icons(2),'MarkerSize',20); 
+set(icons(3),'MarkerSize',20);
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
 hold off;
 
 % Histogram (x - y)
@@ -534,7 +739,7 @@ sigma = std(data);
 z_scores = (data - mu) / sigma;
 outlier_indices = abs(z_scores) > 3;
 cleaned_data = data(~outlier_indices);
-histogram(cleaned_data, bin_edges_top, 'FaceColor', 'r');  % Red color for Auditory Only SD
+histogram(cleaned_data, bin_edges_top, 'FaceColor', '#d73027');  % Red color for Auditory Only SD
 xlim(x_range_top);  % Set x-axis range to [0, 1]
 ylim([0 max_y]);  % Set y-axis limits to the global maximum
 xlabel('Auditory Only SD');
@@ -553,7 +758,7 @@ sigma = std(data);
 z_scores = (data - mu) / sigma;
 outlier_indices = abs(z_scores) > 3;
 cleaned_data = data(~outlier_indices);
-histogram(cleaned_data, bin_edges_top, 'FaceColor', 'b');  % Blue color for Visual Only SD
+histogram(cleaned_data, bin_edges_top, 'FaceColor', '#4575b4');  % Blue color for Visual Only SD
 xlim(x_range_top);  % Set x-axis range to [0, 1]
 ylim([0 max_y]);  % Set y-axis limits to the global maximum
 xlabel('Visual Only SD');
@@ -572,7 +777,7 @@ sigma = std(data);
 z_scores = (data - mu) / sigma;
 outlier_indices = abs(z_scores) > 3;
 cleaned_data = data(~outlier_indices);
-histogram(cleaned_data, bin_edges_bottom, 'FaceColor', 'r');  % Red color for Auditory Only PSE
+histogram(cleaned_data, bin_edges_bottom, 'FaceColor', '#d73027');  % Red color for Auditory Only PSE
 xlim(x_range_bottom);  % Set x-axis range to [-0.5, 0.5]
 ylim([0 max_y]);  % Set y-axis limits to the global maximum
 xlabel('Auditory Only PSE');
@@ -591,7 +796,7 @@ sigma = std(data);
 z_scores = (data - mu) / sigma;
 outlier_indices = abs(z_scores) > 3;
 cleaned_data = data(~outlier_indices);
-histogram(cleaned_data, bin_edges_bottom, 'FaceColor', 'b');  % Blue color for Visual Only PSE
+histogram(cleaned_data, bin_edges_bottom, 'FaceColor', '#4575b4');  % Blue color for Visual Only PSE
 xlim(x_range_bottom);  % Set x-axis range to [-0.5, 0.5]
 ylim([0 max_y]);  % Set y-axis limits to the global maximum
 xlabel('Visual Only PSE');
@@ -798,7 +1003,7 @@ hold off;
 figure;
 hold on;
 scatter_size = 500;  % Define marker size for scatter plot
-scatter(AV_AV_Std, AV_EstimatedSD, scatter_size, 's', 'filled', 'MarkerFaceColor', 'g', 'DisplayName', 'AV Std');
+scatter(AV_AV_Std, AV_EstimatedSD, scatter_size, 's', 'filled', 'MarkerFaceColor', '#009304', 'DisplayName', 'AV Std');
 plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Predicted MLE');
 axis equal;
 xlim([0 1]);
@@ -807,8 +1012,16 @@ xlabel('Cue AV Std');
 ylabel('MLE Predicted Std');
 
 % Create the legend and adjust marker size in the legend
-lgd = legend('show', 'Location', 'northwest');
-lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
 
 beautifyplot;
 set(gca, 'XTickLabelRotation', 45);
@@ -817,6 +1030,71 @@ hold off;
 
 % Histogram (x - y)
 delta = AV_AV_Std - AV_EstimatedSD;
+% data = delta; 
+% mu = mean(data);
+% sigma = std(data);
+% z_scores = (data - mu) / sigma;
+% outlier_indices = abs(z_scores) > 3;
+% cleaned_data = data(~outlier_indices);
+% delta = cleaned_data;
+%delta(15) = [];
+figure;
+histogram(delta, 10, 'FaceColor', 'g');  % 10 bins specified
+xlim([-1 1]);  % Set x-axis range to -1 to 1
+ylim([0 8]);   % Set y-axis range to 0 to 8
+axis off;      % Remove axis
+
+% Add a vertical dotted line at x = 0
+hold on;
+plot([0 0], ylim, 'k--', 'LineWidth', 2);  % Dotted line (--) at x = 0 in black ('k')
+
+% Perform Wilcoxon Signed-Rank Test
+[p, h] = signrank(delta);  % h is 1 if significant, 0 if not
+
+% Annotate based on p-value, set color to black
+hold on;
+if p < 0.001
+    text(0.5, 0.9, '***', 'FontSize', 40, 'Units', 'normalized', 'Color', 'k');
+elseif p < 0.01
+    text(0.5, 0.9, '**', 'FontSize', 40, 'Units', 'normalized', 'Color', 'k');
+elseif p < 0.05
+    text(0.5, 0.9, '*', 'FontSize', 40, 'Units', 'normalized', 'Color', 'k');
+else
+    text(0.5, 0.9, 'n.s.', 'FontSize', 40, 'Units', 'normalized', 'Color', 'k');
+end
+hold off;
+
+% Scatter Plot
+figure;
+hold on;
+scatter_size = 500;  % Define marker size for scatter plot
+scatter(AV_Aud_Std, AV_EstimatedSD, scatter_size, 's', 'filled', 'MarkerFaceColor', '#009304', 'DisplayName', 'AV Std');
+plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Predicted MLE');
+axis equal;
+xlim([0 1]);
+ylim([0 1]);
+xlabel('Cue Aud Std');
+ylabel('MLE Predicted Std');
+
+% Create the legend and adjust marker size in the legend
+[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30);
+h.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+icons = findobj(icons,'Type','patch');
+icons = findobj(icons,'Marker','none','-xor');
+set(icons(1),'MarkerSize',20); 
+
+% Set tick marks 
+xticks([0 0.2 0.4 0.6 0.8 1]);
+yticks([0 0.2 0.4 0.6 0.8 1]);
+
+beautifyplot;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+hold off;
+
+% Histogram (x - y)
+delta = AV_Aud_Std - AV_EstimatedSD;
 % data = delta; 
 % mu = mean(data);
 % sigma = std(data);
@@ -885,3 +1163,82 @@ ylabel('AV Std');
 lgd = legend('show', 'Location', 'northwest');
 beautifyplot;
 grid on;
+
+
+%% Histogram of weights
+% Split the Aud_Weight data into three groups based on the conditions
+aud_gt_06 = Aud_Weight(Aud_Weight > 0.6);  % Aud_Weight > 0.6 (red)
+aud_bw_04_06 = Aud_Weight(Aud_Weight >= 0.4 & Aud_Weight <= 0.6);  % Aud_Weight between 0.4 and 0.6 (green)
+aud_lt_04 = Aud_Weight(Aud_Weight < 0.4);  % Aud_Weight < 0.4 (blue)
+
+% Create the figure and plot the histograms
+figure;
+hold on;
+
+% Plot the three histograms with different colors
+histogram(aud_gt_06, 8, 'FaceColor', '#d73027', 'DisplayName', 'Auditory Bias');  % Red for Aud_Weight > 0.6
+histogram(aud_bw_04_06, 3, 'FaceColor', '#ffffbf', 'DisplayName', 'Equal Reliabilities');  % Green for Aud_Weight between 0.4 and 0.6
+histogram(aud_lt_04, 8, 'FaceColor', '#4575b4', 'DisplayName', 'Visual Bias');  % Blue for Aud_Weight < 0.4
+
+% Set axis limits
+xlim([0 1]);  % Set x-axis range to 0 to 1
+ylim([0 4.5]);  % Set y-axis range to 0 to 5 (or adjust accordingly)
+
+
+% Add a vertical dotted line at x = 0.5
+plot([0.5 0.5], ylim, 'k--', 'LineWidth', 2, 'DisplayName', 'Equal Reliability');
+
+% Label the axes
+xlabel('Auditory Weight (1 - Visual Weight)');
+
+% Remove y-axis tick marks and labels
+set(gca, 'YTick', [], 'YColor', 'none');
+
+% Add legend
+legend('show', 'Location', 'northwest');
+
+% Beautify the plot (assuming 'beautifyplot' is a custom function)
+beautifyplot;
+
+hold off;
+
+
+% --- Plot 4a: AV AV Cue vs Multisensory A Cue Sensitivity ---
+% Scatter Plot
+figure;
+hold on;
+
+scatter_size = 500;  % Define marker size for scatter plot
+
+% Indexing based on Aud_Weight
+above_threshold = Aud_Weight > 0.5;  % Logical index for Aud_Weight > 0.5
+below_threshold = Aud_Weight <= 0.5;  % Logical index for Aud_Weight <= 0.5
+
+% Plot blue squares for Aud_Weight > 0.5
+scatter(AV_Aud_Std(above_threshold), AV_AV_Std(above_threshold), ...
+    scatter_size, '^', 'filled', 'MarkerFaceColor', '#A2142F', 'DisplayName', 'Aud Weight > 0.5');
+
+% Plot maroon triangles for Aud_Weight <= 0.5
+scatter(AV_Aud_Std(below_threshold), AV_AV_Std(below_threshold), ...
+    scatter_size, 's', 'filled', 'MarkerFaceColor', 'b', 'DisplayName', 'Aud Weight <= 0.5');
+
+% Add a reference line
+plot([0 1], [0 1], '--k', 'LineWidth', 2, 'DisplayName', 'Equal Sensitivity');
+
+% Set axis properties
+axis equal;
+xlim([0 1]);
+ylim([0 1]);
+xlabel('Aud Cue Sigma');
+ylabel('AV Cue Sigma');
+
+% Create the legend and adjust marker size in the legend
+lgd = legend('show', 'Location', 'northwest');
+lgd.ItemTokenSize = [25, 25];  % Adjust the marker size in the legend
+
+% Apply additional formatting
+beautifyplot;
+set(gca, 'XTickLabelRotation', 45);
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
+hold off;
+
