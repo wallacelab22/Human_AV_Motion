@@ -33,8 +33,15 @@ end
 stim_or_perf_matched = input('Stimulus or Performance Matched AV Coherence? 1 = Stimulus Matched, 2 = Performance Matched : ');
 interleave_nature = input('Interleave A,V, AV trials or just AV? 0 = Just AV, 1 = Interleave : ');
 selfinit_nature = input('Participant-initiated trials? 0 = NO, 1 = YES : ');
-if selfinit_nature
-    cued_nature = input('Cued or Uncued task? 0 = UNCUED, 1 = CUED : ');
+cued_nature = input('Cued or Uncued task? 0 = UNCUED, 1 = CUED : ');
+if cued_nature
+    cued_typeBlock = input('Trial by trial or block by block? 0 = Trials, 1 = Blocked : ');
+    if cued_typeBlock
+        cued_nature = 0;
+        cued_modality_nature = input('Auditory, Visual, or Auditory & Visual Block? 1 = Aud, 2 = Vis, 3 = AV : ');
+    end
+else
+    cued_typeBlock = 0;
 end
 all_noise_nature = input('1 Modality Complete Noise AV Trials? 0 = NO, 1 = YES : ');
 training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
@@ -114,7 +121,7 @@ dur = 0.7; Fs = 44100; triallength = 2;
 if interleave_nature
     nbblocks = 9;
 else
-    nbblocks = 3;
+    nbblocks = 2;
 end
 
 % Define buffersize in order to make CAM (auditory stimulus)
@@ -132,8 +139,8 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % congruent_mstrials = 20; incongruent_mstrials = 0;
 
 % New conditions:
-num_trials = 100; stimtrials = 10; catchtrials = 20;
-congruent_mstrials = 40; incongruent_mstrials = 0;
+num_trials = 100; stimtrials = 0; catchtrials = 20;
+congruent_mstrials = 20; incongruent_mstrials = 8;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -393,8 +400,8 @@ elseif task_nature == 2
         end
     elseif stim_matching_nature == 3
         if stim_or_perf_matched == 1
-            audInfo.cohSet = [0.4, 0.2, 0.10, 0.07, 0.045];
-            visInfo.cohSet = [0.4, 0.2, 0.10, 0.07, 0.045];
+            audInfo.cohSet = [0.4, 0.2, 0.10, 0.05];
+            visInfo.cohSet = [0.4, 0.2, 0.10, 0.05];
         elseif stim_or_perf_matched == 2
             % write code for performance matched coherence set
         end
@@ -452,6 +459,8 @@ if training_nature == 1 && cued_nature == 0
     instructions_trainAV(curWindow, cWhite0, pahandle, corr_soundout, incorr_soundout, sliderResp_nature);
 elseif training_nature == 0 && cued_nature == 1
     instructions_psyAV_cued(curWindow, cWhite0, sliderResp_nature);
+elseif training_nature == 0 && cued_typeBlock == 1
+    instructions_psyAV_cuedBlock(curWindow, cWhite0, sliderResp_nature, cued_modality_nature);
 else
     instructions_psyAV(curWindow, cWhite0, sliderResp_nature);
 end

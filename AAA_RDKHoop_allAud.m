@@ -418,7 +418,7 @@ for ii = 1:length(data_output)
     end
 
     if task_nature == 1 && staircase_nature == 1
-        num_reversals = 40;
+        num_reversals = 20;
         % Find the direction of each trial (positive or negative)
         differences = diff(data_output(:,2));
         nonzero_differences = differences(differences ~= 0);

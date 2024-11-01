@@ -11,60 +11,79 @@ right_var = 1; left_var = 2; catch_var = 0;
 
 %% Specify parameters of the block
 disp('This is the main script for the VISUAL ONLY motion discrimination task.')
-task_nature = input('Staircase = 1;  Method of constant stimuli (MCS) = 2 : ');
-if task_nature == 1
-    staircase_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
-    if staircase_nature == 2 || staircase_nature == 3
-        vel_stair = 1;
-    elseif staircase_nature == 1
+Unity_comparison = input('Are you comparing Unity vs CRT RDK? YES = 1; NO = 0 : ');
+if ~Unity_comparison
+    task_nature = input('Staircase = 1;  Method of constant stimuli (MCS) = 2 : ');
+    if task_nature == 1
+        staircase_nature = input('Coherence only staircase = 1; Velocity only staircase = 2; Coherence and velocity staircase = 3 : ');
+        if staircase_nature == 2 || staircase_nature == 3
+            vel_stair = 1;
+        elseif staircase_nature == 1
+            vel_stair = 0;
+        end
+    else 
+        % Set these parameters to 0 so staircase_procedure function knows not to
+        % manipulate velocity.
         vel_stair = 0;
     end
-else 
-    % Set these parameters to 0 so staircase_procedure function knows not to
-    % manipulate velocity.
+    if task_nature == 2
+        disp('How do you want to match the visual and auditory stimuli?')
+        stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
+    else
+        stim_matching_nature = 0;
+    end
+    selfinit_nature = input('Participant-initiated trials? 0 = NO; 1 = YES : ');
+    training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
+    aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
+    if aperture_nature ~= 1
+        % Original aperture size, in tens of visual degrees (e.g. 50 is 5 degrees)
+        aperture_size = 50;
+    end
+    sliderResp_nature = input('Slider Response following trials? 0 = NO, 1 = YES : ');
+    if sliderResp_nature == 1
+        typeSlide = input('Slider Type? 1 = Confidence, 2 = Strength of motion : ');
+    else
+        sliderResp = NaN;
+    end
+    noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
+    EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
+    if EEG_nature == 1
+        addpath('/add/path/to/liblsl-Matlab-master/');
+        addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
+        [lib, info, outlet] = initialize_lsl;
+    else
+        outlet = NaN;
+    end
+    if vel_stair ~= 1
+        % Specify the dot speed in the RDK, wil be an input to function
+        % at_createDotInfo
+        block_dot_speed = input('Dot Speed (in deg/sec): ');
+        visInfo.vel = block_dot_speed;
+    end
+    % Specify if you want data analysis
+    data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
+    ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
+    
+    
+    %% Directories created to navigate code folders throughout script
+    OS_nature = input('1 = Linux OS, 2 = Windows OS : ');
+elseif Unity_comparison
+    task_nature = 2;
     vel_stair = 0;
+    stim_matching_nature = 3;
+    visInfo.cohSet = [0.4, 0.2, 0.15, 0.10, 0.07, 0.05, 0.02];
+    selfinit_nature = 0;
+    training_nature = 1;
+    aperture_nature = 1;
+    sliderResp_nature = 0; sliderResp = NaN;
+    noise_jitter_nature = 0;
+    EEG_nature = 0; outlet = NaN;
+    block_dot_speed = 20; visInfo.vel = block_dot_speed;
+    data_analysis = 0;
+    ExampleMatrix = 0;
+    OS_nature = 1;
 end
-if task_nature == 2
-    disp('How do you want to match the visual and auditory stimuli?')
-    stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
-else
-    stim_matching_nature = 0;
-end
-selfinit_nature = input('Participant-initiated trials? 0 = NO; 1 = YES : ');
-training_nature = input('Trial by trial feedback? 0 = NO; 1 = YES : ');
-aperture_nature = input('Do you want to change the aperture size? 0 = NO; 1 = YES : ');
-if aperture_nature ~= 1
-    % Original aperture size, in tens of visual degrees (e.g. 50 is 5 degrees)
-    aperture_size = 50;
-end
-sliderResp_nature = input('Slider Response following trials? 0 = NO, 1 = YES : ');
-if sliderResp_nature == 1
-    typeSlide = input('Slider Type? 1 = Confidence, 2 = Strength of motion : ');
-else
-    sliderResp = NaN;
-end
-noise_jitter_nature = input('Do you want noise before and after stimulus? 0 = NO; 1 = YES : ');
-EEG_nature = input('EEG recording? 0 = NO; 1 = YES : ');
-if EEG_nature == 1
-    addpath('/add/path/to/liblsl-Matlab-master/');
-    addpath('/also/add/path/to/liblsl-Matlab-master/bin/');
-    [lib, info, outlet] = initialize_lsl;
-else
-    outlet = NaN;
-end
-if vel_stair ~= 1
-    % Specify the dot speed in the RDK, wil be an input to function
-    % at_createDotInfo
-    block_dot_speed = input('Dot Speed (in deg/sec): ');
-    visInfo.vel = block_dot_speed;
-end
-% Specify if you want data analysis
-data_analysis = input('Data Analysis? 0 = NO, 1 = YES : ');
-ExampleMatrix = input('Example Matrix? 0 = NO, 1 = YES : ');
 
-
-%% Directories created to navigate code folders throughout script
-OS_nature = input('1 = Linux OS, 2 = Windows OS : ');
 [script_directory, data_directory, analysis_directory] = define_directories(OS_nature, EEG_nature);
 cd(script_directory)
 
@@ -101,7 +120,7 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 % number of staircase trials, stimtrials defines number of stimulus trials
 % per condition for MCS, catchtrials defines total number of catch trials
 % for MCS.
-num_trials = 250; stimtrials = 12; catchtrials = 25;
+num_trials = 250; stimtrials = 16; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -208,6 +227,9 @@ elseif task_nature == 2
         else
             data_output = at_generateMatrix(catchtrials, stimtrials, visInfo, right_var, left_var, catch_var);
         end
+    elseif stim_matching_nature == 3
+        rng('shuffle')
+        data_output = at_generateMatrix(catchtrials, stimtrials, visInfo, right_var, left_var, catch_var);
     end
 else
     error('Could not generate coherences. Task nature determines how coherences are generated.')
@@ -382,7 +404,7 @@ for ii = 1:length(data_output)
     end
 
     if task_nature == 1 && staircase_nature == 1
-        num_reversals = 40;
+        num_reversals = 20;
         % Find the direction of each trial (positive or negative)
         differences = diff(data_output(:,2));
         nonzero_differences = differences(differences ~= 0);
