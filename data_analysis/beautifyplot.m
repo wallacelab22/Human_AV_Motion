@@ -4,7 +4,7 @@ function beautifyplot
 set(gca, 'xcolor', 'k');
 set(gca, 'ycolor', 'k');
 set(gca, 'LineWidth', 2);
-set(gca, 'FontName','Helvetica')
+set(gca, 'FontName','Times New Roman')
 set(gca, 'FontSize', 18);
 set(gca, 'TickDir', 'in');
 box off;
