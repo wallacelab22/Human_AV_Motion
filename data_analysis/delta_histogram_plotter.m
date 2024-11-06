@@ -1,4 +1,4 @@
-function delta_histogram_plotter(x, y, color, x_name, y_name)
+function delta_histogram_plotter(x, y, color, figure_font_size, x_name, y_name)
 % Calculate the delta and remove outliers based on z-scores
 delta = x - y;
 data = delta; 
@@ -37,24 +37,19 @@ delta_median = median(delta);
 beautifyplot;
 unmatlabifyplot;
 
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 44);
-
-% Annotate based on p-value
-if p < 0.001
-    text(0.52, 0.9, '***', 'FontSize', 64, 'Units', 'normalized', 'Color', 'k');
-elseif p < 0.01
-    text(0.52, 0.9, '**', 'FontSize', 64, 'Units', 'normalized', 'Color', 'k');
-elseif p < 0.05
-    text(0.52, 0.9, '*', 'FontSize', 64, 'Units', 'normalized', 'Color', 'k');
-else
-    text(0.52, 0.9, 'n.s.', 'FontSize', 64, 'Units', 'normalized', 'Color', 'k');
-end
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', figure_font_size);
 
 y_limits = ylim;  % Get current y-axis limits
 p_rounded = round(p, 4);
 median_rounded = round(delta_median, 2);
 
-text(10, y_limits(2) - 1, "median = " + num2str(median_rounded), 'FontName', 'Times New Roman', 'FontSize', 36);
-text(10, y_limits(2) - 1.3, "p = " + num2str(p_rounded), 'FontName', 'Times New Roman', 'FontSize', 36);
+% Display median and p-value on the plot
+text_location_x = 10;
+text_location_y = y_limits(2) - 1;
+text_str = sprintf('median = %.3f\np = %.3f', median_rounded, p_rounded);
+text(text_location_x, text_location_y, text_str, 'FontSize', 36, 'FontWeight', 'bold', 'FontName', 'Times New Roman');
+
+% text(10, y_limits(2) - 1, "median = " + num2str(median_rounded), 'FontName', 'Times New Roman', 'FontSize', 36);
+% text(10, y_limits(2) - 1.3, "p = " + num2str(p_rounded), 'FontName', 'Times New Roman', 'FontSize', 36);
 
 hold off;

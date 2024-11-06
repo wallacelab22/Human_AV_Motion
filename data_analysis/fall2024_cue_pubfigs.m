@@ -4,7 +4,14 @@ clear; close all; clc;
 %% Figure variables to keep uniform throughout
 scatter_size = 500;
 aud_color = '#d73027'; vis_color = '#4575b4'; both_color = '#009304';
+aud_icon = 'o'; vis_icon = '^'; both_icon = 's';
+figure_font_size = 30;
+save_figures = 0; save_names = {};
 
+data_analysis_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis';
+figure_file_directory = '/Users/a.tiesman/Documents/Research/Paper Figures';
+
+cd(data_analysis_directory)
 
 dataAll = readtable('group_cue_data.xlsx',  'Sheet', 'data_final');
 
@@ -24,91 +31,157 @@ MS_Gain_Slope = table2array(dataAll(:, 28));
 Worst_Unisensory_Weight = table2array(dataAll(:, 29));
 
 % --- Plot 1: Cue Aud vs AO ---
-x_name = 'Auditory Only Slope';
-y_name = 'Cued Auditory Slope';
+x_name = 'No Cue Auditory Only Sensitivity';
+y_name = 'Auditory-Cued Congruent Audiovisual Sensitivity';
 
-% Scatter Plot
-figure;
-hold on;
-plot([0 20], [0 20], '--', 'Color', '#bbbbbb', 'LineWidth', 2.5, 'DisplayName', 'Equal Sensitivity');
-scatter(AO_Slope, AV_Aud_Slope, scatter_size, 'o', 'filled', 'MarkerFaceColor', aud_color, 'HandleVisibility', 'off');
-xlim([0 20]);
-ylim([0 20]);
-xlabel(x_name, 'FontSize', 38);
-ylabel(y_name, 'FontSize', 38);
-axis square
-% Set tick marks 
-xticks([0 4 8 12 16 20]);
-yticks([0 4 8 12 16 20]);
+pubfig_scatter_plotter(AO_Slope, AV_Aud_Slope, aud_icon, aud_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AO_Slope, AV_Aud_Slope, aud_color, figure_font_size, x_name, y_name);
 
-% Create the legend and adjust its properties
-[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30, 'FontName', 'Times New Roman');  % Set legend font size
-h.ItemTokenSize = [25, 25];  % Match the size of the markers in the legend to the scatter plot
-
-beautifyplot;
-unmatlabifyplot;
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
-
-hold off;
-
-delta_histogram_plotter(AO_Slope, AV_Aud_Slope, aud_color, x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
 
 % --- Plot 2: Cue Vis vs VO ---
-x_name = 'Visual Only Slope';
-y_name = 'Cued Visual Slope';
+x_name = 'No Cue Visual Only Sensitivity';
+y_name = 'Visual-Cued Congruent Audiovisual Sensitivity';
 
-% Scatter Plot
-figure;
-hold on;
-plot([0 20], [0 20], '--', 'Color', '#bbbbbb', 'LineWidth', 2.5, 'DisplayName', 'Equal Sensitivity');
-scatter(VO_Slope, AV_Vis_Slope, scatter_size, '^', 'filled', 'MarkerFaceColor', vis_color, 'HandleVisibility', 'off');
-xlim([0 20]);
-ylim([0 20]);
-xlabel(x_name, 'FontSize', 38);
-ylabel(y_name, 'FontSize', 38);
-axis square
-% Set tick marks 
-xticks([0 4 8 12 16 20]);
-yticks([0 4 8 12 16 20]);
+pubfig_scatter_plotter(VO_Slope, AV_Vis_Slope, vis_icon, vis_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(VO_Slope, AV_Vis_Slope, vis_color, figure_font_size, x_name, y_name);
 
-% Create the legend and adjust its properties
-[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30, 'FontName', 'Times New Roman');  % Set legend font size
-h.ItemTokenSize = [25, 25];  % Match the size of the markers in the legend to the scatter plot
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
 
-beautifyplot;
-unmatlabifyplot;
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
+% --- Plot 3: AO vs VO ---
+x_name = 'No Cue Auditory Only Sensitivity';
+y_name = 'No Cue Visual Only Sensitivity';
 
-hold off;
+pubfig_scatter_plotter(AO_Slope, VO_Slope, both_icon, both_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AO_Slope, VO_Slope, both_color, figure_font_size, x_name, y_name);
 
-delta_histogram_plotter(VO_Slope, AV_Vis_Slope, vis_color, x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
 
-% --- Plot 3: Cue Vis vs VO ---
-x_name = 'Auditory Only Slope';
-y_name = 'Visual Only Slope';
+% --- Plot 4: Cue Aud vs Cue Audiovisual  ---
+x_name = 'Auditory-Cued Congruent Audiovisual Sensitivity';
+y_name = 'Audiovisual-Cued Congruent Audiovisual Sensitivity';
 
-% Scatter Plot
-figure;
-hold on;
-plot([0 20], [0 20], '--', 'Color', '#bbbbbb', 'LineWidth', 2.5, 'DisplayName', 'Equal Sensitivity');
-scatter(AO_Slope, VO_Slope, scatter_size, 's', 'filled', 'MarkerFaceColor', both_color, 'HandleVisibility', 'off');
-xlim([0 20]);
-ylim([0 20]);
-xlabel(x_name, 'FontSize', 38);
-ylabel(y_name, 'FontSize', 38);
-axis square
-% Set tick marks 
-xticks([0 4 8 12 16 20]);
-yticks([0 4 8 12 16 20]);
+pubfig_scatter_plotter(AV_Aud_Slope, AV_AV_Slope, aud_icon, aud_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AV_Aud_Slope, AV_AV_Slope, aud_color, figure_font_size, x_name, y_name);
 
-% Create the legend and adjust its properties
-[h, icons] = legend('show', 'Location', 'northwest', 'FontSize', 30, 'FontName', 'Times New Roman');  % Set legend font size
-h.ItemTokenSize = [25, 25];  % Match the size of the markers in the legend to the scatter plot
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
 
-beautifyplot;
-unmatlabifyplot;
-set(findall(gcf, '-property', 'FontSize'), 'FontSize', 38);
+% --- Plot 5: Cue Vis vs Cue Audiovisual  ---
+x_name = 'Visual-Cued Congruent Audiovisual Sensitivity';
+y_name = 'Audiovisual-Cued Congruent Audiovisual Sensitivity';
 
-hold off;
+pubfig_scatter_plotter(AV_Vis_Slope, AV_AV_Slope, vis_icon, vis_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AV_Vis_Slope, AV_AV_Slope, vis_color, figure_font_size, x_name, y_name);
 
-delta_histogram_plotter(AO_Slope, VO_Slope, both_color, x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 6: AO vs Incongruent Cue Auditory ---
+x_name = 'No Cue Auditory Only Sensitivity';
+y_name = 'Auditory-Cued Incongruent Audiovisual Sensitivity';
+
+pubfig_scatter_plotter(AO_Slope, Incong_AV_Aud_Slope, aud_icon, aud_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AO_Slope, Incong_AV_Aud_Slope, aud_color, figure_font_size, x_name, y_name);
+
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 7: VO vs Incongruent Cue Visual  ---
+x_name = 'No Cue Visual Only Sensitivity';
+y_name = 'Visual-Cued Incongruent Audiovisual Sensitivity';
+
+pubfig_scatter_plotter(VO_Slope, Incong_AV_Vis_Slope, vis_icon, vis_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(VO_Slope, Incong_AV_Vis_Slope, vis_color, figure_font_size, x_name, y_name);
+
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 8: Congruent Cue Auditory vs Incongruent Cue Auditory ---
+x_name = 'Auditory-Cued Congruent Audiovisual Sensitivity';
+y_name = 'Auditory-Cued Incongruent Audiovisual Sensitivity';
+
+pubfig_scatter_plotter(AV_Aud_Slope, Incong_AV_Aud_Slope, aud_icon, aud_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AV_Aud_Slope, Incong_AV_Aud_Slope, aud_color, figure_font_size, x_name, y_name);
+
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 9: Congruent Cue Visual vs Incongruent Cue Visual  ---
+x_name = 'Visual-Cued Congruent Audiovisual Sensitivity';
+y_name = 'Visual-Cued Incongruent Audiovisual Sensitivity';
+
+pubfig_scatter_plotter(AV_Vis_Slope, Incong_AV_Vis_Slope, vis_icon, vis_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AV_Vis_Slope, Incong_AV_Vis_Slope, vis_color, figure_font_size, x_name, y_name);
+
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 10: Cue Auditory vs Cue Audiovisual  ---
+x_name = 'Auditory-Cued Congruent Audiovisual Sensitivity';
+y_name = 'Audiovisual-Cued Congruent Audiovisual Sensitivity';
+
+pubfig_scatter_plotter(AV_Aud_Slope, AV_AV_Slope, aud_icon, aud_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AV_Aud_Slope, AV_AV_Slope, aud_color, figure_font_size, x_name, y_name);
+
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 11: Cue Visual vs Cue Audiovisual  ---
+x_name = 'Visual-Cued Congruent Audiovisual Sensitivity';
+y_name = 'Audiovisual-Cued Congruent Audiovisual Sensitivity';
+
+pubfig_scatter_plotter(AV_Vis_Slope, AV_AV_Slope, vis_icon, vis_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AV_Vis_Slope, AV_AV_Slope, vis_color, figure_font_size, x_name, y_name);
+
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 12: Cue Auditory vs Cue Visual  ---
+x_name = 'Auditory-Cued Congruent Audiovisual Sensitivity';
+y_name = 'Visual-Cued Congruent Audiovisual Sensitivity';
+
+pubfig_scatter_plotter(AV_Aud_Slope, AV_Vis_Slope, both_icon, both_color, figure_font_size, scatter_size, x_name, y_name);
+delta_histogram_plotter(AV_Aud_Slope, AV_Vis_Slope, both_color, figure_font_size, x_name, y_name);
+
+save_names{end+1} = sprintf('%s vs. %s Scatter', x_name, y_name);
+save_names{end+1} = sprintf('%s vs. %s Delta Histogram', x_name, y_name);
+
+% --- Plot 13: Linear Regression Vis Weight vs Cue AV ---
+x_name = 'Visual Weight (1 - Auditory Weight)';
+y_name = 'Audiovisual-Cued Congruent Audiovisual Sensitivity';
+x_lim = [0 1]; x_ticks = [0 0.2 0.4 0.6 0.8 1.0];
+y_lim = [0 20]; y_ticks = [0 4 8 12 16 20];
+
+linear_regression_plotter(Vis_Weight, AV_AV_Slope, both_icon, both_color, figure_font_size, scatter_size, x_name, y_name, x_lim, x_ticks, y_lim, y_ticks)
+
+save_names{end+1} = sprintf('%s vs. %s Linear Regression', x_name, y_name);
+
+% --- Plot 14: Linear Regression Worst Weight vs MS Gain ---
+x_name = 'Worst Unisensory Weight';
+y_name = 'Audiovisual Sensitivity Gain (%)';
+x_lim = [0 0.5]; x_ticks = [0 0.1 0.2 0.3 0.4 0.5];
+y_lim = [-2 2]; y_ticks = [-2 -1.5 -1 -0.5 0 0.5 1 1.5 2];
+
+linear_regression_plotter(Worst_Unisensory_Weight, MS_Gain_Slope, both_icon, both_color, figure_font_size, scatter_size, x_name, y_name, x_lim, x_ticks, y_lim, y_ticks)
+
+save_names{end+1} = sprintf('%s vs. %s Linear Regression', x_name, y_name);
+
+%% Save figures
+if save_figures
+    cd(figure_file_directory)
+    figures = findobj('Type', 'figure');  % Find all figure handles
+    
+    for i = 1:length(figures)
+        fig = figures(i);
+        figure(fig);  % Make the figure active
+    
+        filename = save_names{i};
+    
+        saveas(fig, filename, 'epsc');
+        print(fig, filename, '-djpeg');
+    end
+end

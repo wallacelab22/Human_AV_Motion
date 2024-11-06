@@ -6,10 +6,8 @@ unity_version = 1;
 
 cd('/Users/a.tiesman/Documents/Research/Human_AV_Motion/')
 
-[file_name, subjnum_s, group_s, sex_s, age_s] = collect_subject_information('RDKHoop_stairVis');
+[file_name, subjnum_s, group_s, sex_s, age_s] = collect_subject_information('RDKHoop_psyVis');
 partID = sprintf('%s%s.csv', subjnum_s, group_s);
-save_name = partID;
-
 
 %% UNITY version
 if unity_version
@@ -23,7 +21,7 @@ if unity_version
     
     dataVis = table2array(dataVis);
 
-    save_name = 'stair';
+    save_name = 'psy';
     [right_vs_left, right_group, left_group] = direction_plotter(dataVis);
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, 1, 2);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(dataVis, right_vs_left);
@@ -41,7 +39,7 @@ if CRT_version
     cd('/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis');
     dataVis(dataVis(:, 1) == 0, 1) = 3; 
     
-    save_name = 'stair';
+    save_name = 'psy';
     [right_vs_left, right_group, left_group] = direction_plotter(dataVis);
     rightward_prob = unisensory_rightward_prob_calc(right_vs_left, right_group, left_group, 1, 2);
     [total_coh_frequency, left_coh_vals, right_coh_vals, coherence_lvls, coherence_counts, coherence_frequency] = frequency_plotter(dataVis, right_vs_left);
@@ -52,7 +50,8 @@ if CRT_version
     hold on
 end
 
-title(sprintf('Psych. Function Comparison: \n %s', partID), 'Interpreter','none');
+save_name = sprintf('%s_%s', subjnum_s, group_s);
+title(sprintf('Psych. Function Comparison: \n %s', save_name), 'Interpreter','none');
 legend('Location', 'NorthWest', 'Interpreter', 'none');
 xlabel( 'Coherence ((-)Leftward, (+)Rightward)', 'Interpreter', 'none');
 ylabel( 'Proportion Rightward Response', 'Interpreter', 'none');
@@ -70,3 +69,4 @@ if CRT_version
 end
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 24)
 beautifyplot;
+unmatlabifyplot;
