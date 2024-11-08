@@ -1,4 +1,4 @@
-function [accuracies, violation, RT_gain, coherence1, coherence2, AV_accuracy_CDF_points] = PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s, figure_file_directory, save_fig, figures)
+function [accuracies, coherence1, coherence2, AV_accuracy_CDF_points] = PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s, figure_file_directory, save_fig, figures)
 % Assume 'data_output' is your matrix with trial information
 % Column 1: Auditory direction (1=left, 2=right)
 % Column 2: Auditory coherence (0-1)
@@ -104,45 +104,45 @@ if figures
     end
 end
 
-% Filter data for the current coherence level
-% Convert seconds to ms, sort RT in ascending order
-rtAuditory = dataAud(:, 6);
-rtAuditory = rtAuditory*1000;
-rtAuditory = sort(rtAuditory, 'ascend');
-rtAuditory = rtAuditory(~isnan(rtAuditory));
-rtVisual = dataVis(:, 6);
-rtVisual = rtVisual*1000;
-rtVisual = sort(rtVisual, 'ascend');
-rtVisual = rtVisual(~isnan(rtVisual));
-rtAudiovisual = dataAV(:, 6);
-rtAudiovisual = rtAudiovisual*1000;
-rtAudiovisual = sort(rtAudiovisual, 'ascend');
-rtAudiovisual = rtAudiovisual(~isnan(rtAudiovisual));
-coherence1 = num2str(round(coherence1, 3));
-coherence2 = num2str(round(coherence2, 3));
-coh = sprintf("%s, %s", coherence1, coherence2);
-if length(rtAuditory) > length(rtVisual)
-    rtAUD_oldsize = length(rtAuditory);
-    rtAuditory = rtAuditory(1:length(rtVisual));
-    rtAUD_newsize = length(rtAuditory);
-    rtAUD_missingdata = rtAUD_oldsize - rtAUD_newsize; 
-elseif length(rtAuditory) < length(rtVisual)
-    rtVIS_oldsize = length(rtVisual);
-    rtVisual = rtVisual(1:length(rtAuditory));
-    rtVIS_newsize = length(rtVisual);
-    rtVIS_missingdata = rtVIS_oldsize - rtVIS_newsize;
-end
-if length(rtAuditory) < length(rtAudiovisual)
-    rtAV_oldsize = length(rtAudiovisual);
-    rtAudiovisual = rtAudiovisual(1:length(rtAuditory));
-    rtAV_newsize = length(rtAudiovisual);
-    rtAV_missingdata = rtAV_oldsize - rtAV_newsize;
-elseif length(rtAuditory) > length(rtAudiovisual)
-    rtAuditory = rtAuditory(1:length(rtAudiovisual));
-    rtVisual = rtVisual(1:length(rtAudiovisual));
-end
-part_ID = sprintf('%s, %s', subjnum_s, group_s);
-[violation, RT_gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, figures, part_ID, coh, subjnum_s, group_s, figure_file_directory, save_fig);
+% % Filter data for the current coherence level
+% % Convert seconds to ms, sort RT in ascending order
+% rtAuditory = dataAud(:, 6);
+% rtAuditory = rtAuditory*1000;
+% rtAuditory = sort(rtAuditory, 'ascend');
+% rtAuditory = rtAuditory(~isnan(rtAuditory));
+% rtVisual = dataVis(:, 6);
+% rtVisual = rtVisual*1000;
+% rtVisual = sort(rtVisual, 'ascend');
+% rtVisual = rtVisual(~isnan(rtVisual));
+% rtAudiovisual = dataAV(:, 6);
+% rtAudiovisual = rtAudiovisual*1000;
+% rtAudiovisual = sort(rtAudiovisual, 'ascend');
+% rtAudiovisual = rtAudiovisual(~isnan(rtAudiovisual));
+% coherence1 = num2str(round(coherence1, 3));
+% coherence2 = num2str(round(coherence2, 3));
+% coh = sprintf("%s, %s", coherence1, coherence2);
+% if length(rtAuditory) > length(rtVisual)
+%     rtAUD_oldsize = length(rtAuditory);
+%     rtAuditory = rtAuditory(1:length(rtVisual));
+%     rtAUD_newsize = length(rtAuditory);
+%     rtAUD_missingdata = rtAUD_oldsize - rtAUD_newsize; 
+% elseif length(rtAuditory) < length(rtVisual)
+%     rtVIS_oldsize = length(rtVisual);
+%     rtVisual = rtVisual(1:length(rtAuditory));
+%     rtVIS_newsize = length(rtVisual);
+%     rtVIS_missingdata = rtVIS_oldsize - rtVIS_newsize;
+% end
+% if length(rtAuditory) < length(rtAudiovisual)
+%     rtAV_oldsize = length(rtAudiovisual);
+%     rtAudiovisual = rtAudiovisual(1:length(rtAuditory));
+%     rtAV_newsize = length(rtAudiovisual);
+%     rtAV_missingdata = rtAV_oldsize - rtAV_newsize;
+% elseif length(rtAuditory) > length(rtAudiovisual)
+%     rtAuditory = rtAuditory(1:length(rtAudiovisual));
+%     rtVisual = rtVisual(1:length(rtAudiovisual));
+% end
+% part_ID = sprintf('%s, %s', subjnum_s, group_s);
+% [violation, RT_gain] = RMI_violation(rtAuditory, rtVisual, rtAudiovisual, figures, part_ID, coh, subjnum_s, group_s, figure_file_directory, save_fig);
 
 coherence1 = str2double(coherence1);
 coherence2 = str2double(coherence2);

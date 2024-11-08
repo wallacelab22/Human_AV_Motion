@@ -5,7 +5,7 @@ clc;
 %% Set variables
 vel_stair = 0;
 save_fig = 0;
-estimated_AV = 0;
+estimated_AV = 1;
 figures = 1;
 analyze_halves = 0;
 remove_early = 0;
@@ -50,7 +50,7 @@ cd(script_file_directory)
 data_output_half1 = data_output(1:150, :);
 data_output_half2 = data_output(151:300, :);
 
-%[boxplot_accuracies, violation, RT_gain, aud_coh, vis_coh, AV_accuracy_CDF_points] = PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s, figure_file_directory, save_fig, figures);
+[boxplot_accuracies, aud_coh, vis_coh, AV_accuracy_CDF_points] = PERFvsSTIM_accuracy_plotter(data_output, subjnum_s, group_s, figure_file_directory, save_fig, figures);
 if analyze_halves
     [boxplot_accuracies_half1, violation_half1, RT_gain_half1, ~, ~, AV_accuracy_CDF_points_half1] = PERFvsSTIM_accuracy_plotter(data_output_half1, subjnum_s, 'First Half', figure_file_directory, save_fig, figures);
     [boxplot_accuracies_half2, violation_half2, RT_gain_half2, ~, ~, AV_accuracy_CDF_points_half2] = PERFvsSTIM_accuracy_plotter(data_output_half2, subjnum_s, 'Second Half', figure_file_directory, save_fig, figures);

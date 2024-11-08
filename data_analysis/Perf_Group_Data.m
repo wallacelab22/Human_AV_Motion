@@ -6,7 +6,7 @@ clc;
 % Set initial variables
 msize=100; lw=1.5;
 
-groupData = readtable('group_perf_data.xlsx', 'Sheet', 'Sheet2');
+groupData = readtable('group_perf_data.xlsx', 'Sheet', 'data_to_analyze');
 
 thresAud = [0.125 0.177 0.25 0.177 0.177 0.062 0.125 0.044 0.707 0.177 0.177 0.088 0.354 0.177 0.177 0.177 0.062 0.177 0.031 0.177];
 thresVis = [0.125 0.044 0.088 0.125 0.125 0.088 0.25 0.031 0.354 0.088 0.125 0.354 0.088 0.044 0.022 0.5 0.088 0.177 0.125 0.5]; 

@@ -15,7 +15,7 @@ clc;
 
 A_and_V = 0;
 RT_analysis = 1;
-NO_cue = 0;
+NO_cue = 1;
 
 data_file_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data/';
 addpath('/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis/RSE-box-master/analysis')
