@@ -46,7 +46,7 @@ if single_group
     
     % Apply styling functions
     beautifyplot;
-    unmatlabifyplot;
+    unmatlabifyplot(1);
     
     set(findall(gcf, '-property', 'FontSize'), 'FontSize', figure_font_size);
     
@@ -108,7 +108,7 @@ else
     
     % Apply styling functions
     beautifyplot;
-    unmatlabifyplot;
+    unmatlabifyplot(1);
     
     set(findall(gcf, '-property', 'FontSize'), 'FontSize', figure_font_size);
     

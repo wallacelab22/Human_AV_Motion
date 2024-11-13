@@ -81,7 +81,7 @@ else
     sz = 36;
 end
 
-fig = 0;
+%fig = 0;
 
 % % Plot fit with data.
 % if compare_plot == 1

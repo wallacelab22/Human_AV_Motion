@@ -10,7 +10,7 @@ multiple_group_scatters = input('Plot Multiple Groups Scatters? 0 = NO; 1 = YES 
 scatter_size = 500;
 aud_color = '#d73027'; vis_color = '#4575b4'; both_color = '#009304';
 aud_icon = 'o'; vis_icon = '^'; both_icon = 's';
-figure_font_size = 30; single_group = 1;
+figure_font_size = 24; single_group = 1;
 save_jpg_figures = 0; save_eps_figures = 0; save_names = {};
 
 data_analysis_directory = '/Users/a.tiesman/Documents/Research/Human_AV_Motion/data_analysis';

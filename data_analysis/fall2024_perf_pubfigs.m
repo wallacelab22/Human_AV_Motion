@@ -38,6 +38,7 @@ num_participants = size(dataAll, 1);
 AudCoh_MLE_Accuracy = zeros(num_participants, 1);
 VisCoh_MLE_Accuracy = zeros(num_participants, 1);
 Average_MLE_Accuracy = zeros(num_participants, 1);
+
 for i = 1:num_participants
     right_aud_coh = Aud_Coh(i);
     left_aud_coh = -1*Aud_Coh(i);
@@ -121,28 +122,35 @@ h = daviolinplot(dataCAvsMLE_combined, 'groups', dataCAvsMLE_groups, 'violin', '
 
 %ylim([0 1]);
 ylabel('Proportion Correct')
-ylim([0 1.2]);
+ylim([0 1]);
 xl = xlim; xlim([xl(1)-0.2, xl(2)+0.4]); % make more space for the legend
 
+% Calculate the medians for each condition
+median_AV_Accuracy = median(dataCAvsMLE(:, 1));
+median_Average_MLE_Accuracy = median(dataCAvsMLE(:, 2));
+median_CA_Accuracy = median(dataCAvsMLE(:, 3));
+
+% Plot the medians as dotted lines
+hold on; % Keep the current plot to overlay the lines
+
+% Plot and label the median for the first condition
+line([0.7, 1.5], [median_AV_Accuracy, median_AV_Accuracy], 'Color', '#bbbbbb', 'LineStyle', '--', 'LineWidth', 2.5);
+text(1.55, median_AV_Accuracy, sprintf('%.2f', median_AV_Accuracy), 'HorizontalAlignment', 'left', 'VerticalAlignment', 'middle', 'FontSize', 22, 'FontWeight', 'bold', 'FontName', 'Times New Roman');
+
+% Plot and label the median for the second condition
+line([1.7, 2.5], [median_Average_MLE_Accuracy, median_Average_MLE_Accuracy], 'Color', '#bbbbbb', 'LineStyle', '--', 'LineWidth', 2.5);
+text(2.55, median_Average_MLE_Accuracy, sprintf('%.2f', median_Average_MLE_Accuracy), 'HorizontalAlignment', 'left', 'VerticalAlignment', 'middle', 'FontSize', 22, 'FontWeight', 'bold', 'FontName', 'Times New Roman');
+
+% Plot and label the median for the third condition
+line([2.7, 3.5], [median_CA_Accuracy, median_CA_Accuracy], 'Color', '#bbbbbb', 'LineStyle', '--', 'LineWidth', 2.5);
+text(3.55, median_CA_Accuracy, sprintf('%.2f', median_CA_Accuracy), 'HorizontalAlignment', 'left', 'VerticalAlignment', 'middle', 'FontSize', 22, 'FontWeight', 'bold', 'FontName', 'Times New Roman');
 
 beautifyplot;
 unmatlabifyplot;
 
-
-function rgb = hex2rgb(hex)
-    % HEX2RGB converts a hexadecimal color code to an RGB triplet
-    %
-    % Input:
-    %   hex - a string representing a color in hex format (e.g., '#d73027')
-    %
-    % Output:
-    %   rgb - a 1x3 array representing the color in RGB format with values between 0 and 1
-    
-    % Remove the '#' if it is present
-    if hex(1) == '#'
-        hex = hex(2:end);
-    end
-    
-    % Convert hex to decimal
-    rgb = [hex2dec(hex(1:2)), hex2dec(hex(3:4)), hex2dec(hex(5:6))] / 255;
-end
+delta_EMP_MLE = AV_Accuracy - Average_MLE_Accuracy;
+delta_EMP_CA = AV_Accuracy - CA_Accuracy;
+delta_MLE_CA = Average_MLE_Accuracy - CA_Accuracy;
+[p_EMP_MLE] = signrank(delta_EMP_MLE);
+[p_EMP_CA] = signrank(delta_EMP_CA);
+[p_MLE_CA] = signrank(delta_MLE_CA);
