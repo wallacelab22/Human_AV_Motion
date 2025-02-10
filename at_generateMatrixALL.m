@@ -12,10 +12,10 @@ AV_r_cong_trials = zeros(congruent_mstrials * length(audInfo.cohSet), 4);
 AV_l_cong_trials = zeros(congruent_mstrials * length(audInfo.cohSet), 4);
 AV_rA_incong_trials = zeros(incongruent_mstrials * length(audInfo.cohSet), 4);
 AV_lA_incong_trials = zeros(incongruent_mstrials * length(audInfo.cohSet), 4);
-A_r_trials = zeros(stimtrials * length(audInfo.cohSet), 4);
-A_l_trials = zeros(stimtrials * length(audInfo.cohSet), 4);
-V_l_trials = zeros(stimtrials * length(visInfo.cohSet), 4);
-V_r_trials = zeros(stimtrials * length(visInfo.cohSet), 4);
+A_r_trials = zeros(stimtrials(1) * length(audInfo.cohSet), 4);
+A_l_trials = zeros(stimtrials(1) * length(audInfo.cohSet), 4);
+V_l_trials = zeros(stimtrials(2) * length(visInfo.cohSet), 4);
+V_r_trials = zeros(stimtrials(2) * length(visInfo.cohSet), 4);
 
 % Populate congruent and incongruent trials
 for i = 1:length(audInfo.cohSet)
