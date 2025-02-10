@@ -26,7 +26,7 @@ else
 end
 if task_nature == 2
     disp('How do you want to match the visual and auditory stimuli?')
-    stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response : ');
+    stim_matching_nature = input('1 = Staircase Coherence Calc, 2 = Participant Slider Response, 3 = Stimulus Matched Range of Coherences : ');
 else
     stim_matching_nature = 0;
 end
@@ -100,9 +100,9 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 
 % All variables that define stimulus repetitions; num_trials defines total
 % number of staircase trials, stimtrials defines number of stimulus trials
-% per condition for MCS, catchtrials defines total number of catch trials
-% for MCS.
-num_trials = 250; stimtrials = 12; catchtrials = 25;
+% per condition for MCS where column 1 is AO, column 2 is VO, and column 3 is AV, 
+% catchtrials defines total number of catch trials for MCS.
+num_trials = 250; stimtrials = [20, 0, 0]; catchtrials = 25;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
@@ -218,6 +218,17 @@ elseif task_nature == 2 % Method of constant stimuli
     
         % Define duration in audInfo for makCAM function
         audInfo.durRaw = dur;
+    elseif stim_matching_nature == 3
+        audInfo.cohSet = [0.4, 0.2, 0.10, 0.05];
+        visInfo.cohSet = [0.4, 0.2, 0.10, 0.05];
+
+        all_trials = at_generateMatrixALL(catchtrials, 0, 0, stimtrials, audInfo, visInfo, right_var, left_var, catch_var, 0);
+        
+        % Randomize trials
+        rng('shuffle');
+        nbtrials = size(all_trials, 1);
+        order = randperm(nbtrials);
+        data_output = all_trials(order, :);
     end
 else
     error('Could not generate coherences. Task nature determines how coherences are generated')
