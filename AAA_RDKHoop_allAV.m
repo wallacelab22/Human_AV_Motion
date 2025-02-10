@@ -129,18 +129,19 @@ silence = 0.03; buffersize = (dur+silence)*Fs;
 
 % All variables that define stimulus repetitions; num_trials defines total
 % number of staircase trials, stimtrials defines number of stimulus trials
-% per condition for MCS for unisensory trials/blocks, catchtrials defines total number of catch trials
-% for MCS, congruent_mstrials defines number of stimulus trials per
-% congruent condition for AV MCS, incongruent_mstrials is same as above for
-% incongruent conditions.
+% per condition for MCS where column 1 is AO, column 2 is VO, and column 3 is AV, 
+% catchtrials defines total number of catch trials for MCS, congruent_mstrials defines 
+% number of stimulus trials per congruent condition for AV MCS, incongruent_mstrials 
+% is same as above for incongruent conditions.
 
 % Previous conditions:
 % num_trials = 100; stimtrials = 12; catchtrials = 25;
 % congruent_mstrials = 20; incongruent_mstrials = 0;
 
 % New conditions:
-num_trials = 100; stimtrials = 0; catchtrials = 20;
+num_trials = 100; stimtrials = [0, 0, 0]; catchtrials = 20;
 congruent_mstrials = 20; incongruent_mstrials = 8;
+stimtrials(3) = congruent_mstrials + incongruent_mstrials;
 
 % Visual stimulus properties relating to monitor (measure yourself),
 % maxdotsframe is for RDK and is a limitation of your graphics card. The
